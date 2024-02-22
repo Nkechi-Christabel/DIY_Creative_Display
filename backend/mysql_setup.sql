@@ -1,5 +1,4 @@
 -- Connect to MySQL server as a superuser (e.g., root)
--- Replace 'your_root_password' with your actual root password
 -- If the database does not exist, create it
 CREATE DATABASE IF NOT EXISTS diy_creative_display;
 

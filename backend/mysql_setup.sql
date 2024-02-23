@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS users (
     name VARCHAR(50) NOT NULL,
     username VARCHAR(30) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
+    pwd VARCHAR(60) NOT NULL UNIQUE,
 );
 
 -- Flush privileges to apply changes

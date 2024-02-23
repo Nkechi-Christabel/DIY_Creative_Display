@@ -3,4 +3,4 @@ from flask import Blueprint
 
 app_routes = Blueprint('app_routes', __name__)
 
-from app.routes.main import *
+from diy_app.routes.account import *

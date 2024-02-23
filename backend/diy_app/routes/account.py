@@ -1,7 +1,7 @@
 #!/usr/bin/python3
-from app.extensions import db
+from diy_app.extensions import db
 from flask import request, jsonify
-from app.models.user import User
+from diy_app.models.user import User
 from . import app_routes  # Import the blueprint directly
 
 # Endpoint to sign up a user
@@ -11,10 +11,10 @@ def signup():
     name = data.get('name')
     username = data.get('username')
     email = data.get('email')
-    password = data.get('password')
+    pwd = data.get('pwd')
 
-    new_user = User(name=name, username=username, email=email)
-    new_user.set_password(password)
+    new_user = User(name=name, username=username, email=email, pwd=pwd)
+    new_user.set_password(pwd)
     db.session.add(new_user)
     db.session.commit()
 

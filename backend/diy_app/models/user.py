@@ -1,9 +1,10 @@
 import bcrypt
-from diy_app.extensions import db
+from diy_app.models import db
 from diy_app.models.base_model import Base
+from flask_login import UserMixin
 
 
-class User(Base):
+class User(Base, UserMixin):
     __tablename__ = 'users'
     name = db.Column(db.String(50), nullable=False)
     username = db.Column(db.String(30), nullable=False)

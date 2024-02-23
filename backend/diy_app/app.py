@@ -26,7 +26,7 @@ def create_app():
         return User.query.get(user_id)
 
     # Import and register blueprints
-    from diy_app.routes import app_routes
+    from backend.diy_app.routes import app_routes
     app.register_blueprint(app_routes)
 
     print("Connection string",  app.config['SQLALCHEMY_DATABASE_URI'])

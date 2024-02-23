@@ -14,7 +14,7 @@ def create_app():
     db.init_app(app)  # Initialize db with the Flask app
 
     # Import and register blueprints
-    from diy_app.routes import app_routes
+    from backend.diy_app.routes import app_routes
     app.register_blueprint(app_routes)
 
     print("Connection string",  app.config['SQLALCHEMY_DATABASE_URI'])

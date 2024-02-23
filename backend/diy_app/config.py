@@ -1,0 +1,5 @@
+SECRET_KEY = '1#$Gak&%0p{<}@dfer'
+DB_USER = 'diy_cd_user'
+DB_PWD = 'DIY_cd_pwd3}'
+DB_HOST = 'localhost'
+DB_NAME = 'diy_creative_display'

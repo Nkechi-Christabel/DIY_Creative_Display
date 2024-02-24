@@ -1,9 +1,11 @@
 #!/usr/bin/python3
+import bcrypt
 from diy_app.models import db
-from flask import request, jsonify
+from flask import request, jsonify, current_app
 from diy_app.models.user import User
 from . import app_routes  # Import the blueprint directly
 from flask_login import login_user, logout_user
+import jwt
 
 # Endpoint to sign up a user
 @app_routes.route('/signup', methods=['POST'])
@@ -30,13 +32,13 @@ def login():
 
     # Check if user exists
     user = User.query.filter_by(username=username).first()
-    if not user or not user.check_password(pwd):
-        return jsonify({'error': 'Invalid username or password'}), 401
-
-    # Login user
-    login_user(user)
-
-    return jsonify({'message': 'Login successful'}), 200
+    # Check if user exists and password is correct
+    if user and user.check_password(pwd):
+        # Generate JWT token with user's ID as payload
+        token = jwt.encode({'user_id': user.id}, current_app.config['SECRET_KEY'], algorithm='HS256')
+        return jsonify({'token': token}), 200
+    else:
+        return jsonify({'message': 'Invalid username or password'}), 401
 
 # Endpoint to logout user
 @app_routes.route('/logout', methods=['POST'])

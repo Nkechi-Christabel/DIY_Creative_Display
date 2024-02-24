@@ -1,6 +1,6 @@
 import jwt
 from flask import request, jsonify, current_app
-from diy_app.models import user
+from diy_app.models.user import User
 from functools import wraps
 
 def token_required(f):
@@ -12,7 +12,7 @@ def token_required(f):
 
         try:
             data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])
-            current_user = user.query.filter_by(id=data['id']).first()
+            current_user = User.query.filter_by(id=data['user_id']).first()
         except:
             return jsonify({'message': 'Token is invalid'}), 401
 

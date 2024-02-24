@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-import bcrypt
 from diy_app.models import db
 from flask import request, jsonify, current_app
 from diy_app.models.user import User
@@ -37,7 +36,7 @@ def login():
         token = jwt.encode({'user_id': user.id}, current_app.config['SECRET_KEY'], algorithm='HS256')
         return jsonify({'token': token}), 200
     else:
-        return jsonify({'message': 'Invalid username or password'}), 401
+        return jsonify({'message': 'Invalid email or password'}), 401
 
 # Endpoint to logout user
 @app_routes.route('/logout', methods=['POST'])

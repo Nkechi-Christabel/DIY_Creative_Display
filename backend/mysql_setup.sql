@@ -20,7 +20,18 @@ CREATE TABLE IF NOT EXISTS users (
     name VARCHAR(50) NOT NULL,
     username VARCHAR(30) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
-    pwd VARCHAR(60) NOT NULL UNIQUE,
+    pwd VARCHAR(60) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS posts (
+    id INTEGER AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(100) NOT NULL,
+    content TEXT NOT NULL,
+    date_posted DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    categories VARCHAR(100) NOT NULL,
+    picture VARCHAR(255) NOT NULL DEFAULT 'default.jpg',
+    user_id INTEGER NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
 -- Flush privileges to apply changes

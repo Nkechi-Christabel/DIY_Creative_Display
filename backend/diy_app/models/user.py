@@ -9,6 +9,7 @@ class User(Base):
     username = db.Column(db.String(30), nullable=False)
     email = db.Column(db.String(100), nullable=False)
     pwd = db.Column(db.String(60), unique=True, nullable=False)
+    post = db.relationship('Post', backref=db.backref('users', lazy=True), cascade="all, delete-orphan")
      
 
     def set_password(self, password):

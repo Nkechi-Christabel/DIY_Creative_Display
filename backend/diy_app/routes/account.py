@@ -4,7 +4,6 @@ from diy_app.models import db
 from flask import request, jsonify, current_app
 from diy_app.models.user import User
 from . import app_routes  # Import the blueprint directly
-from flask_login import login_user, logout_user
 import jwt
 
 # Endpoint to sign up a user
@@ -43,5 +42,4 @@ def login():
 # Endpoint to logout user
 @app_routes.route('/logout', methods=['POST'])
 def logout():
-    logout_user()
     return jsonify({'message': 'Logout successful'}), 200

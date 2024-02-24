@@ -2,8 +2,6 @@
 from flask import Flask
 from diy_app.models import db  # Import db from extensions.py
 from diy_app.config import SECRET_KEY, DB_USER, DB_PWD, DB_HOST, DB_NAME
-from flask_login import LoginManager
-from diy_app.models.user import User
 import os
 
 def create_app():
@@ -14,16 +12,6 @@ def create_app():
     
     # Initialize extensions
     db.init_app(app)  # Initialize db with the Flask app
-
-    # Initialize login
-    login_manager = LoginManager()
-    login_manager.init_app(app)
-    login_manager.login_view = 'login'
-
-    @login_manager.user_loader
-    def load_user(user_id):
-    # Query and return the user object based on the user_id
-        return User.query.get(user_id)
 
     # Import and register blueprints
     from diy_app.routes import app_routes

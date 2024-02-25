@@ -11,6 +11,10 @@ from diy_app.auth import token_required
 @token_required
 def create_post(current_user):
     data = request.get_json()
+
+    if not data:
+        return jsonify({'message': 'No data provided'}), 400
+    
     title = data.get('title')
     content = data.get('content')
     categories = data.get('categories')
@@ -38,26 +42,45 @@ def get_post(post_id):
 
 # Update a Post by a user
 @app_routes.route('/posts/<int:post_id>', methods=['PUT'])
-def update_post(post_id):
+@token_required
+def update_post(current_user, post_id):
     data = request.get_json()
+
+    if not data:
+        return jsonify({'message': 'No data provided'}), 400
+    
     title = data.get('title')
     content = data.get('content')
     categories = data.get('categories')
     picture = data.get('picture')
 
+    current_user_id = current_user.id
     # Query the Database for post_id, if failed return 404 error
     diypost = Post.query.get_or_404(post_id)
-    diypost.title = title
-    diypost.content = content
-    diypost.categories = categories
-    diypost.picture = picture
-    db.session.commit()
-    return jsonify({'message': 'Post updated successfully'}), 201
+    
+    # Checks if current user is authorized to update the post
+    if current_user_id == diypost.user_id:
+        diypost.title = title
+        diypost.content = content
+        diypost.categories = categories
+        diypost.picture = picture
+        db.session.commit()
+        return jsonify({'message': 'Post updated successfully'}), 201
+    else:
+        return jsonify({'message': 'Unauthorized to update this post'}), 403
+
 
 # Delete a Post
 @app_routes.route('/posts/<int:post_id>', methods=['DELETE'])
-def delete_diypost(post_id):
+@token_required
+def delete_diypost(current_user, post_id):
+    current_user_id = current_user.id
     diypost = Post.query.get_or_404(post_id)
-    db.session.delete(diypost)
-    db.session.commit()
-    return jsonify({'message': 'Post deleted successfully'}), 200
+
+    # Checks if current user is authorized to delete the post
+    if current_user_id == diypost.user_id:
+        db.session.delete(diypost)
+        db.session.commit()
+        return jsonify({'message': 'Post deleted successfully'}), 200
+    else:
+        return jsonify({'message': 'Unauthorized to delete this post'}), 403

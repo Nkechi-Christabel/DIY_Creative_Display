@@ -9,12 +9,15 @@ import jwt
 @app_routes.route('/signup', methods=['POST'])
 def signup():
     data = request.get_json()
-    name = data.get('name')
-    username = data.get('username')
+    fullname = data.get('fullname')
     email = data.get('email')
     pwd = data.get('pwd')
 
-    new_user = User(name=name, username=username, email=email, pwd=pwd)
+    existing_user = User.query.filter((User.email == email)).first()
+    if existing_user:
+        return jsonify({'error': 'Email already exists'}), 400
+
+    new_user = User(fullname=fullname, email=email, pwd=pwd)
     new_user.set_password(pwd)
     db.session.add(new_user)
     db.session.commit()

@@ -17,8 +17,7 @@ USE diy_creative_display;
 
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
-    username VARCHAR(30) NOT NULL,
+    fullname VARCHAR(50) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     pwd VARCHAR(60) NOT NULL UNIQUE
 );
@@ -38,4 +37,4 @@ CREATE TABLE IF NOT EXISTS posts (
 
 
 -- Exit MySQL prompt
-EXIT;
+

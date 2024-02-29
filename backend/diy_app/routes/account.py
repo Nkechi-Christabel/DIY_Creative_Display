@@ -48,7 +48,7 @@ def logout():
 
 # Endpoint to like/unlike a post
 @app_routes.route('/like', methods=['POST'])
-def like_post(post_id):
+def like_post():
     token = request.headers.get('Authorization')
     if not token:
         return jsonify({'error': 'Authorization token is missing'}), 401
@@ -79,7 +79,7 @@ def like_post(post_id):
 
 # Endpoint to save/unsave a post
 @app_routes.route('/save', methods=['POST'])
-def save_post(post_id):
+def save_post():
     token = request.headers.get('Authorization')
     if not token:
         return jsonify({'error': 'Authorization token is missing'}), 401
@@ -108,7 +108,7 @@ def save_post(post_id):
 
 # Endpoint to get comments for a post
 @app_routes.route('/comments', methods=['GET'])
-def get_comments(post_id):
+def get_comments():
     post = Post.query.get_or_404(post_id)
     comments = post.comments.all()
     return jsonify({'comments': [comment.serialize() for comment in comments]}), 200

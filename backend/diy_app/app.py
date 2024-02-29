@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 from flask import Flask
-from diy_app.extensions import db  # Import db from extensions.py
+from diy_app.models import db  # Import db from extensions.py
 from diy_app.config import SECRET_KEY, DB_USER, DB_PWD, DB_HOST, DB_NAME
 import os
 
@@ -26,4 +26,4 @@ if __name__ == "__main__":
     # HOST = os.getenv('FLASK_HOST', '0.0.0.0') 
     # PORT = int(os.getenv('FLASK_PORT', 5000)) 
 
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000, debug=True)

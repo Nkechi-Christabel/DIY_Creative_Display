@@ -8,7 +8,7 @@ CREATE USER IF NOT EXISTS 'diy_cd_user'@'localhost' IDENTIFIED BY 'DIY_cd_pwd3}'
 -- Grant privileges to the user for the database
 GRANT ALL PRIVILEGES ON diy_creative_display.* TO 'diy_cd_user'@'localhost';
 
-GRANT SELECT ON `performance_schema`.* TO 'diy_cd_user'@'localhost'
+GRANT SELECT ON `performance_schema`.* TO 'diy_cd_user'@'localhost';
 
 FLUSH PRIVILEGES;
 
@@ -17,14 +17,24 @@ USE diy_creative_display;
 
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
-    username VARCHAR(30) NOT NULL,
+    fullname VARCHAR(50) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
-    pwd VARCHAR(60) NOT NULL UNIQUE,
+    pwd VARCHAR(60) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS posts (
+    id INTEGER AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(100) NOT NULL,
+    content TEXT NOT NULL,
+    date_posted DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    categories VARCHAR(100) NOT NULL,
+    picture VARCHAR(255) NOT NULL DEFAULT 'default.jpg',
+    user_id INTEGER NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
 -- Flush privileges to apply changes
 
 
 -- Exit MySQL prompt
-EXIT;
+

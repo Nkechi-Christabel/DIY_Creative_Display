@@ -1,8 +1,17 @@
+// "use client";
+import React from "react";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import dynamic from "next/dynamic";
+import { Lato } from "next/font/google";
+import { Header } from "./components/Header";
+
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const ReduxProvider = dynamic(() => import("../redux/Provider"), {
+  ssr: false,
+});
+
+const inter = Lato({ weight: "400", subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -11,12 +20,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <ReduxProvider>
+          <Header />
+          {children}
+        </ReduxProvider>
+      </body>
     </html>
   );
 }

@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 from flask import Flask
+from flask_cors import CORS
 from diy_app.models import db  # Import db from extensions.py
 from diy_app.config import SECRET_KEY, DB_USER, DB_PWD, DB_HOST, DB_NAME
 import os
@@ -17,7 +18,7 @@ def create_app():
     from diy_app.routes import app_routes
     app.register_blueprint(app_routes)
 
-    print("Connection string",  app.config['SQLALCHEMY_DATABASE_URI'])
+    CORS(app, origins=["http://localhost:3000"])
 
     return app
 

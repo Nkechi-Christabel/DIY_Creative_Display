@@ -6,26 +6,26 @@ from . import app_routes  # Import the blueprint directly
 import jwt
 
 # Endpoint to sign up a user
-@app_routes.route('/signup', methods=['POST'])
+@app_routes.route('/auth/signup', methods=['POST'])
 def signup():
     data = request.get_json()
     fullname = data.get('fullname')
     email = data.get('email')
-    pwd = data.get('pwd')
+    password = data.get('password')
 
     existing_user = User.query.filter((User.email == email)).first()
     if existing_user:
         return jsonify({'error': 'Email already exists'}), 400
 
-    new_user = User(fullname=fullname, email=email, pwd=pwd)
-    new_user.set_password(pwd)
+    new_user = User(fullname=fullname, email=email, password=password)
+    new_user.set_password(password)
     db.session.add(new_user)
     db.session.commit()
 
     return jsonify({'message': 'User created successfully'}), 201
 
 # Endpoint to login user
-@app_routes.route('/login', methods=['POST'])
+@app_routes.route('/auth/login', methods=['POST'])
 def login():
     data = request.get_json()
     email = data.get('email')

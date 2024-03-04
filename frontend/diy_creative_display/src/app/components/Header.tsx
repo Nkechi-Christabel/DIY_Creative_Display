@@ -24,10 +24,9 @@ export const Header = () => {
   ];
   const { email, token } = useAppSelector((state: RootState) => state.login);
   const { user } = useAppSelector((state: RootState) => state.signup);
-  let getName = user?.email === email ? user?.name.split(" ") : "";
-  getName = `${getName[0][0].toUpperCase() + getName[0].slice(1)} ${
-    getName[1][0].toUpperCase() + getName[1].slice(1)
-  }`;
+  const getName = user?.email === email ? user?.name.split(" ") : "";
+  const name: string = getName && getName[1] &&`${ getName[0][0]?.toUpperCase() + getName[0]?.slice(1)
+  } ${getName[1][0]?.toUpperCase() + getName[1]?.slice(1)}`;
 
   return (
     <>
@@ -102,7 +101,7 @@ export const Header = () => {
                       }}
                     >
                       <p className={`${userInitials}`}>
-                        {getName[0]?.toUpperCase()}
+                        {name[0]?.toUpperCase()}
                       </p>
                     </div>
                     <div
@@ -115,9 +114,9 @@ export const Header = () => {
                         <li
                           className={`py-2 w-16 h-16 text-4xl ${userInitials}`}
                         >
-                          {getName[0]?.toUpperCase()}
+                          {name[0]?.toUpperCase()}
                         </li>
-                        <li className="pt-2">{getName}</li>
+                        <li className="pt-2">{name}</li>
                         <li className="pb-2 text-base text-gray-400">
                           {email}
                         </li>

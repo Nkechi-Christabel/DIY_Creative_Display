@@ -16,10 +16,3 @@ class User(Base):
 
     def check_password(self, password):
         return bcrypt.checkpw(password.encode(), self.password.encode())
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'fullName': self.fullName,
-            'email': self.email,
-        }

@@ -10,6 +10,9 @@ class Post(Base):
     categories = db.Column(db.String(100), nullable=False)
     picture = db.Column(db.String(255), nullable=False, default='default.jpg')
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    like = db.relationship('Like', backref=db.backref('post', lazy=True), cascade="all, delete-orphan")
+    comment = db.relationship('Comment', backref=db.backref('post', lazy=True), cascade="all, delete-orphan")
+    save = db.relationship('Save', backref=db.backref('post', lazy=True), cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"('{self.id}', '{self.title}', '{self.content}', '{self.date_posted}', '{self.picture}', '{self.user_id}')"
@@ -19,7 +22,7 @@ class Post(Base):
             'id': self.id,
             'title': self.title,
             'content': self.content,
-            'date': self.date_posted, #.isoformat(),  Convert datetime to string
+            'date': self.date_posted, #.isoformat(), Convert datetime to string
             'categories': self.categories,
             'picture': self.picture,
             'user_id': self.user_id

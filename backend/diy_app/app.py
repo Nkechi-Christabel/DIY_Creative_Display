@@ -1,9 +1,12 @@
-#!/usr/bin/python3
 from flask import Flask
 from flask_cors import CORS
 from diy_app.models import db  # Import db from extensions.py
 from diy_app.config import SECRET_KEY, DB_USER, DB_PWD, DB_HOST, DB_NAME
-import os
+from diy_app.models.user import User
+from diy_app.models.post import Post
+from diy_app.models.likes import Like
+from diy_app.models.comment import Comment
+from diy_app.models.save import Save
 
 def create_app():
     app = Flask(__name__)
@@ -13,6 +16,9 @@ def create_app():
     
     # Initialize extensions
     db.init_app(app)  # Initialize db with the Flask app
+    
+    with app.app_context():
+        db.create_all()
 
     # Import and register blueprints
     from diy_app.routes import app_routes

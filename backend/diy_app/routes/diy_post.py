@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 from flask import jsonify, request
 from diy_app.models.post import Post
 from . import app_routes
@@ -7,7 +6,7 @@ from diy_app.auth import token_required
 
 
 # Creates a post
-@app_routes.route('/create', methods=['POST'])
+@app_routes.route('/post', methods=['POST'])
 @token_required
 def create_post(current_user):
     data = request.get_json()
@@ -26,6 +25,7 @@ def create_post(current_user):
     db.session.commit()
     return jsonify({'message': 'Post created successfully'}), 201
 
+
 # Gets all Posts
 @app_routes.route('/posts', methods=['GET'])
 def get_posts():
@@ -34,14 +34,14 @@ def get_posts():
 
 
 # Gets a Post with a specific id
-@app_routes.route('/posts/<int:post_id>', methods=['GET'])
+@app_routes.route('/post/<int:post_id>', methods=['GET'])
 def get_post(post_id):
     diypost = Post.query.get_or_404(post_id)
     return jsonify(diypost.to_dict())
 
 
 # Update a Post by a user
-@app_routes.route('/posts/<int:post_id>', methods=['PUT'])
+@app_routes.route('/post/<int:post_id>', methods=['PUT'])
 @token_required
 def update_post(current_user, post_id):
     data = request.get_json()
@@ -71,7 +71,7 @@ def update_post(current_user, post_id):
 
 
 # Delete a Post
-@app_routes.route('/posts/<int:post_id>', methods=['DELETE'])
+@app_routes.route('/post/<int:post_id>', methods=['DELETE'])
 @token_required
 def delete_diypost(current_user, post_id):
     current_user_id = current_user.id

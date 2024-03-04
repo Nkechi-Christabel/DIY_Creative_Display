@@ -17,7 +17,7 @@ def signup():
     if existing_user:
         return jsonify({'error': 'Email already exists'}), 400
 
-    new_user = User(fullName=fullName, email=email, password=password)
+    new_user = User(fullName=fullName, email=email, pwd=password)
     new_user.set_password(password)
     db.session.add(new_user)
     db.session.commit()

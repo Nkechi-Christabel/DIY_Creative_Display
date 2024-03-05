@@ -1,9 +1,9 @@
-#!/usr/bin/python3
 from diy_app.models import db
 from flask import request, jsonify, current_app
 from diy_app.models.user import User
 from . import app_routes  # Import the blueprint directly
 import jwt
+
 
 # Endpoint to sign up a user
 @app_routes.route('/auth/signup', methods=['POST'])
@@ -24,6 +24,7 @@ def signup():
 
     return jsonify({'message': 'User created successfully', 'fullName': fullName, 'email': email}), 201
 
+
 # Endpoint to login user
 @app_routes.route('/auth/login', methods=['POST'])
 def login():
@@ -40,6 +41,7 @@ def login():
         return jsonify({'token': token, 'email': email}), 200
     else:
         return jsonify({'message': 'Invalid email or password'}), 401
+
 
 # Endpoint to logout user
 @app_routes.route('/logout', methods=['POST'])

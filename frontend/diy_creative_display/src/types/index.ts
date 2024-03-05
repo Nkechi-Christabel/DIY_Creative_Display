@@ -54,3 +54,4 @@ export interface createDiyValues {
   categories: Option;
   picture: PictureValues | Blob;
 }
+

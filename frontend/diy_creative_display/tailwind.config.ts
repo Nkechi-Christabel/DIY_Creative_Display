@@ -60,4 +60,5 @@ const config: Config = {
   },
   plugins: [require("@whiterussianstudio/tailwind-easing")],
 };
+
 export default config;

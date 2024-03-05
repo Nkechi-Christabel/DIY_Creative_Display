@@ -2,18 +2,24 @@ import React from "react";
 import clsx from "clsx";
 import { Label } from "./Label";
 import { ErrorMessage } from "./ErrorMessage";
-import { Controller, FieldError, UseFormRegisterReturn } from "react-hook-form";
+import {
+  Controller,
+  FieldError,
+  UseFormRegisterReturn,
+  FieldErrorsImpl,
+  Merge,
+} from "react-hook-form";
 
 interface InputFieldProps {
-  type?: "text" | "number" | "email" | "password";
-  label?: string;
+  type?: "text" | "number" | "email" | "password" | "file";
+  label?: string | JSX.Element | undefined;
   className?: string;
   placeholder?: string;
   iconPosition?: "start" | "end";
   iconStart?: React.ReactNode;
   iconEnd?: React.ReactNode;
   isDisabled?: boolean;
-  hasError: FieldError | undefined;
+  hasError: Merge<FieldError, FieldErrorsImpl<{}>> | undefined;
   withIcon?: boolean;
   canPressSpace?: boolean;
   registration: Partial<UseFormRegisterReturn>;
@@ -23,6 +29,9 @@ interface InputFieldProps {
   isRequired?: boolean;
   errorMessage?: string | undefined;
   control: any;
+  hide?: string;
+  accept?: string;
+  handleImagePreview?: (e: React.SyntheticEvent<EventTarget>) => void;
   handleTogglePassword?: () => void;
 }
 
@@ -37,14 +46,18 @@ export const InputField = ({
   errorMessage,
   control,
   registration,
+  placeholder,
   min,
   max,
   value,
   withIcon,
+  hide,
+  accept,
+  handleImagePreview,
   handleTogglePassword,
   isDisabled = false,
 }: InputFieldProps) => {
-  const { name } = registration;
+  const { name, onChange } = registration;
 
   return (
     <>
@@ -61,17 +74,30 @@ export const InputField = ({
             className={clsx(
               "font-WorkSans focus-within:border-secondary pb-3 w-full rounded-lg border border-gray-200 outline-none  disabled:bg-gray-100",
               hasError && "border-red-500 border-b-2",
-              className
+              className,
+              hide
             )}
             type={type}
             disabled={isDisabled}
             name={name}
             value={value}
             id={name}
+            placeholder={placeholder}
+            accept={accept}
             // onKeyDown={canPressSpace ? undefined : handleKeyDown}
             min={min}
             max={max}
             {...registration}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              handleImagePreview && handleImagePreview(e);
+              onChange &&
+                onChange({
+                  target: {
+                    name: "picture",
+                    value: e.target.files && e.target.files[0],
+                  },
+                });
+            }}
           />
           {/* )}
           /> */}
@@ -87,7 +113,7 @@ export const InputField = ({
           )}
         </div>
       </div>
-      {errorMessage && label && <ErrorMessage>{errorMessage}</ErrorMessage>}
+      {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
     </>
   );
 };

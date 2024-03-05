@@ -1,13 +1,16 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import clsx from "clsx";
 import { disableNav } from "../../utils/disableNav";
-import { logout } from "../../redux/features/loginSlice";
+import { logout } from "../../redux/features/authSlice/loginSlice";
 import { BiSearch } from "react-icons/bi";
 import { Logo } from "./Logo";
 import { RootState, useAppSelector, useAppDispatch } from "../../redux/store";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { ProfilePic } from "./ProfilePic";
+import { userName } from "../../redux/features/authSlice/signupSlice";
+import { Transition } from "@headlessui/react";
 
 export const Header = () => {
   const dispatch = useAppDispatch();
@@ -19,15 +22,22 @@ export const Header = () => {
     "flex justify-center items-center bg-amber-950 w-10 h-10 rounded-full text-gray-200 text-xl";
   const navItems = [
     { name: "About Us", href: "/about" },
-    { name: "DIY Post", href: "/newpost" },
+    { name: "DIY Post", href: "/create" },
     { name: "Contact Us", href: "/contact" },
   ];
   const { email, token } = useAppSelector((state: RootState) => state.login);
   const { user } = useAppSelector((state: RootState) => state.signup);
-  let getName = user?.email === email ? user?.name.split(" ") : "";
-  getName = `${getName[0][0].toUpperCase() + getName[0].slice(1)} ${
-    getName[1][0].toUpperCase() + getName[1].slice(1)
-  }`;
+  const getName = user?.email === email ? user?.name.split(" ") : "";
+  const name: string =
+    getName &&
+    getName[1] &&
+    `${getName[0][0]?.toUpperCase() + getName[0]?.slice(1)} ${
+      getName[1][0]?.toUpperCase() + getName[1]?.slice(1)
+    }`;
+
+  useEffect(() => {
+    dispatch(userName(name));
+  }, [dispatch, name]);
 
   return (
     <>
@@ -35,7 +45,9 @@ export const Header = () => {
         <header className="py-3">
           <nav
             className={`${
-              isOpen ? "relative w-full h-screen bg-black bg-opacity-40" : ""
+              isOpen
+                ? "relative w-full h-screen bg-black bg-opacity-40 transition-all ease-in-circ delay-[200ms]"
+                : ""
             }`}
           >
             <div className="flex justify-between items-center big_screen md:pl-0 px-5 pb-3 bg-white">
@@ -73,7 +85,10 @@ export const Header = () => {
                     return (
                       <li key={item.name}>
                         <Link
-                          className={clsx("", isActive && "text-amber-100")}
+                          className={clsx(
+                            "hover:text-gray-600",
+                            isActive && "text-yellow-700"
+                          )}
                           href={item.href}
                         >
                           {item.name}
@@ -83,7 +98,7 @@ export const Header = () => {
                   })}
                 </ul>
               </div>
-              <div className="right flex items-center space-x-3">
+              <div className="right flex items-center space-x-5">
                 <div className="relative">
                   <BiSearch className="inline-block lg:absolute top-[.7rem] left-9 lg:text-gray-400 lg:text-base text-2xl lg:mr-0 mr-3 lg:cursor-none cursor-pointer" />
                   <input
@@ -101,35 +116,35 @@ export const Header = () => {
                         setIsOpen(false);
                       }}
                     >
-                      <p className={`${userInitials}`}>
-                        {getName[0]?.toUpperCase()}
-                      </p>
+                      <ProfilePic name={name} userInitials={userInitials} />
                     </div>
                     <div
-                      className={`dropdown-profile w-72 p-7 absolute top-20 right-6 bg-white border border-gray-300 rounded-md shadow-md ${
+                      className={`dropdown-profile w-72 p-7 absolute top-20 right-6 z-10 bg-white border border-gray-300 rounded-md shadow-md ${
                         hover && !isOpen ? "block" : "hidden"
                       }`}
                       onMouseLeave={() => setHover(false)}
                     >
                       <ul className="flex flex-col items-center pb-2">
-                        <li
-                          className={`py-2 w-16 h-16 text-4xl ${userInitials}`}
-                        >
-                          {getName[0]?.toUpperCase()}
+                        <li className="py-2">
+                          <ProfilePic
+                            name={name}
+                            userInitials={userInitials}
+                            classes="w-16 h-16 text-4xl"
+                          />
                         </li>
-                        <li className="pt-2">{getName}</li>
+                        <li className="pt-2">{name}</li>
                         <li className="pb-2 text-base text-gray-400">
                           {email}
                         </li>
                       </ul>
                       <ul>
-                        <li className="py-2">
+                        <li className="hover:text-gray-600 py-2">
                           <Link href="">Upload a new DIY</Link>
                         </li>
-                        <li className="pt-2 pb-4">
+                        <li className="hover:text-gray-600 pt-2 pb-4">
                           <Link href="">DIY profile</Link>
                         </li>
-                        <li className="pt-4 pb-2 border-t border-gray-200">
+                        <li className="hover:text-gray-600 pt-4 pb-2 border-t border-gray-200">
                           <Link href="" onClick={() => dispatch(logout())}>
                             Sign out
                           </Link>
@@ -139,50 +154,57 @@ export const Header = () => {
                   </div>
                 ) : (
                   <>
-                    <div className="md:block hidden">
+                    <div className="md:block hidden hover:text-gray-600">
                       <Link href="/login">Log in</Link>
                     </div>
-                    <div className="text-white bg-black rounded-3xl py-2 px-4">
+                    <div className="text-white bg-black rounded-3xl py-2 px-4 hover:bg-gray-600">
                       <Link href="signup">Sign Up</Link>
                     </div>
                   </>
                 )}
               </div>
             </div>
-            <div
-              className={`small_screen_dopdown_menupx-5 relative
-              `}
+            <Transition
+              className="relative bg-white border-t border-gray-200 z-50"
+              show={isOpen}
+              enter="transition-all ease-in-out-circ duration-500 delay-[200ms]"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="transition-all ease-in-out duration-300"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
             >
-              <ul
-                className={`px-5 absolute top-full left-0 w-full bg-white border-t border-gray-200 overflow-hidden transition duration-600 ease-in-out-circ z-50 ${
-                  isOpen ? "-translate-x-0" : "-translate-x-full"
-                }`}
-              >
-                {navItems.map((item) => {
-                  const isActive = item.href === pathname;
-                  return (
-                    <li key={item.name} className="py-3">
-                      <Link
-                        className={clsx("", isActive && "text-amber-100")}
-                        href={item.href}
-                      >
-                        {item.name}
-                      </Link>
-                    </li>
-                  );
-                })}
+              <div className="small_screen_dopdown_menu px-5">
+                <ul className="px-5">
+                  {navItems.map((item) => {
+                    const isActive = item.href === pathname;
+                    return (
+                      <li key={item.name} className="py-3 ease-in-out-circ">
+                        <Link
+                          className={clsx(
+                            "hover:text-slate-600",
+                            isActive && ""
+                          )}
+                          href={item.href}
+                        >
+                          {item.name}
+                        </Link>
+                      </li>
+                    );
+                  })}
 
-                <div className="border-t border-gray-200 py-4 mt-3">
-                  {token ? (
-                    <Link href="/" onClick={() => dispatch(logout())}>
-                      Sign out
-                    </Link>
-                  ) : (
-                    <Link href="/login">Sign in</Link>
-                  )}
-                </div>
-              </ul>
-            </div>
+                  <div className="border-t border-gray-200 py-4 mt-3 hover:text-gray-600">
+                    {token ? (
+                      <Link href="/" onClick={() => dispatch(logout())}>
+                        Sign out
+                      </Link>
+                    ) : (
+                      <Link href="/login">Sign in</Link>
+                    )}
+                  </div>
+                </ul>
+              </div>
+            </Transition>
           </nav>
         </header>
       )}

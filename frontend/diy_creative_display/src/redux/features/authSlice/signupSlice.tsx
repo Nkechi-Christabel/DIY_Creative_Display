@@ -1,16 +1,15 @@
 import axios from "axios";
-// import { WritableDraft } from "immer";
-
-import { signupState } from "../../types";
-import { SignupValues } from "../../types";
-import { baseUrlApi } from "../../axiosHelper/index";
+import { SignupState } from "../../../types";
+import { SignupValues } from "../../../types";
+import { baseUrlApi } from "../../../axiosHelper/index";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const base = axios.create({
   baseURL: baseUrlApi,
 });
 
-const initialState: signupState = {
+const initialState: SignupState = {
+  confirmedName: "",
   user: {
     name: "",
     email: "",
@@ -32,10 +31,8 @@ export const signupUser = createAsyncThunk(
     } catch (error) {
       console.error("Error occurred during signup:", error);
       if (axios.isAxiosError(error)) {
-        // If it's an AxiosError, handle it accordingly
         return rejectWithValue(error.response?.data);
       } else {
-        // If it's another type of error, handle it as appropriate
         return rejectWithValue(error);
       }
     }
@@ -53,10 +50,14 @@ export const SignupSlice = createSlice({
 
       return state;
     },
+    userName: (state, { payload }: { payload: string }) => {
+      const name = payload;
+      state.confirmedName = name;
+    },
   },
+
   extraReducers: (builder) => {
     builder.addCase(signupUser.fulfilled, (state, { payload }) => {
-      console.log("Payload", state);
       state.user = {
         name: payload.fullName,
         email: payload.email,
@@ -67,11 +68,13 @@ export const SignupSlice = createSlice({
       return state;
     });
     builder
-      .addCase(signupUser.rejected, (state, action: any) => {
+      .addCase(signupUser.rejected, (state, action) => {
         state.isFetching = false;
         state.isError = true;
         state.errorMessage =
-          action?.payload?.error || "An error occured, please try again";
+          (action.payload as { message?: string }).message ||
+          (action.payload as { message?: string }).message ||
+          "An error occured, please try again";
       })
       .addCase(signupUser.pending, (state) => {
         state.isFetching = true;
@@ -79,5 +82,5 @@ export const SignupSlice = createSlice({
   },
 });
 
-export const { clearState } = SignupSlice.actions;
+export const { clearState, userName } = SignupSlice.actions;
 export default SignupSlice.reducer;

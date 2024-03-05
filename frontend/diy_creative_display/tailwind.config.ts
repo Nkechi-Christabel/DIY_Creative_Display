@@ -24,15 +24,17 @@ const config: Config = {
         },
       },
       keyframes: {
-        fade: {
-          "0%": { opacity: "0" },
-          "14% 86%": { opacity: "1" },
-          // "86%": { opacity: "1" },
-          "100%": { opacity: "1" },
+        spin: {
+          from: {
+            transform: "rotate(0deg)",
+          },
+          to: {
+            transform: "rotate(360deg)",
+          },
         },
       },
       animation: {
-        fade: "fade 14s linear forwards",
+        spin: "spin 1s linear infinite",
       },
       screens: {
         xm: { max: "475px" },

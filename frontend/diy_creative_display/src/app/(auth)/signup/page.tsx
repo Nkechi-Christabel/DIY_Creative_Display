@@ -18,7 +18,10 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import "react-toastify/dist/ReactToastify.css";
 
-import { signupUser, clearState } from "../../../redux/features/signupSlice";
+import {
+  signupUser,
+  clearState,
+} from "../../../redux/features/authSlice/signupSlice";
 import { InputField } from "../../components/InputField";
 
 const Playfair = Playfair_Display({ weight: "400", subsets: ["latin"] });
@@ -26,13 +29,14 @@ const schema = yup
   .object({
     fullName: yup
       .string()
-      .required("This field is required")
+      .required("Name is required")
       .min(3, "Should contain 3 numbers")
-      .max(50, "Should contain 3 numbers"),
+      .max(100, "Should contain maximum of 100 characters"),
     email: yup
       .string()
       .email("Please enter a valid email address")
-      .required("Email is required"),
+      .required("Email is required")
+      .max(100, "Should contain maximum of 100 characters"),
     password: yup
       .string()
       .required("Please enter your password.")
@@ -44,7 +48,7 @@ const Signup: React.FC = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const { isFetching, isSuccess, isError, errorMessage } = useAppSelector(
+  const { isSuccess, isError, errorMessage } = useAppSelector(
     (state: RootState) => state.signup
   );
 
@@ -62,6 +66,12 @@ const Signup: React.FC = () => {
     resolver: yupResolver(schema),
     mode: "onBlur",
   });
+
+  useEffect(() => {
+    return () => {
+      dispatch(clearState());
+    };
+  }, [dispatch]);
 
   useEffect(() => {
     if (isSuccess) {

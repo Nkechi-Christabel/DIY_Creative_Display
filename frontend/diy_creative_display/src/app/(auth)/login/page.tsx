@@ -16,7 +16,10 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import "react-toastify/dist/ReactToastify.css";
 
-import { loginUser, clearState } from "../../../redux/features/loginSlice";
+import {
+  loginUser,
+  clearState,
+} from "../../../redux/features/authSlice/loginSlice";
 import { InputField } from "../../components/InputField";
 import { Logo } from "@/app/components/Logo";
 
@@ -36,7 +39,7 @@ const Login: React.FC = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const { isFetching, isSuccess, isError, errorMessage } = useAppSelector(
+  const { isSuccess, isError, errorMessage } = useAppSelector(
     (state: RootState) => state.login
   );
 
@@ -54,6 +57,12 @@ const Login: React.FC = () => {
     resolver: yupResolver(schema),
     mode: "onBlur",
   });
+
+  useEffect(() => {
+    return () => {
+      dispatch(clearState());
+    };
+  }, [dispatch]);
 
   useEffect(() => {
     if (isSuccess) {

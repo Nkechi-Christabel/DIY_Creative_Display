@@ -1,14 +1,15 @@
 import axios from "axios";
-import { loginState } from "../../types";
-import { LoginValues } from "../../types";
-import { baseUrlApi } from "../../axiosHelper/index";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { WritableDraft } from "immer";
+import { LoginState } from "../../../types";
+import { LoginValues } from "../../../types";
+import { baseUrlApi } from "../../../axiosHelper/index";
 
 const base = axios.create({
   baseURL: baseUrlApi,
 });
 
-const initialState: loginState = {
+const initialState: LoginState = {
   token: "",
   email: "",
   isFetching: false,
@@ -32,10 +33,8 @@ export const loginUser = createAsyncThunk(
     } catch (error) {
       console.error("Error occurred during login:", error);
       if (axios.isAxiosError(error)) {
-        // If it's an AxiosError, handle it accordingly
         return rejectWithValue(error.response?.data);
       } else {
-        // If it's another type of error, handle it as appropriate
         return rejectWithValue(error);
       }
     }
@@ -59,21 +58,24 @@ export const LoginSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(loginUser.fulfilled, (state, { payload }) => {
-      //   console.log("Response data", payload);
-      state.token = payload.token;
-      state.email = payload.email;
-      state.isFetching = false;
-      state.isSuccess = true;
-      return state;
-    });
+    builder.addCase(
+      loginUser.fulfilled,
+      (state, { payload }: PayloadAction<LoginState>) => {
+        state.token = payload.token;
+        state.email = payload.email;
+        state.isFetching = false;
+        state.isSuccess = true;
+        return state;
+      }
+    );
     builder
-      .addCase(loginUser.rejected, (state, action: any) => {
-        console.log(action);
+      .addCase(loginUser.rejected, (state, action) => {
         state.isFetching = false;
         state.isError = true;
         state.errorMessage =
-          action.payload.message || "An error occured, please try again";
+          (action.payload as { message?: string }).message ||
+          (action.payload as { message?: string }).message ||
+          "An error occured, please try again";
       })
       .addCase(loginUser.pending, (state) => {
         state.isFetching = true;

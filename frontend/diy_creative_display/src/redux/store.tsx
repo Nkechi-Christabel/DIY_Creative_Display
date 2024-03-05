@@ -11,8 +11,9 @@ import {
 } from "redux-persist";
 import { useDispatch, TypedUseSelectorHook, useSelector } from "react-redux";
 
-import loginSlice from "./features/loginSlice";
-import signupSlice from "./features/signupSlice";
+import loginSlice from "./features/authSlice/loginSlice";
+import signupSlice from "./features/authSlice/signupSlice";
+import createDiySlice from "./features/projectSlice/createSlice";
 
 const createNoopStorage = () => {
   return {
@@ -36,6 +37,7 @@ const storage =
 const rootReducers = combineReducers({
   login: loginSlice,
   signup: signupSlice,
+  createPost: createDiySlice,
 });
 
 const persistConfig = {

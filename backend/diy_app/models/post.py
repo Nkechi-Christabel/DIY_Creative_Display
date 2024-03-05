@@ -8,7 +8,7 @@ class Post(Base):
     content = db.Column(db.Text, nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     categories = db.Column(db.String(100), nullable=False)
-    picture = db.Column(db.String(255), nullable=False, default='default.jpg')
+    image_filenames = db.Column(db.String(255), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     like = db.relationship('Like', backref=db.backref('post', lazy=True), cascade="all, delete-orphan")
     comment = db.relationship('Comment', backref=db.backref('post', lazy=True), cascade="all, delete-orphan")
@@ -24,6 +24,6 @@ class Post(Base):
             'content': self.content,
             'date': self.date_posted, #.isoformat(), Convert datetime to string
             'categories': self.categories,
-            'picture': self.picture,
+            # 'picture': self.picture,
             'user_id': self.user_id
         }

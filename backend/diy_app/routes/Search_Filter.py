@@ -14,7 +14,7 @@ def search():
         post_found = [post.to_dict() for post in posts]
         return jsonify(post_found), 200
     else:
-        return jsonify({'Message': 'Not Found'})
+        return jsonify({'Message': 'Not Found'}), 404
 
 
 # Endpoint for filter by Categories
@@ -29,4 +29,4 @@ def filter():
         post_found = [post.to_dict() for post in posts]
         return jsonify(post_found), 200
     else:
-        return jsonify({'Message': 'Not Found'})
+        return jsonify({'Message': 'Not Found'}), 404

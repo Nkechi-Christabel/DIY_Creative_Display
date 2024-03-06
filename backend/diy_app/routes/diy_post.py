@@ -6,6 +6,7 @@ from diy_app.auth import token_required
 from flask_uploads import UploadNotAllowed
 from flask_uploads import UploadSet, configure_uploads, IMAGES
 import json
+import os
 
 
 photos = UploadSet('photos', IMAGES)
@@ -24,6 +25,9 @@ def create_post(current_user):
     categories = request.form['categories']
     user_id = current_user.id
     images = request.files.getlist('photos')
+
+    if not title or not content or not categories:
+        return jsonify({'error': 'Title, Content, and Categories are required fields'}), 400
 
     # Save uploaded images and get their filenames
     filenames = []
@@ -82,45 +86,63 @@ def get_post(post_id):
 
 
 # Update a Post by a user
-# @app_routes.route('/post/<int:post_id>', methods=['PUT'])
-# @token_required
-# def update_post(current_user, post_id):
-#     data = request.get_json()
-
-#     if not data:
-#         return jsonify({'message': 'No data provided'}), 400
+@app_routes.route('/post/<int:post_id>', methods=['PUT'])
+@token_required
+def update_post(current_user, post_id):
     
-#     title = data.get('title')
-#     content = data.get('content')
-#     categories = data.get('categories')
-#     picture = data.get('picture')
+    title = request.form['title']
+    content = request.form['content']
+    categories = request.form['categories']
+    images = request.files.getlist('photos')
 
-#     current_user_id = current_user.id
-#     # Query the Database for post_id, if failed return 404 error
-#     diypost = Post.query.get_or_404(post_id)
+    if not title or not content or not categories:
+        return jsonify({'error': 'Title, Content, and Categories are required fields'}), 400
+
+    current_user_id = current_user.id
+    # Query the Database for post_id, if failed return 404 error
+    post = Post.query.get_or_404(post_id)
     
-#     # Checks if current user is authorized to update the post
-#     if current_user_id == diypost.user_id:
-#         diypost.title = title
-#         diypost.content = content
-#         diypost.categories = categories
-#         diypost.picture = picture
-#         db.session.commit()
-#         return jsonify({'message': 'Post updated successfully'}), 201
-#     else:
-#         return jsonify({'message': 'Unauthorized to update this post'}), 403
+    # Checks if current user is authorized to update the post
+    if current_user_id == post.user_id:
+        post.title = title
+        post.content = content
+        post.categories = categories
+        if images:
+            # Save uploaded images and get their filenames
+            filenames = []
+            for image in images:
+                try:
+                    filename = photos.save(image)
+                    filenames.append(filename)
+                except UploadNotAllowed:
+                    return jsonify({'error': 'Invalid file type'}), 400
+                
+            filenames_json = json.dumps(filenames)
+            post.image_filenames = filenames_json
+        db.session.commit()
+        return jsonify({'message': 'Post updated successfully'}), 201
+    else:
+        return jsonify({'message': 'Unauthorized to update this post'}), 403
 
 
 # Delete a Post
 @app_routes.route('/post/<int:post_id>', methods=['DELETE'])
 @token_required
-def delete_diypost(current_user, post_id):
+def delete_post(current_user, post_id):
     current_user_id = current_user.id
-    diypost = Post.query.get_or_404(post_id)
+    post = Post.query.get_or_404(post_id)
 
     # Checks if current user is authorized to delete the post
-    if current_user_id == diypost.user_id:
-        db.session.delete(diypost)
+    if current_user_id == post.user_id:
+        image_filenames = json.loads(post.image_filenames)
+
+        # Deletes Images Associated with the post
+        for filename in image_filenames:
+            file_path = os.path.join('./uploaded/images', filename)
+            if os.path.exists(file_path):
+                os.remove(file_path)
+
+        db.session.delete(post)
         db.session.commit()
         return jsonify({'message': 'Post deleted successfully'}), 200
     else:

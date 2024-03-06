@@ -22,7 +22,7 @@ class Post(Base):
             'id': self.id,
             'title': self.title,
             'content': self.content,
-            'date': self.date_posted, #.isoformat(), Convert datetime to string
+            'date_posted': self.date_posted, #.isoformat(), Convert datetime to string
             'categories': self.categories,
             # 'picture': self.picture,
             'user_id': self.user_id

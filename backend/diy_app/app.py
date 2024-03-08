@@ -33,7 +33,7 @@ def create_app():
     configure_file_uploads(app)
 
 
-    CORS(app, origins=["http://localhost:3000"])
+    CORS(app, origins='*')
 
     return app
 

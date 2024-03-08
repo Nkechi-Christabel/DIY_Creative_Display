@@ -7,6 +7,7 @@ from flask_uploads import UploadNotAllowed
 from flask_uploads import UploadSet, configure_uploads, IMAGES
 import json
 import os
+from flask import send_from_directory
 
 
 photos = UploadSet('photos', IMAGES)
@@ -14,6 +15,13 @@ photos = UploadSet('photos', IMAGES)
 # Function to configure Flask-Uploads
 def configure_file_uploads(app):
     configure_uploads(app, photos)
+
+
+# Route to serve uploaded images
+@app_routes.route('/_uploads/photos/<path:filename>', methods=['GET'])
+def download_file(filename):
+    path = '/mnt/c/Users/banwy/OneDrive/Desktop/DIY_Creative_Display/backend/uploaded/images'
+    return send_from_directory(path, filename)
 
 
 # Creates a post
@@ -70,7 +78,8 @@ def get_posts():
 # Gets a Post with a specific id
 @app_routes.route('/post/<int:post_id>', methods=['GET'])
 def get_post(post_id):
-    post = Post.query.get_or_404(post_id)
+    # post = Post.query.get_or_404(post_id)
+    post = db.session.get(Post, post_id)
 
     # Parse the JSON string stored in the image_filenames field into a list of filenames
     image_filenames = json.loads(post.image_filenames)

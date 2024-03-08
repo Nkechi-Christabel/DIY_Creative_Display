@@ -178,8 +178,5 @@ class TestFlaskApp(unittest.TestCase):
         self.assertEqual(response_data['message'], 'Post deleted successfully')
 
 
-
-
-
 if __name__ == '__main__':
     unittest.main()

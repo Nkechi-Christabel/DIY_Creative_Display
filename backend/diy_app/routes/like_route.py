@@ -12,8 +12,8 @@ from diy_app.auth import token_required
 def like_post(current_user, post_id):
     user_id = current_user.id
 
-    diypost = Post.query.get(post_id)
-    if not diypost:
+    post = db.session.get(Post, post_id)
+    if not post:
         return jsonify({'error': 'Post not Found'}), 404
     
     like = Like.query.filter_by(user_id=user_id, post_id=post_id).first()
@@ -21,7 +21,7 @@ def like_post(current_user, post_id):
         db.session.delete(like)
         db.session.commit()
         likes_count = Like.query.filter_by(post_id=post_id).count()
-        return jsonify({'message': 'Post unlike Successfully', 'likes_count': likes_count}), 200
+        return jsonify({'message': 'Post unliked Successfully', 'likes_count': likes_count}), 200
     else:
         new_like = Like(user_id=user_id, post_id=post_id)
         db.session.add(new_like)

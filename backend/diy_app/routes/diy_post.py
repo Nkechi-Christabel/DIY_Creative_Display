@@ -109,7 +109,8 @@ def update_post(current_user, post_id):
 
     current_user_id = current_user.id
     # Query the Database for post_id, if failed return 404 error
-    post = Post.query.get_or_404(post_id)
+    # post = Post.query.get_or_404(post_id)
+    post = db.session.get(Post, post_id)
     
     # Checks if current user is authorized to update the post
     if current_user_id == post.user_id:
@@ -139,7 +140,8 @@ def update_post(current_user, post_id):
 @token_required
 def delete_post(current_user, post_id):
     current_user_id = current_user.id
-    post = Post.query.get_or_404(post_id)
+    # post = Post.query.get_or_404(post_id)
+    post = db.session.get(Post, post_id)
 
     # Checks if current user is authorized to delete the post
     if current_user_id == post.user_id:

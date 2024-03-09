@@ -72,7 +72,7 @@ def get_posts():
 
         posts_data.append(post_data)
 
-    return jsonify(posts_data)
+    return jsonify(posts_data), 200
 
 
 # Gets a Post with a specific id
@@ -149,7 +149,7 @@ def delete_post(current_user, post_id):
 
         # Deletes Images Associated with the post
         for filename in image_filenames:
-            file_path = os.path.join('./uploaded/images', filename)
+            file_path = os.path.join('./diy_app/uploaded/images', filename)
             if os.path.exists(file_path):
                 os.remove(file_path)
 

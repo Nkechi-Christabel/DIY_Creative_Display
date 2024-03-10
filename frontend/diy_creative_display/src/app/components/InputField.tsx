@@ -8,7 +8,9 @@ import {
   UseFormRegisterReturn,
   FieldErrorsImpl,
   Merge,
+  UseFormGetValues,
 } from "react-hook-form";
+import {  CreatePostValues} from "@/types";
 
 interface InputFieldProps {
   type?: "text" | "number" | "email" | "password" | "file";
@@ -31,7 +33,8 @@ interface InputFieldProps {
   control: any;
   hide?: string;
   accept?: string;
-  handleImagePreview?: (e: React.SyntheticEvent<EventTarget>) => void;
+  getValues?: UseFormGetValues<CreatePostValues>;
+  handleImagePreview?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleTogglePassword?: () => void;
 }
 
@@ -53,6 +56,7 @@ export const InputField = ({
   withIcon,
   hide,
   accept,
+  getValues,
   handleImagePreview,
   handleTogglePassword,
   isDisabled = false,
@@ -87,14 +91,19 @@ export const InputField = ({
             // onKeyDown={canPressSpace ? undefined : handleKeyDown}
             min={min}
             max={max}
+            multiple
             {...registration}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               handleImagePreview && handleImagePreview(e);
               onChange &&
                 onChange({
                   target: {
-                    name: "picture",
-                    value: e.target.files && e.target.files[0],
+                    name: "photos",
+                    value: getValues &&
+                      e.target.files && [
+                        ...((getValues("photos") as File[]) || []),
+                        ...Array.from(e.target.files),
+                      ],
                   },
                 });
             }}

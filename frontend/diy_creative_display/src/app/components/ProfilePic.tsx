@@ -4,19 +4,18 @@ import { userName } from "../../redux/features/authSlice/signupSlice";
 
 type Name = {
   name: string;
-  userInitials?: string;
   classes?: string;
 };
 
-export const ProfilePic: React.FC<Name> = ({
-  name,
-  userInitials,
-  classes,
-}: Name) => {
+export const ProfilePic: React.FC<Name> = ({ name, classes }: Name) => {
   return (
     <div>
       {" "}
-      <p className={`${userInitials} ${classes}`}>{name[0]?.toUpperCase()}</p>
+      <p
+        className={`flex justify-center items-center bg-amber-950 rounded-full text-gray-200 ${classes}`}
+      >
+        {name && name[0]?.toUpperCase()}
+      </p>
     </div>
   );
 };

@@ -11,7 +11,7 @@ const ReduxProvider = dynamic(() => import("../redux/Provider"), {
   ssr: false,
 });
 
-const inter = Lato({ weight: "400", subsets: ["latin"] });
+const inter = Lato({ weight: ["300", "400"], subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Create Next App",

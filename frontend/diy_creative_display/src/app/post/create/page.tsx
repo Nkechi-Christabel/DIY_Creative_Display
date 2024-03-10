@@ -1,10 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { createDiyValues, Option, PictureValues } from "../../../types";
+import { CreatePostValues, Option, PictureValues } from "../../../types";
 import {
-  createDiy,
+  createPost,
   clearState,
-} from "../../../redux/features/projectSlice/createSlice";
+} from "../../../redux/features/projectSlice/postSlice";
 import Image from "next/image";
 import { InputField } from "@/app/components/InputField";
 import { IoCamera } from "react-icons/io5";
@@ -16,6 +16,7 @@ import {
 } from "../../../redux/store";
 import { redirect } from "next/navigation";
 import { useForm, SubmitHandler, Control } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import { MdOutlineCancel } from "react-icons/md";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -25,17 +26,59 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ImSpinner2 } from "react-icons/im";
 
+export const categories = [
+  {
+    id: "Home Decor",
+    name: "Home Decor",
+  },
+  {
+    id: "Crafts",
+    name: "Crafts",
+  },
+  { id: "Woodworking", name: "Woodworking" },
+  {
+    id: "Diy Gifts",
+    name: "Diy Gifts",
+  },
+  {
+    id: "Organization and Storage",
+    name: "Organization and Storage",
+  },
+  {
+    id: "Fashion",
+    name: "Fashion",
+  },
+  {
+    id: "Art and Design",
+    name: "Art and Design",
+  },
+  {
+    id: "Tech and Gadgets",
+    name: "Tech and Gadgets",
+  },
+  {
+    id: "Health and Wellness",
+    name: "Health and Wellness",
+  },
+  {
+    id: "Others",
+    name: "Others",
+  },
+];
+
 const Create = () => {
   const dispatch = useAppDispatch();
-  const [picturePreview, setPicturePreview] = useState<string>();
+  const router = useRouter();
+  const [picturePreview, setPicturePreview] = useState<
+    File[] | PictureValues[]
+  >([]);
   const { isSuccess, isError, errorMessage, isFetching } = useAppSelector(
     (state: RootState) => state.createPost
   );
   const { token } = useAppSelector((state: RootState) => state.login);
   const { confirmedName } = useAppSelector((state: RootState) => state.signup);
-  const userInitials =
-    "flex justify-center items-center bg-amber-950 w-10 h-10 rounded-full text-gray-200 text-xl";
-  const FILE_SIZE = 160 * 1024;
+
+  const FILE_SIZE = 2 * 1024 * 1024;
   const SUPPORTED_FORMATS = [
     "image/jpg",
     "image/jpeg",
@@ -43,45 +86,17 @@ const Create = () => {
     "image/png",
   ];
 
-  const categories = [
-    {
-      id: "Home Decor",
-      name: "Home Decor",
-    },
-    {
-      id: "Crafts",
-      name: "Crafts",
-    },
-    { id: "Woodworking", name: "Woodworking" },
-    {
-      id: "Diy Gifts",
-      name: "Diy Gifts",
-    },
-    {
-      id: "Organization and Storage",
-      name: "Organization and Storage",
-    },
-    {
-      id: "Fashion and Accessories",
-      name: "Fashion and Accessories",
-    },
-    {
-      id: "Art and Design",
-      name: "Art and Design",
-    },
-    {
-      id: "Tech and Gadgets",
-      name: "Tech and Gadgets",
-    },
-    {
-      id: "Health and Wellness",
-      name: "Health and Wellness",
-    },
-    {
-      id: "Others",
-      name: "Others",
-    },
-  ];
+  useEffect(() => {
+    dispatch(clearState());
+  }, [dispatch]);
+
+  useEffect(() => {
+    return () => {
+      if (!token) {
+        redirect("/login");
+      }
+    };
+  }, []);
 
   const schema = yup
     .object({
@@ -92,15 +107,22 @@ const Create = () => {
         .max(100, "Should contain maximum of 100 characters"),
       content: yup.string().required("Content can't be blank"),
       categories: yup.mixed<Option>().required("Please select a category"),
-      picture: yup
-        .mixed<PictureValues>()
-        .required("A file is required")
+      photos: yup
+        .mixed<PictureValues[]>()
+        .required("This field is required")
         .test("fileSize", "File too large", (value) => {
-          console.log(value);
-          return value && value?.size <= FILE_SIZE ? true : false;
+          return value &&
+            value.some((file: PictureValues) => file?.size <= FILE_SIZE)
+            ? true
+            : false;
         })
         .test("fileFormat", "Unsupported File Format", (value) =>
-          value && SUPPORTED_FORMATS.includes(value?.type) ? true : false
+          value &&
+          value.some((file: PictureValues) =>
+            SUPPORTED_FORMATS.includes(file?.type)
+          )
+            ? true
+            : false
         ),
     })
     .required();
@@ -108,20 +130,19 @@ const Create = () => {
   const {
     watch,
     control,
-    setValue,
     getValues,
     register,
     reset,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<CreatePostValues>({
     resolver: yupResolver(schema),
     mode: "onBlur",
   });
 
   const content = watch("content");
-  const onSubmit: SubmitHandler<createDiyValues> = (
-    data: createDiyValues,
+  const onSubmit: SubmitHandler<CreatePostValues> = (
+    data: CreatePostValues,
     e
   ) => {
     e?.preventDefault();
@@ -129,37 +150,40 @@ const Create = () => {
     formData.append("title", data.title);
     formData.append("content", data.content);
     formData.append("categories", (data.categories as Option).name);
-    formData.append("picture", data.picture as Blob);
-    console.log("Picture", data.picture);
+    data.photos.forEach((picture: PictureValues) => {
+      formData.append("photos", picture as File);
+    });
 
-    dispatch(createDiy(formData));
+    dispatch(createPost(formData));
     reset();
-    setPicturePreview("");
+    setPicturePreview([]);
+  };
+  const handleImagePreview = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const files = Array.from(e.target.files) as File[];
+      setPicturePreview((prevFiles) => [...prevFiles, ...files]);
+    }
   };
 
-  const handleImagePreview = (e: React.SyntheticEvent<EventTarget>) => {
-    const file = (e.target as HTMLFormElement).files[0];
-    // console.log("File", (e.target as HTMLFormElement).files);
-
-    const urlImage = URL.createObjectURL(file);
-
-    setPicturePreview(urlImage);
+  const removeImage = (name: string) => {
+    setPicturePreview(
+      picturePreview?.filter((picture) => picture?.name !== name)
+    );
+    const { onChange } = register("photos");
+    onChange({
+      target: {
+        name: "photo",
+        value: getValues("photos").filter((file) => file?.name !== name),
+      },
+    });
   };
-
-  useEffect(() => {
-    return () => {
-      if (!token) {
-        redirect("/login");
-      }
-      dispatch(clearState());
-    };
-  }, [dispatch]);
 
   useEffect(() => {
     if (isSuccess) {
-      toast.success("User created successfully.");
-      reset();
+      toast.success("Post created successfully.");
       dispatch(clearState());
+      reset();
+      router.push("/");
     } else if (isError) {
       toast.error(errorMessage);
       dispatch(clearState());
@@ -168,11 +192,11 @@ const Create = () => {
 
   return (
     <>
-      <div className="flex bg-gradient-to-br from-amber-500 via-auth-100 to-amber-900 h-screen fixed right-0 left-0">
+      <div className="flex px-5 bg-gradient-to-br from-amber-500 via-auth-100 to-amber-900 h-screen fixed right-0 left-0">
         <ToastContainer position="top-right" />
         <div className="container mx-auto max-w-2xl mt-20 bg-white shadow-lg shadow-neutral-600 backdrop-blur-2xl rounded p-5 pt-6 h-[35rem] max-h-full overflow-scroll">
           <div className="flex items-center space-x-3 mb-9">
-            <ProfilePic name={confirmedName} userInitials={userInitials} />
+            <ProfilePic name={confirmedName} classes="text-xl w-10 h-10 " />
             <p>{confirmedName}</p>
           </div>
           <div className="pt-5">
@@ -206,26 +230,27 @@ const Create = () => {
                 hasError={errors.categories}
                 className="my-3 max-w-4xl"
               />
-              {picturePreview && (
-                <div className="relative border-8 border-gray-50 shadow-xl backdrop-blur-2xl">
-                  <MdOutlineCancel
-                    className="absolute -right-3 -top-3 text-xl text-red-700 cursor-pointer"
-                    onClick={() => {
-                      setPicturePreview("");
-                      setValue("picture", {
-                        ...getValues("picture"),
-                        name: "",
-                      });
-                    }}
-                  />
-                  <Image
-                    src={picturePreview}
-                    alt="Image upload"
-                    width={800}
-                    height={300}
-                  />
-                </div>
-              )}
+              <div className="flex justify-between flex-wrap">
+                {picturePreview &&
+                  picturePreview.map((file, idx) => (
+                    <div
+                      className="relative border-8 border-gray-50 shadow-xl backdrop-blur-2xl"
+                      key={idx}
+                    >
+                      <MdOutlineCancel
+                        className="absolute -right-3 -top-3 text-xl text-red-700 cursor-pointer"
+                        onClick={() => removeImage(file.name)}
+                      />
+                      <Image
+                        src={URL.createObjectURL(file as File)}
+                        alt="Image upload"
+                        width={250}
+                        height={250}
+                        className="h-40"
+                      />
+                    </div>
+                  ))}
+              </div>
               <div className="flex justify-end items-center space-x-3 pt-3">
                 <InputField
                   label={
@@ -236,17 +261,18 @@ const Create = () => {
                   }
                   type="file"
                   control={control}
-                  registration={{ ...register("picture") }}
-                  hasError={errors.picture}
-                  errorMessage={errors.picture?.message}
+                  registration={{ ...register("photos") }}
+                  hasError={errors.photos}
+                  errorMessage={errors.photos?.message}
                   handleImagePreview={handleImagePreview}
+                  getValues={getValues}
                   accept={"image/*"}
                   isRequired
                   hide="hidden"
                 />
                 <button
                   type="submit"
-                  className="flex justify-center items-center space-x-3 bg-gradient-to-br from-rose-500 to-amber-700 hover:bg-gradient-to-br hover:from-amber-600 hover:to-rose-600 py-2 px-5 rounded text-white"
+                  className="flex justify-center items-center space-x-3 bg-gradient-to-br from-rose-500 to-amber-700 hover:bg-gradient-to-br hover:from-amber-600 hover:to-rose-600 py-2 px-6 rounded text-white"
                 >
                   {isFetching && (
                     <ImSpinner2 className="animate-spin text-xl" />

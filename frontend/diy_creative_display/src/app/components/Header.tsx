@@ -1,39 +1,46 @@
 "use client";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import clsx from "clsx";
 import { disableNav } from "../../utils/disableNav";
 import { logout } from "../../redux/features/authSlice/loginSlice";
 import { BiSearch } from "react-icons/bi";
 import { Logo } from "./Logo";
 import { RootState, useAppSelector, useAppDispatch } from "../../redux/store";
-import { usePathname } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { ProfilePic } from "./ProfilePic";
 import { userName } from "../../redux/features/authSlice/signupSlice";
 import { Transition } from "@headlessui/react";
+import { Users } from "@/types";
 
-export const Header = () => {
+export const Header = React.memo(() => {
+  const router = useRouter();
   const dispatch = useAppDispatch();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [hover, setHover] = useState(false);
   const genericHamburgerLine = `bg-black transition ease transform duration-300`;
   const userInitials =
-    "flex justify-center items-center bg-amber-950 w-10 h-10 rounded-full text-gray-200 text-xl";
+    "flex justify-center items-center bg-amber-950 w-10 h-10 rounded-full text-gray-200";
   const navItems = [
     { name: "About Us", href: "/about" },
-    { name: "DIY Post", href: "/create" },
+    { name: "DIY Post", href: "/post/create" },
     { name: "Contact Us", href: "/contact" },
   ];
   const { email, token } = useAppSelector((state: RootState) => state.login);
-  const { user } = useAppSelector((state: RootState) => state.signup);
-  const getName = user?.email === email ? user?.name.split(" ") : "";
-  const name: string =
-    getName &&
-    getName[1] &&
-    `${getName[0][0]?.toUpperCase() + getName[0]?.slice(1)} ${
-      getName[1][0]?.toUpperCase() + getName[1]?.slice(1)
-    }`;
+  const { users } = useAppSelector((state: RootState) => state.users);
+  const splitUserName = users
+    ?.find((user: Users) => user?.email === email)
+    ?.fullName.split(" ");
+
+  const name: string = splitUserName
+    ?.map((n: string) => `${n[0].toUpperCase()}${n.slice(1)}`)
+    .join(" ") as string;
+
+  const handleSignout = () => {
+    dispatch(logout());
+    router.push("/");
+  };
 
   useEffect(() => {
     dispatch(userName(name));
@@ -116,7 +123,7 @@ export const Header = () => {
                         setIsOpen(false);
                       }}
                     >
-                      <ProfilePic name={name} userInitials={userInitials} />
+                      <ProfilePic name={name} classes="text-xl w-10 h-10 " />
                     </div>
                     <div
                       className={`dropdown-profile w-72 p-7 absolute top-20 right-6 z-10 bg-white border border-gray-300 rounded-md shadow-md ${
@@ -128,7 +135,6 @@ export const Header = () => {
                         <li className="py-2">
                           <ProfilePic
                             name={name}
-                            userInitials={userInitials}
                             classes="w-16 h-16 text-4xl"
                           />
                         </li>
@@ -145,7 +151,7 @@ export const Header = () => {
                           <Link href="">DIY profile</Link>
                         </li>
                         <li className="hover:text-gray-600 pt-4 pb-2 border-t border-gray-200">
-                          <Link href="" onClick={() => dispatch(logout())}>
+                          <Link href="" onClick={() => handleSignout()}>
                             Sign out
                           </Link>
                         </li>
@@ -195,7 +201,7 @@ export const Header = () => {
 
                   <div className="border-t border-gray-200 py-4 mt-3 hover:text-gray-600">
                     {token ? (
-                      <Link href="/" onClick={() => dispatch(logout())}>
+                      <Link href="/" onClick={() => handleSignout()}>
                         Sign out
                       </Link>
                     ) : (
@@ -210,5 +216,4 @@ export const Header = () => {
       )}
     </>
   );
-};
-
+});

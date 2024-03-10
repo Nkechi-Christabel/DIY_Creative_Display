@@ -3,36 +3,34 @@ export interface Option {
   id: string;
 }
 
-export type SignupValues = {
+export interface SignupValues {
   fullName: string;
   email: string;
   password: string;
-};
+}
 
-export type LoginValues = {
+export interface LoginValues {
   email: string;
   password: string;
-};
+}
 
-export type Status = {
-  isFetching: Boolean;
-  isSuccess: Boolean;
-  isError: Boolean;
+export interface Status {
+  isFetching: boolean;
+  isSuccess: boolean;
+  isError: boolean;
   errorMessage: string;
-};
-
-export interface SignupState extends Status {
-  confirmedName: string;
-  user: {
-    name: string;
-    email: string;
-  };
 }
 
 export interface LoginState extends Status {
   token: string;
   email: string;
 }
+
+export type Users = {
+  id: number;
+  fullName: string;
+  email: string;
+};
 
 export interface PictureValues {
   lastModified: number;
@@ -42,16 +40,11 @@ export interface PictureValues {
   webkitRelativePath: string;
 }
 
-// export interface FileList {
-//   File: PictureValues;
-//   length: number;
-// }
-
-// interface AnyPresentValue extends Option {}
-export interface createDiyValues {
+export interface CreatePostValues {
+  id?: number;
   title: string;
   content: string;
   categories: Option;
-  picture: PictureValues | Blob;
+  photos: PictureValues[];
+  user_id?: number;
 }
-

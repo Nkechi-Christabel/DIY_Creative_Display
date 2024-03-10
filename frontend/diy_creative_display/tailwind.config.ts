@@ -14,6 +14,7 @@ const config: Config = {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
         "auth-bg": "url('/assets/auth/auth-bg.jpg')",
         "auth-bg1": "url('/assets/auth/auth-bg1.jpg')",
+        "about-hero": "url('/assets/about/hero.jpg')",
       },
       colors: {
         auth: {
@@ -21,6 +22,15 @@ const config: Config = {
           100: "#8b6b55",
           150: "#94634e",
           200: "#7c543f",
+        },
+        bg: {
+          100: "#f8f7f4;",
+        },
+      },
+      extend: {
+        gridTemplateColumns: {
+          "auto-fill-270": "repeat(auto-fill, minmax(270px, 1fr))",
+          "auto-fit-270": "repeat(auto-fit, minmax(270px, 1fr))",
         },
       },
       keyframes: {
@@ -37,6 +47,7 @@ const config: Config = {
         spin: "spin 1s linear infinite",
       },
       screens: {
+        xxm: "320px",
         xm: { max: "475px" },
         // => @media (max-width: 475px) { ... }
         sml: "475px",

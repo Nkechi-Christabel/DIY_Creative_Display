@@ -1,6 +1,6 @@
 import axios from "axios";
-import { SignupState } from "../../../types";
-import { SignupValues } from "../../../types";
+import { Status } from "../../../types";
+import { SignupValues, Users } from "../../../types";
 import { baseUrlApi } from "../../../axiosHelper/index";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
@@ -8,12 +8,12 @@ const base = axios.create({
   baseURL: baseUrlApi,
 });
 
-const initialState: SignupState = {
+const initialState: Status & {
+  confirmedName: string;
+  users: Users[];
+} = {
   confirmedName: "",
-  user: {
-    name: "",
-    email: "",
-  },
+  users: [],
   isFetching: false,
   isSuccess: false,
   isError: false,
@@ -27,6 +27,13 @@ export const signupUser = createAsyncThunk(
       const response = await base.post("/auth/signup", payload, {
         headers: { "Content-Type": "application/json" },
       });
+      const userData = {
+        fullName: response.data.fullName,
+        email: response.data.email,
+        id: response.data.id,
+      };
+      localStorage.setItem(userData.email, JSON.stringify(userData));
+
       return response.data;
     } catch (error) {
       console.error("Error occurred during signup:", error);
@@ -57,11 +64,7 @@ export const SignupSlice = createSlice({
   },
 
   extraReducers: (builder) => {
-    builder.addCase(signupUser.fulfilled, (state, { payload }) => {
-      state.user = {
-        name: payload.fullName,
-        email: payload.email,
-      };
+    builder.addCase(signupUser.fulfilled, (state, action) => {
       state.isFetching = false;
       state.isSuccess = true;
 
@@ -72,8 +75,8 @@ export const SignupSlice = createSlice({
         state.isFetching = false;
         state.isError = true;
         state.errorMessage =
-          (action.payload as { message?: string }).message ||
-          (action.payload as { message?: string }).message ||
+          (action.payload as { message?: string })?.message ||
+          (action.payload as { message?: string })?.message ||
           "An error occured, please try again";
       })
       .addCase(signupUser.pending, (state) => {
@@ -82,5 +85,41 @@ export const SignupSlice = createSlice({
   },
 });
 
+export const getAllUsers = createAsyncThunk("users/users", async () => {
+  const response = await base.get("/users");
+  return response.data;
+});
+
+export const UsersSlice = createSlice({
+  name: "users",
+  initialState,
+  reducers: {},
+
+  extraReducers: (builder) => {
+    builder.addCase(getAllUsers.fulfilled, (state, action) => {
+      const user = action.payload;
+      return {
+        ...state, // Spread the existing state
+        users: user, // Create a new array with the new user added
+        isFetching: false,
+        isSuccess: true,
+      };
+    });
+    builder
+      .addCase(getAllUsers.rejected, (state, action) => {
+        state.isFetching = false;
+        state.isError = true;
+        state.errorMessage =
+          (action.payload as { message?: string })?.message ||
+          (action.payload as { message?: string })?.message ||
+          "An error occured, please try again";
+      })
+      .addCase(getAllUsers.pending, (state) => {
+        state.isFetching = true;
+      });
+  },
+});
+
 export const { clearState, userName } = SignupSlice.actions;
-export default SignupSlice.reducer;
+export const signupReducer = SignupSlice.reducer;
+export const usersReducer = UsersSlice.reducer;

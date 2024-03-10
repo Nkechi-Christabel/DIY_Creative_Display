@@ -2,18 +2,22 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
 import {
   persistReducer,
-  FLUSH,
-  REHYDRATE,
-  PAUSE,
-  PERSIST,
-  PURGE,
-  REGISTER,
+  // FLUSH,
+  // REHYDRATE,
+  // PAUSE,
+  // PERSIST,
+  // PURGE,
+  // REGISTER,
 } from "redux-persist";
 import { useDispatch, TypedUseSelectorHook, useSelector } from "react-redux";
 
 import loginSlice from "./features/authSlice/loginSlice";
-import signupSlice from "./features/authSlice/signupSlice";
-import createDiySlice from "./features/projectSlice/createSlice";
+import { signupReducer, usersReducer } from "./features/authSlice/signupSlice";
+import {
+  createPostReducer,
+  fetchPostsReducer,
+} from "./features/projectSlice/postSlice";
+import { likePosts, likePostReducer } from "./features/projectSlice/postFeaturesSlice";
 
 const createNoopStorage = () => {
   return {
@@ -36,8 +40,11 @@ const storage =
 
 const rootReducers = combineReducers({
   login: loginSlice,
-  signup: signupSlice,
-  createPost: createDiySlice,
+  signup: signupReducer,
+  createPost: createPostReducer,
+  fetchPosts: fetchPostsReducer,
+  users: usersReducer,
+  likes: likePostReducer,
 });
 
 const persistConfig = {
@@ -51,9 +58,7 @@ export const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-      },
+      serializableCheck: false,
     }),
 });
 

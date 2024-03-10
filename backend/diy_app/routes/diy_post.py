@@ -1,10 +1,9 @@
-from flask import jsonify, request
+from flask import jsonify, request, send_from_directory
 from diy_app.models.post import Post
 from . import app_routes
 from diy_app.models import db
 from diy_app.auth import token_required
-from flask_uploads import UploadNotAllowed
-from flask_uploads import UploadSet, configure_uploads, IMAGES
+from flask_uploads import UploadSet, configure_uploads, IMAGES, UploadNotAllowed
 import json
 
 
@@ -14,6 +13,11 @@ photos = UploadSet('photos', IMAGES)
 def configure_file_uploads(app):
     configure_uploads(app, photos)
 
+# Route to serve uploaded images
+@app_routes.route('/_uploads/photos/<path:filename>', methods=['GET'])
+def ownload_file(filename):
+    path = '/Users/apple/Documents/DIY_Creative_Display/backend/uploaded/images'
+    return send_from_directory(path, filename)
 
 # Creates a post
 @app_routes.route('/post', methods=['POST'])
@@ -50,13 +54,16 @@ def get_posts():
 
     for post in posts:
         # Parse the JSON string stored in the image_filenames field into a list of filenames
-        image_filenames = json.loads(post.image_filenames)
+        try:
+            image_filenames = json.loads(post.image_filenames)
+        except json.JSONDecodeError:
+            image_filenames = []  # Handle cases where image_filenames is invalid JSON or empty
 
         # Create URLs for accessing the images based on the filenames
-        image_urls = [photos.url(filename) for filename in image_filenames]
-
+        image_urls = [photos.url(filename) for filename in image_filenames if filename]
+        
         post_data = post.to_dict()
-        post_data['image_urls'] = image_urls
+        post_data['photos'] = image_urls
 
         posts_data.append(post_data)
 

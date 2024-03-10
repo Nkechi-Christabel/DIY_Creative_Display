@@ -7,4 +7,4 @@ from diy_app.routes.diy_post import *
 from diy_app.routes.like_route import *
 from diy_app.routes.comment_route import *
 from diy_app.routes.save_route import *
-from diy_app.routes.search_filter import *
+# from diy_app.routes.search_filter import *

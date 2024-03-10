@@ -12,6 +12,7 @@ def signup():
     fullName = data.get('fullName')
     email = data.get('email')
     password = data.get('password')
+    # id = data.get("id")
 
     existing_user = User.query.filter((User.email == email)).first()
     if existing_user:
@@ -21,8 +22,11 @@ def signup():
     new_user.set_password(password)
     db.session.add(new_user)
     db.session.commit()
+   
+    id = new_user.id
+    print(id)
 
-    return jsonify({'message': 'User created successfully', 'fullName': fullName, 'email': email}), 201
+    return jsonify({'message': 'User created successfully', 'fullName': fullName, 'email': email, 'id': id}), 201
 
 
 # Endpoint to login user
@@ -44,6 +48,25 @@ def login():
 
 
 # Endpoint to logout user
-@app_routes.route('/logout', methods=['POST'])
+@app_routes.route('/auth/logout', methods=['POST'])
 def logout():
     return jsonify({'message': 'Logout successful'}), 200
+
+
+# Gets all users
+@app_routes.route('/users', methods=['GET'])
+def get_all_users():
+    try:
+        users = User.query.all()
+
+        users_data = [{
+            'id': user.id,
+            'fullName': user.fullName,
+            'email': user.email,
+            # Add other fields as needed
+        } for user in users]
+
+        return jsonify(users_data)
+    except Exception as e:
+        print(f"Error fetching users: {e}")
+        return jsonify({'error': 'Failed to retrieve user data'}), 500

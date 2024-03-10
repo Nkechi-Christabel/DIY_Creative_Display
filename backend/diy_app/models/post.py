@@ -1,6 +1,7 @@
 from diy_app.models import db
 from diy_app.models.base_model import Base
 from datetime import datetime
+import json
 
 class Post(Base):
     __tablename__ = 'posts'
@@ -22,8 +23,18 @@ class Post(Base):
             'id': self.id,
             'title': self.title,
             'content': self.content,
-            'date': self.date_posted, #.isoformat(), Convert datetime to string
+            'date_posted': self.date_posted, #.isoformat(), Convert datetime to string
             'categories': self.categories,
-            # 'picture': self.picture,
             'user_id': self.user_id
+        }
+    
+    def to_dict_with_images(self):
+        images = json.loads(self.image_filenames)
+        image_urls = ['http://127.0.0.1:5000/_uploads/photos/' + image for image in images]
+        return {
+            'id': self.id,
+            'title': self.title,
+            'content': self.content,
+            'categories': self.categories,
+            'image_urls': image_urls
         }

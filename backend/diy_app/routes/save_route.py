@@ -12,8 +12,9 @@ from diy_app.auth import token_required
 def save_post(current_user, post_id):
     user_id = current_user.id
 
-    diypost = Post.query.get(post_id)
-    if not diypost:
+    # diypost = Post.query.get(post_id)
+    post = db.session.get(Post, post_id)
+    if not post:
         return jsonify({'error': 'Post not Found'}), 404
     
     save = Save.query.filter_by(user_id=user_id, post_id=post_id).first()
@@ -31,7 +32,7 @@ def save_post(current_user, post_id):
 
 
 # Get saved Post by a user
-@app_routes.route('/save', methods=['GET'])
+@app_routes.route('/saves', methods=['GET'])
 @token_required
 def get_save_post(current_user):
     user_id = current_user.id

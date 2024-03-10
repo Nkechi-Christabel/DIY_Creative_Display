@@ -37,7 +37,7 @@ def get_post_comments(post_id):
 
     comments = Comment.query.filter_by(post_id=post_id).all()
     # Serialize comments if needed
-    serialized_comments = [comment.serialize() for comment in comments]
+    serialized_comments = [comment.to_dict() for comment in comments]
     return jsonify(serialized_comments), 200
 
 

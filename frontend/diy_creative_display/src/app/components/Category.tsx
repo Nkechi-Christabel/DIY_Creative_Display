@@ -25,7 +25,7 @@ export const Category = ({ selectedCategory, setSelectedCategory }: Iprops) => {
       <div className="flex items-center justify-center">
         <IoChevronBackSharp className="cursor-pointer" onClick={scrollLeft} />
         <ul
-          className="flex justify-between max-w-2xl overflow-x-scroll no-scrollbar"
+          className="flex justify-between max-w-3xl overflow-x-scroll no-scrollbar"
           ref={containerRef}
         >
           <li

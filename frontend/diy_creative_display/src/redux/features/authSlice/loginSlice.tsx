@@ -27,7 +27,7 @@ export const loginUser = createAsyncThunk(
         headers: { "Content-Type": "application/json" },
       });
       if (response.data.token) {
-        localStorage.setItem("user", JSON.stringify(response.data.token));
+        localStorage.setItem("token", JSON.stringify(response.data.token));
       }
       return response.data;
     } catch (error) {
@@ -53,7 +53,7 @@ export const LoginSlice = createSlice({
       return state;
     },
     logout: (state) => {
-      localStorage.removeItem("user");
+      localStorage.removeItem("token");
       state.token = "";
     },
   },
@@ -73,8 +73,8 @@ export const LoginSlice = createSlice({
         state.isFetching = false;
         state.isError = true;
         state.errorMessage =
-          (action.payload as { message?: string }).message ||
-          (action.payload as { message?: string }).message ||
+          (action.payload as { error?: string })?.error ||
+          (action.payload as { message?: string })?.message ||
           "An error occured, please try again";
       })
       .addCase(loginUser.pending, (state) => {

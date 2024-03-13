@@ -48,3 +48,22 @@ export interface CreatePostValues {
   photos: PictureValues[];
   user_id?: number;
 }
+
+export interface CommentReducerValues {
+  content: string;
+  postId: number | undefined;
+}
+
+export interface CommentValues {
+  content: string;
+  post_id: number;
+  id: number;
+  date_posted: string;
+  user: {
+    date_joined: string;
+    email: string;
+    fullName: string;
+    id: number;
+  };
+  isOpen: boolean;
+}

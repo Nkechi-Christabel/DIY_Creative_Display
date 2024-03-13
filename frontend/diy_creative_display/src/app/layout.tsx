@@ -4,8 +4,8 @@ import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { Lato } from "next/font/google";
 import { Header } from "./components/Header";
-
 import "./globals.css";
+import { Footer } from "./components/Footer";
 
 const ReduxProvider = dynamic(() => import("../redux/Provider"), {
   ssr: false,
@@ -27,6 +27,7 @@ export default function RootLayout({
         <ReduxProvider>
           <Header />
           {children}
+          <Footer />
         </ReduxProvider>
       </body>
     </html>

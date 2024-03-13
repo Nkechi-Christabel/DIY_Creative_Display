@@ -2,6 +2,7 @@ import Link from "next/link";
 import React from "react";
 import Community from "../../../public/assets/about/community.jpg";
 import Showcase from "../../../public/assets/about/showcase.jpg";
+import Interact from "../../../public/assets/about/interact.jpg";
 import Nkechi from "../../../public/assets/about/Nkechi.jpg";
 import Bammie from "../../../public/assets/about/Bammie.jpg";
 import Image from "next/image";
@@ -28,9 +29,9 @@ const About = () => {
   ];
   return (
     <div>
-      <section className="hero">
+      <section className="hero scroll-smooth" id="top">
         <div className="bg-about-hero bg-cover bg-no-repeat h-[35rem] relative">
-          <div className=" w-full h-full flex flex-col justify-center backdrop-brightness-75 text-white">
+          <div className=" w-full h-full flex flex-col justify-center backdrop-brightness-[.60] text-white">
             <div className="container mx-auto max-w-7xl px-7">
               <h2 className="max-w-xl text-2xl font-bold">
                 Welcome to DIY Creative Display where creativity knows no
@@ -124,7 +125,7 @@ const About = () => {
             <div className="flex-1">
               {" "}
               <Image
-                src={Showcase}
+                src={Interact}
                 alt="Wood work Diy"
                 width={500}
                 height={500}
@@ -182,15 +183,15 @@ const About = () => {
               fostering creativity and community.
             </p>
           </div>
-          <div className="sm:flex sm:space-x-8 mt-8">
+          <div className="sm:flex sm:space-x-14 mt-8">
             {team.map((team) => (
               <div key={team.x}>
                 <Image
                   src={team.image}
                   alt="Team member"
-                  width={300}
+                  width={250}
                   height={300}
-                  className="w-full h-3/6"
+                  className="w-full h-3/6 rounded"
                 />
                 <h3 className="text-yellow-700 text-lg font-bold py-2">
                   {team.name}

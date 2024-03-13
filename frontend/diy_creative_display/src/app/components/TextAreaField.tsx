@@ -24,9 +24,9 @@ export const TextAreaField: React.FunctionComponent<TextAreaFieldProps> = ({
   autoFocus = false,
   registration,
   className,
-  rows = 5,
+  rows = 20,
   hasError,
-  limit = 500,
+  limit = 5000,
   value,
   errorMessage,
 }) => {

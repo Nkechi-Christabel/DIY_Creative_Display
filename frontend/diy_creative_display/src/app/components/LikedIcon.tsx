@@ -1,51 +1,58 @@
-import { RootState, useAppDispatch, useAppSelector } from "@/redux/store";
-import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { RootState, useAppDispatch, useAppSelector } from "@/redux/store";
+import { redirect, useRouter } from "next/navigation";
 import { ImHeart } from "react-icons/im";
-import { likePosts } from "../../redux/features/projectSlice/postFeaturesSlice";
+import {
+  likePosts,
+  toggleLike,
+} from "../../redux/features/projectSlice/postFeaturesSlice";
 
 type Iprops = {
-  post_id: number | undefined;
-  likeCounts: number;
-  isSuccess: boolean;
+  postId: number | undefined;
+  showCount: boolean;
+  className?: string;
 };
 
 export const LikedIcon: React.FC<Iprops> = ({
-  post_id,
-  likeCounts,
-  isSuccess,
+  postId,
+  showCount,
+  className,
 }: Iprops) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const [isLiked, setIsLiked] = useState(false);
-  const token = localStorage.getItem("user");
-
-  const handleLikes = async (post_id: number) => {
-    console.log("Post id", post_id);
-    if (!token) {
-      router.push("/login");
-    }
-    try {
-      setIsLiked(!isLiked); // Optimistic update (optional)
-      await dispatch(likePosts(post_id)); // Dispatch like action
-    } catch (error) {
-      console.error("Error liking post:", error);
-    }
+  const token = localStorage.getItem("token");
+  const { likes } = useAppSelector((state: RootState) => state.likes);
+  const { isLiked } = useAppSelector((state: RootState) => state.likes);
+  const handleLikes = (postId: number, token: string) => {
+    dispatch(likePosts(postId));
+    dispatch(toggleLike({ postId, token }));
   };
 
-  console.log("Likes", isLiked);
+  console.log(token);
+  // localStorage.removeItem("persist:root");
+  // localStorage.clear();
+
+  console.log(isLiked[postId as number]);
 
   return (
-    <button type="button" className="flex items-center space-x-1">
+    <button
+      type="button"
+      className={`flex items-center space-x-1 ${className}`}
+    >
       <ImHeart
-        className={` hover:text-pink-300 cursor-pointer ${
-          isSuccess && isLiked
-            ? "text-red-700 transition-all ease-in-quart duration-300"
-            : "text-gray-400"
-        }`}
-        onClick={() => handleLikes(post_id as number)}
+        className={`text-gray-400 hover:text-pink-200 cursor-pointer transition-all active:scale-0 ease-in-out-circ duration-600
+          ${token && isLiked[postId as number] ? "text-red-500" : ""}  ${
+          token ? "active:scale-150" : ""
+        }
+          
+          `}
+        onClick={() => handleLikes(postId as number, token as string)}
       />
-      <span className="text-sm text-gray-600">{likeCounts}</span>
+      {showCount && (
+        <span className="text-sm text-gray-600">
+          {likes[postId as number] || 0}
+        </span>
+      )}
     </button>
   );
 };

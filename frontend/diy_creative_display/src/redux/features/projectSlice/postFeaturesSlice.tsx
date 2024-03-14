@@ -51,12 +51,10 @@ export const likePostSlice = createSlice({
       state.isSuccess = false;
       state.isFetching = false;
     },
-    toggleLike(state, action: { payload: { postId: number; token: string } }) {
+    toggleLike(state, action: { payload: number }) {
       // Action to toggle like status
-      const { postId, token } = action.payload;
-      if (token) {
-        state.isLiked[postId] = !state.isLiked[postId] || false; // Toggle or set to false if not existing
-      }
+      const postId = action.payload;
+      state.isLiked[postId] = !state.isLiked[postId] || false; // Toggle or set to false if not existing
     },
   },
 

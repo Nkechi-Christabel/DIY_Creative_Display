@@ -21,32 +21,34 @@ export const LikedIcon: React.FC<Iprops> = ({
   const dispatch = useAppDispatch();
   const router = useRouter();
   const token = localStorage.getItem("token");
-  const { likes } = useAppSelector((state: RootState) => state.likes);
-  const { isLiked } = useAppSelector((state: RootState) => state.likes);
-  const handleLikes = (postId: number, token: string) => {
+  // const { likes } = useAppSelector((state: RootState) => state.likes);
+  const { isLiked, likes } = useAppSelector((state: RootState) => state.likes);
+
+  const handleLikes = (postId: number) => {
+    if (!token) {
+      router.push("/login");
+      return;
+    }
     dispatch(likePosts(postId));
-    dispatch(toggleLike({ postId, token }));
+    dispatch(toggleLike(postId));
   };
 
-  console.log(token);
   // localStorage.removeItem("persist:root");
   // localStorage.clear();
-
-  console.log(isLiked[postId as number]);
 
   return (
     <button
       type="button"
       className={`flex items-center space-x-1 ${className}`}
+      onClick={() => handleLikes(postId as number)}
     >
       <ImHeart
         className={`text-gray-400 hover:text-pink-200 cursor-pointer transition-all active:scale-0 ease-in-out-circ duration-600
-          ${token && isLiked[postId as number] ? "text-red-500" : ""}  ${
+          ${isLiked[postId as number] ? "text-red-500" : ""}  ${
           token ? "active:scale-150" : ""
         }
           
           `}
-        onClick={() => handleLikes(postId as number, token as string)}
       />
       {showCount && (
         <span className="text-sm text-gray-600">

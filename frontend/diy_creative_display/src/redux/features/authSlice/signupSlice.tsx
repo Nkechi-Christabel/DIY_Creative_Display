@@ -27,13 +27,6 @@ export const signupUser = createAsyncThunk(
       const response = await base.post("/auth/signup", payload, {
         headers: { "Content-Type": "application/json" },
       });
-      // const userData = {
-      //   fullName: response.data.fullName,
-      //   id: response.data.email,
-      //   id: response.data.id,
-      // };
-      // localStorage.setItem(userData.email, JSON.stringify(userData));
-
       return response.data;
     } catch (error) {
       console.error("Error occurred during signup:", error);
@@ -54,6 +47,7 @@ export const SignupSlice = createSlice({
       state.isError = false;
       state.isSuccess = false;
       state.isFetching = false;
+      state.currentUser = {name: "", id: 0}
 
       return state;
     },

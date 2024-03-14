@@ -6,10 +6,13 @@ import { logout } from "../../redux/features/authSlice/loginSlice";
 import { BiSearch } from "react-icons/bi";
 import { Logo } from "./Logo";
 import { RootState, useAppSelector, useAppDispatch } from "../../redux/store";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, redirect } from "next/navigation";
 import Link from "next/link";
 import { ProfilePic } from "./ProfilePic";
-import { handleCurrentUser } from "../../redux/features/authSlice/signupSlice";
+import {
+  clearState,
+  handleCurrentUser,
+} from "../../redux/features/authSlice/signupSlice";
 import { Transition } from "@headlessui/react";
 import { Users } from "@/types";
 import { getSearchValue } from "@/redux/features/projectSlice/postSlice";
@@ -35,7 +38,12 @@ export const Header = React.memo(() => {
   const name = nameToCamelCase(user?.fullName as string);
 
   const handleSignout = () => {
+    if (!token) {
+      redirect("/login");
+      return;
+    }
     dispatch(logout());
+    dispatch(clearState());
   };
 
   const handleSearchValue = (e: React.ChangeEvent<HTMLInputElement>) => {

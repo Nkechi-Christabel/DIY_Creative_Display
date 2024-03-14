@@ -117,6 +117,13 @@ export const FetchCommentsSlice = createSlice({
       );
       state.comments = updatedComments;
     },
+    updatedComment: (state, action: { payload: CommentValues }) => {
+      console.log("Payload", action.payload);
+      const update = state.comments.map((comment) =>
+        comment.id === action.payload.id ? action.payload : comment
+      );
+      state.comments = update;
+    },
   },
 
   extraReducers: (builder) => {
@@ -127,9 +134,6 @@ export const FetchCommentsSlice = createSlice({
       state.isFetching = false;
       state.isSuccess = true;
       state.comments = action.payload;
-      //   .map((comment: CommentValues) => {
-      //   return { ...comment, isOpen: false };
-      // });
 
       return state;
     });
@@ -201,10 +205,17 @@ export const DeleteCommentSlice = createSlice({
 
 export const updateComment = createAsyncThunk(
   "posts/updateComment",
-  async (payload: CommentReducerValues, { rejectWithValue }) => {
+  async (
+    payload: {
+      postId: number | undefined;
+      content: string;
+      commentId: number | undefined;
+    },
+    { rejectWithValue }
+  ) => {
     try {
-      const response = await base.post(
-        `/post/${payload.postId}/comment`,
+      const response = await base.put(
+        `/post/${payload.postId}/comment/${payload.commentId}`,
         { content: payload.content },
         authHeader()
       );
@@ -254,8 +265,12 @@ export const UpdateCommentSlice = createSlice({
 });
 
 export const { clearState } = PostCommentSlice.actions;
-export const { filterComments, addComment, updateCommentOpenState } =
-  FetchCommentsSlice.actions;
+export const {
+  filterComments,
+  addComment,
+  updateCommentOpenState,
+  updatedComment,
+} = FetchCommentsSlice.actions;
 export const postCommentReducer = PostCommentSlice.reducer;
 export const fetchCommentsReducer = FetchCommentsSlice.reducer;
 export const deleteCommentReducer = DeleteCommentSlice.reducer;

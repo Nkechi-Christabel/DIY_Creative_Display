@@ -76,7 +76,7 @@ const Create = React.memo(() => {
   const { isSuccess, isError, errorMessage, isFetching } = useAppSelector(
     (state: RootState) => state.createPost
   );
-  // const { token } = useAppSelector((state: RootState) => state.login);
+
   const { currentUser } = useAppSelector((state: RootState) => state.signup);
 
   const FILE_SIZE = 2 * 1024 * 1024;
@@ -170,18 +170,14 @@ const Create = React.memo(() => {
     setPicturePreview(
       picturePreview?.filter((picture) => picture?.name !== name)
     );
-    // const { onChange } = register("photos");
-    // onChange({
-    //   target: {
-    //     name: "photo",
-    //     value: getValues("photos").filter((file) => file?.name !== name),
-    //   },
-    // });
+
     setValue(
       "photos",
       getValues("photos").filter((file) => file?.name !== name)
     );
   };
+
+  console.log("Current", currentUser);
 
   useEffect(() => {
     if (isSuccess) {

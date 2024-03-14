@@ -44,7 +44,7 @@ const createNoopStorage = () => {
   };
 };
 
-const storage =
+export const storage =
   typeof window !== "undefined"
     ? createWebStorage("local")
     : createNoopStorage();

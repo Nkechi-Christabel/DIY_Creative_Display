@@ -114,12 +114,10 @@ const PostDetails = React.memo(() => {
       updateComment({
         postId: post.id,
         content: updatedCommentValue,
-        commentId: comment_id,
+        commentId: commentId,
       })
     );
     dispatch(updatedComment(response.payload.updateComment));
-    dispatch(updateCommentOpenState(commentId));
-    console.log(response);
   };
 
   return (

@@ -70,8 +70,6 @@ export const Post: React.FC<Iprops> = ({
     dispatch(filterPosts(postId));
   };
 
-  console.log("user", currentUser);
-
   return (
     <div className="posts">
       <div className="grid grid-cols-[repeat(auto-fill,minmax(270px,1fr))] gap-7 mt-4">

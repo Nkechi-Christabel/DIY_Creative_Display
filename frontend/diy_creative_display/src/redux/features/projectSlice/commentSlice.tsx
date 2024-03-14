@@ -118,7 +118,6 @@ export const FetchCommentsSlice = createSlice({
       state.comments = updatedComments;
     },
     updatedComment: (state, action: { payload: CommentValues }) => {
-      console.log("Payload", action.payload);
       const update = state.comments.map((comment) =>
         comment.id === action.payload.id ? action.payload : comment
       );

@@ -16,8 +16,19 @@ import { signupReducer, usersReducer } from "./features/authSlice/signupSlice";
 import {
   createPostReducer,
   fetchPostsReducer,
+  fetchOnePostReducer,
 } from "./features/projectSlice/postSlice";
-import { likePosts, likePostReducer } from "./features/projectSlice/postFeaturesSlice";
+import {
+  deletePostReducer,
+  likePostReducer,
+} from "./features/projectSlice/postFeaturesSlice";
+
+import {
+  deleteCommentReducer,
+  fetchCommentsReducer,
+  postCommentReducer,
+  updateCommentReducer,
+} from "./features/projectSlice/commentSlice";
 
 const createNoopStorage = () => {
   return {
@@ -45,6 +56,12 @@ const rootReducers = combineReducers({
   fetchPosts: fetchPostsReducer,
   users: usersReducer,
   likes: likePostReducer,
+  fetchPost: fetchOnePostReducer,
+  deletePost: deletePostReducer,
+  comment: postCommentReducer,
+  fetchComments: fetchCommentsReducer,
+  deleteComment: deleteCommentReducer,
+  updateComment: updateCommentReducer,
 });
 
 const persistConfig = {
@@ -61,6 +78,7 @@ export const store = configureStore({
       serializableCheck: false,
     }),
 });
+// storage.removeItem("persist:root");
 
 // Infer the type of makeStore
 export type RootState = ReturnType<typeof store.getState>;

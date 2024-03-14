@@ -25,6 +25,7 @@ import { SelectField } from "@/app/components/SelectField";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ImSpinner2 } from "react-icons/im";
+import withAuth from "@/app/withAuth";
 
 export const categories = [
   {
@@ -66,7 +67,7 @@ export const categories = [
   },
 ];
 
-const Create = () => {
+const Create = React.memo(() => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const [picturePreview, setPicturePreview] = useState<
@@ -75,8 +76,8 @@ const Create = () => {
   const { isSuccess, isError, errorMessage, isFetching } = useAppSelector(
     (state: RootState) => state.createPost
   );
-  const { token } = useAppSelector((state: RootState) => state.login);
-  const { confirmedName } = useAppSelector((state: RootState) => state.signup);
+  // const { token } = useAppSelector((state: RootState) => state.login);
+  const { currentUser } = useAppSelector((state: RootState) => state.signup);
 
   const FILE_SIZE = 2 * 1024 * 1024;
   const SUPPORTED_FORMATS = [
@@ -90,13 +91,13 @@ const Create = () => {
     dispatch(clearState());
   }, [dispatch]);
 
-  useEffect(() => {
-    return () => {
-      if (!token) {
-        redirect("/login");
-      }
-    };
-  }, []);
+  // useEffect(() => {
+  //   return () => {
+  //     if (!token) {
+  //       redirect("/login");
+  //     }
+  //   };
+  // }, [token]);
 
   const schema = yup
     .object({
@@ -110,12 +111,11 @@ const Create = () => {
       photos: yup
         .mixed<PictureValues[]>()
         .required("This field is required")
-        .test("fileSize", "File too large", (value) => {
-          return value &&
-            value.some((file: PictureValues) => file?.size <= FILE_SIZE)
+        .test("fileSize", "File too large", (value) =>
+          value && value.some((file: PictureValues) => file?.size <= FILE_SIZE)
             ? true
-            : false;
-        })
+            : false
+        )
         .test("fileFormat", "Unsupported File Format", (value) =>
           value &&
           value.some((file: PictureValues) =>
@@ -130,6 +130,7 @@ const Create = () => {
   const {
     watch,
     control,
+    setValue,
     getValues,
     register,
     reset,
@@ -169,13 +170,17 @@ const Create = () => {
     setPicturePreview(
       picturePreview?.filter((picture) => picture?.name !== name)
     );
-    const { onChange } = register("photos");
-    onChange({
-      target: {
-        name: "photo",
-        value: getValues("photos").filter((file) => file?.name !== name),
-      },
-    });
+    // const { onChange } = register("photos");
+    // onChange({
+    //   target: {
+    //     name: "photo",
+    //     value: getValues("photos").filter((file) => file?.name !== name),
+    //   },
+    // });
+    setValue(
+      "photos",
+      getValues("photos").filter((file) => file?.name !== name)
+    );
   };
 
   useEffect(() => {
@@ -196,8 +201,8 @@ const Create = () => {
         <ToastContainer position="top-right" />
         <div className="container mx-auto max-w-2xl mt-20 bg-white shadow-lg shadow-neutral-600 backdrop-blur-2xl rounded p-5 pt-6 h-[35rem] max-h-full overflow-scroll">
           <div className="flex items-center space-x-3 mb-9">
-            <ProfilePic name={confirmedName} classes="text-xl w-10 h-10 " />
-            <p>{confirmedName}</p>
+            <ProfilePic name={currentUser.name} classes="text-xl w-10 h-10 " />
+            <p>{currentUser.name}</p>
           </div>
           <div className="pt-5">
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -286,6 +291,7 @@ const Create = () => {
       </div>
     </>
   );
-};
+});
+const AuthProtectedCreatePost = withAuth(Create);
 
-export default Create;
+export default AuthProtectedCreatePost;

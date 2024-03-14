@@ -1,17 +1,19 @@
 import { CreatePostValues, Users } from "@/types";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-// import { RootState, useAppSelector, useAppDispatch } from "../../redux/store";
+import { useAppDispatch } from "../../redux/store";
 // import { getAllUsers } from "@/redux/features/authSlice/signupSlice";
 
 import Default from "../../../public/assets/default.jpg";
 import { ProfilePic } from "./ProfilePic";
-import { ImHeart } from "react-icons/im";
 import { LiaSave } from "react-icons/lia";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useAppDispatch, useAppSelector, RootState } from "@/redux/store";
+import { redirect, useRouter } from "next/navigation";
+import { useAppSelector, RootState } from "@/redux/store";
 import { LikedIcon } from "./LikedIcon";
+import { MdOutlineDeleteOutline } from "react-icons/md";
+import { deletePost } from "@/redux/features/projectSlice/postFeaturesSlice";
+import { filterPosts } from "@/redux/features/projectSlice/postSlice";
 
 type Iprops = {
   posts: CreatePostValues[];
@@ -25,30 +27,54 @@ export const Post: React.FC<Iprops> = ({
   users,
 }: Iprops) => {
   const dispatch = useAppDispatch();
-  const token = localStorage.getItem("user");
-  const { likeCounts, isSuccess } = useAppSelector(
-    (state: RootState) => state.likes
+  const token = localStorage.getItem("token");
+  const { currentUser } = useAppSelector((state: RootState) => state.signup);
+  const { searchValue } = useAppSelector(
+    (state: RootState) => state.fetchPosts
   );
-  const filteredPosts =
-    selectedCategory === "DIYs"
-      ? posts
-      : posts.filter(
+
+  let filteredPosts;
+
+  if (searchValue) {
+    if (selectedCategory === "DIYs") {
+      filteredPosts = posts.filter((post) =>
+        post.title.toLowerCase().includes(searchValue?.toLowerCase())
+      );
+    } else {
+      filteredPosts = posts
+        .filter(
           (post) => (post.categories as unknown as string) === selectedCategory
+        )
+        .filter((post) =>
+          post.title.toLowerCase().includes(searchValue?.toLowerCase())
         );
+    }
+  }
+
+  if (!searchValue) {
+    if (selectedCategory === "DIYs") filteredPosts = posts;
+    else {
+      filteredPosts = posts.filter(
+        (post) => (post.categories as unknown as string) === selectedCategory
+      );
+    }
+  }
+
+  const handleDelete = (postId: number) => {
+    if (!token) {
+      redirect("/login");
+    }
+    dispatch(deletePost(postId));
+    dispatch(filterPosts(postId));
+  };
+
+  console.log("user", currentUser);
 
   return (
     <div className="posts">
       <div className="grid grid-cols-[repeat(auto-fill,minmax(270px,1fr))] gap-7 mt-4">
-        {filteredPosts.map((post) => (
+        {filteredPosts?.map((post) => (
           <div key={post.id} className="post ">
-            {/* <Image
-              src={(post.photos[0] as unknown as string) ?? Default}
-              //   src={Default}
-              alt={post.title}
-              width={300}
-              height={200}
-              className="rounded h-56"
-            /> */}
             <div className="relative group">
               <Link href={token ? `/post/${post.id}` : "/login"}>
                 <img
@@ -56,8 +82,16 @@ export const Post: React.FC<Iprops> = ({
                   alt=""
                   className="w-full h-72 xm:h-auto rounded-xl object-cover"
                 />
+                {/* <Image
+                  src={(post.photos[0] as unknown as string) ?? Default}
+                  //   src={Default}
+                  alt={post.title}
+                  width={300}
+                  height={200}
+                  className="rounded h-56"
+                /> */}
                 <div className="flex justify-around items-end  content-center absolute bottom-full top-0 p-4 bg-black bg-opacity-30 opacity-0 group-hover:opacity-100 rounded-xl w-full group-hover:bottom-0 transition-all duration-500 ease-in-out">
-                  <p className="hidden group-hover:block text-white text-ellipsis">
+                  <p className="hidden group-hover:block text-white text-ellipsis text-lg font-bold">
                     {post.title}
                   </p>
                   <button
@@ -84,11 +118,19 @@ export const Post: React.FC<Iprops> = ({
                     "Unknown User"}
                 </span>
               </h2>
-              <LikedIcon
-                post_id={post.id}
-                likeCounts={likeCounts}
-                isSuccess={isSuccess}
-              />
+              <div className="flex items-center space-x-2">
+                <Link href={token ? `/post/${post.id}` : "/login"}>
+                  <LikedIcon postId={post.id} showCount={true} />
+                </Link>
+                <MdOutlineDeleteOutline
+                  className={`text-xl text-red-600 hover:text-red-400 active:scale-150 cursor-pointer${
+                    token && currentUser.id === post.user_id
+                      ? "pointer-events-auto active:scale-150"
+                      : "pointer-events-none active:scale-0"
+                  }`}
+                  onClick={() => handleDelete(post.id as number)}
+                />
+              </div>
             </div>
           </div>
         ))}

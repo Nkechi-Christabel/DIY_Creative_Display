@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import clsx from "clsx";
-import { disableNav } from "../../utils/disableNav";
+import { disableNavFooter, nameToCamelCase } from "../../utils/reusables";
 import { logout } from "../../redux/features/authSlice/loginSlice";
 import { BiSearch } from "react-icons/bi";
 import { Logo } from "./Logo";
@@ -9,9 +9,10 @@ import { RootState, useAppSelector, useAppDispatch } from "../../redux/store";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { ProfilePic } from "./ProfilePic";
-import { userName } from "../../redux/features/authSlice/signupSlice";
+import { handleCurrentUser } from "../../redux/features/authSlice/signupSlice";
 import { Transition } from "@headlessui/react";
 import { Users } from "@/types";
+import { getSearchValue } from "@/redux/features/projectSlice/postSlice";
 
 export const Header = React.memo(() => {
   const router = useRouter();
@@ -19,36 +20,39 @@ export const Header = React.memo(() => {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [hover, setHover] = useState(false);
+  const [searchValue, setSearchValue] = useState<string>();
   const genericHamburgerLine = `bg-black transition ease transform duration-300`;
   const userInitials =
     "flex justify-center items-center bg-amber-950 w-10 h-10 rounded-full text-gray-200";
   const navItems = [
     { name: "About Us", href: "/about" },
-    { name: "DIY Post", href: "/post/create" },
-    { name: "Contact Us", href: "/contact" },
+    { name: "DIY New Post", href: "/post/create" },
+    { name: "For You", href: "/post/saved" },
   ];
   const { email, token } = useAppSelector((state: RootState) => state.login);
   const { users } = useAppSelector((state: RootState) => state.users);
-  const splitUserName = users
-    ?.find((user: Users) => user?.email === email)
-    ?.fullName.split(" ");
-
-  const name: string = splitUserName
-    ?.map((n: string) => `${n[0].toUpperCase()}${n.slice(1)}`)
-    .join(" ") as string;
+  const user = users?.find((user: Users) => user?.email === email);
+  const name = nameToCamelCase(user?.fullName as string);
 
   const handleSignout = () => {
     dispatch(logout());
-    router.push("/");
+  };
+
+  const handleSearchValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.target.value);
   };
 
   useEffect(() => {
-    dispatch(userName(name));
+    dispatch(handleCurrentUser({ name: name, id: user?.id }));
   }, [dispatch, name]);
+
+  useEffect(() => {
+    dispatch(getSearchValue(searchValue));
+  });
 
   return (
     <>
-      {!disableNav.includes(pathname) && (
+      {!disableNavFooter.includes(pathname) && (
         <header className="py-3">
           <nav
             className={`${
@@ -112,6 +116,7 @@ export const Header = React.memo(() => {
                     type="text"
                     placeholder="Search"
                     className="hidden lg:block bg-slate-50 rounded-2xl pl-10 pr-7 py-2 ml-5 outline-none text-sm"
+                    onChange={(e) => handleSearchValue(e)}
                   />
                 </div>
                 {token ? (
@@ -145,10 +150,10 @@ export const Header = React.memo(() => {
                       </ul>
                       <ul>
                         <li className="hover:text-gray-600 py-2">
-                          <Link href="">Upload a new DIY</Link>
+                          <Link href="/post/create">Upload a new DIY</Link>
                         </li>
                         <li className="hover:text-gray-600 pt-2 pb-4">
-                          <Link href="">DIY profile</Link>
+                          <Link href="/post/saved">Your saved posts</Link>
                         </li>
                         <li className="hover:text-gray-600 pt-4 pb-2 border-t border-gray-200">
                           <Link href="" onClick={() => handleSignout()}>

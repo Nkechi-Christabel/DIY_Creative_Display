@@ -5,7 +5,7 @@ const middleware = (request: NextRequest) => {
   // const protectedRoutes = ["/create"];
   // if (protectedRoutes && protectedRoutes.includes(pathname)) {
   //   // Handle protected routes
-  //   const token = localStorage.getItem("user");
+  //   const token = localStorage.getItem("token");
   //   const isAuthorized = token ? token : {};
   //   console.log("Token", token);
   //   console.log("Authorized", isAuthorized);

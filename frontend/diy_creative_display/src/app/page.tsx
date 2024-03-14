@@ -6,16 +6,18 @@ import {
 } from "@/redux/features/projectSlice/postSlice";
 import { getAllUsers } from "@/redux/features/authSlice/signupSlice";
 import { RootState, useAppDispatch, useAppSelector } from "@/redux/store";
-import { TbLoader3 } from "react-icons/tb";
+// import { TbLoader3 } from "react-icons/tb";
 import { Category } from "./components/Category";
 import { Post } from "./components/Post";
+import { RiLoader2Line } from "react-icons/ri";
 
 const Home = () => {
   const dispatch = useAppDispatch();
   const { users } = useAppSelector((state: RootState) => state.users);
   const [selectedCategory, setSelectedCategory] = useState("DIYs");
-  const { posts, isSuccess, isError, errorMessage, isFetching } =
-    useAppSelector((state: RootState) => state.fetchPosts);
+  const { posts, isError, errorMessage, isFetching } = useAppSelector(
+    (state: RootState) => state.fetchPosts
+  );
 
   useEffect(() => {
     dispatch(clearState());
@@ -24,8 +26,11 @@ const Home = () => {
   }, []);
 
   return (
-    <main className="container mx-auto  px-5">
-      <p className="text-4xl text-center max-w-3xl mx-auto pt-10 pb-5  tracking-wide leading-normal">
+    <main
+      className="container mx-auto max-w-7xl p-9 xl:px-0 h-screen scroll-smooth"
+      id="top"
+    >
+      <p className="text-4xl text-center max-w-3xl mx-auto pt-1 pb-5tracking-wide leading-normal">
         Discover, Create, and Share Your DIY Projects with the World!
         <span className="text-sm text-gray-600 block">
           Get started today and unleash your creativity with DIY Creative
@@ -34,17 +39,22 @@ const Home = () => {
       </p>
       <div className="">
         <div>
-          {isFetching && <TbLoader3 />}
           <Category
             setSelectedCategory={setSelectedCategory}
             selectedCategory={selectedCategory}
           />
-
-          <Post
-            selectedCategory={selectedCategory}
-            posts={posts}
-            users={users}
-          />
+          {isFetching && (
+            <div className="flex items-center justify-center h-96">
+              <RiLoader2Line className="text-5xl text-yellow-500 animate-spin" />
+            </div>
+          )}
+          {!isFetching && (
+            <Post
+              selectedCategory={selectedCategory}
+              posts={posts}
+              users={users}
+            />
+          )}
         </div>
       </div>
     </main>

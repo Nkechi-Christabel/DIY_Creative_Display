@@ -9,10 +9,10 @@ const base = axios.create({
 });
 
 const initialState: Status & {
-  confirmedName: string;
+  currentUser: { name: string; id: number | undefined };
   users: Users[];
 } = {
-  confirmedName: "",
+  currentUser: { name: "", id: 0 },
   users: [],
   isFetching: false,
   isSuccess: false,
@@ -27,12 +27,12 @@ export const signupUser = createAsyncThunk(
       const response = await base.post("/auth/signup", payload, {
         headers: { "Content-Type": "application/json" },
       });
-      const userData = {
-        fullName: response.data.fullName,
-        email: response.data.email,
-        id: response.data.id,
-      };
-      localStorage.setItem(userData.email, JSON.stringify(userData));
+      // const userData = {
+      //   fullName: response.data.fullName,
+      //   id: response.data.email,
+      //   id: response.data.id,
+      // };
+      // localStorage.setItem(userData.email, JSON.stringify(userData));
 
       return response.data;
     } catch (error) {
@@ -57,14 +57,19 @@ export const SignupSlice = createSlice({
 
       return state;
     },
-    userName: (state, { payload }: { payload: string }) => {
-      const name = payload;
-      state.confirmedName = name;
+    handleCurrentUser: (
+      state,
+      { payload }: { payload: { name: string; id: number | undefined } }
+    ) => {
+      state.currentUser = {
+        name: payload.name,
+        id: payload.id,
+      };
     },
   },
 
   extraReducers: (builder) => {
-    builder.addCase(signupUser.fulfilled, (state, action) => {
+    builder.addCase(signupUser.fulfilled, (state) => {
       state.isFetching = false;
       state.isSuccess = true;
 
@@ -75,7 +80,7 @@ export const SignupSlice = createSlice({
         state.isFetching = false;
         state.isError = true;
         state.errorMessage =
-          (action.payload as { message?: string })?.message ||
+          (action.payload as { error?: string })?.error ||
           (action.payload as { message?: string })?.message ||
           "An error occured, please try again";
       })
@@ -110,7 +115,7 @@ export const UsersSlice = createSlice({
         state.isFetching = false;
         state.isError = true;
         state.errorMessage =
-          (action.payload as { message?: string })?.message ||
+          (action.payload as { error?: string })?.error ||
           (action.payload as { message?: string })?.message ||
           "An error occured, please try again";
       })
@@ -120,6 +125,6 @@ export const UsersSlice = createSlice({
   },
 });
 
-export const { clearState, userName } = SignupSlice.actions;
+export const { clearState, handleCurrentUser } = SignupSlice.actions;
 export const signupReducer = SignupSlice.reducer;
 export const usersReducer = UsersSlice.reducer;

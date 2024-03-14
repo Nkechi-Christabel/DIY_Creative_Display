@@ -67,8 +67,8 @@ const Login: React.FC = () => {
   useEffect(() => {
     if (isSuccess) {
       toast.success("Logged in Successfully");
-      reset();
       dispatch(clearState());
+      reset();
       router.push("/");
     } else if (isError) {
       toast.error(errorMessage);

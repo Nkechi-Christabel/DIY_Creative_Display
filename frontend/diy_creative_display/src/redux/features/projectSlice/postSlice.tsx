@@ -4,8 +4,21 @@ import { baseUrlApi } from "../../../axiosHelper/index";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { CreatePostValues, Status } from "../../../types";
 
-const initialState: Status & { posts: CreatePostValues[] } = {
+const initialState: Status & {
+  posts: CreatePostValues[];
+  post: CreatePostValues;
+  searchValue: string;
+} = {
   posts: [],
+  post: {
+    id: 0,
+    title: "",
+    content: "",
+    categories: { id: "", name: "" },
+    photos: [],
+    user_id: 0,
+  },
+  searchValue: "",
   isFetching: false,
   isSuccess: false,
   isError: false,
@@ -48,9 +61,10 @@ export const CreatePostSlice = createSlice({
     builder.addCase(createPost.pending, (state) => {
       state.isFetching = true;
     });
-    builder.addCase(createPost.fulfilled, (state) => {
+    builder.addCase(createPost.fulfilled, (state, action) => {
       state.isFetching = false;
       state.isSuccess = true;
+      state.post = action.payload;
 
       return state;
     });
@@ -58,17 +72,30 @@ export const CreatePostSlice = createSlice({
       state.isFetching = false;
       state.isError = true;
       state.errorMessage =
-        action.error.message ||
-        (action.payload as { message?: string }).message ||
+        // action.error.message
+        (action.payload as { error?: string }).error ||
+        (action.payload as { message?: string })?.message ||
         "An error occurred, please try again";
     });
   },
 });
 
-export const getAllPosts = createAsyncThunk("posts/fetchPosts", async () => {
-  const response = await base.get("/posts");
-  return response.data;
-});
+export const getAllPosts = createAsyncThunk(
+  "posts/fetchPosts",
+  async (nothing, { rejectWithValue }) => {
+    try {
+      const response = await base.get("/posts");
+      return response.data;
+    } catch (error) {
+      console.error("Error occurred while getting posts:", error);
+      if (axios.isAxiosError(error)) {
+        return rejectWithValue(error.response?.data);
+      } else {
+        return rejectWithValue(error);
+      }
+    }
+  }
+);
 
 export const FetchPostsSlice = createSlice({
   name: "getPosts",
@@ -78,6 +105,14 @@ export const FetchPostsSlice = createSlice({
       state.isError = false;
       state.isSuccess = false;
       state.isFetching = false;
+    },
+    filterPosts: (state, action: { payload: number }) => {
+      state.posts = state.isSuccess
+        ? state.posts.filter((post) => post.id !== action.payload)
+        : state.posts;
+    },
+    getSearchValue: (state, action: { payload: string | undefined }) => {
+      state.searchValue = action.payload as string;
     },
   },
 
@@ -96,13 +131,65 @@ export const FetchPostsSlice = createSlice({
       state.isFetching = false;
       state.isError = true;
       state.errorMessage =
-        action.error.message ||
-        (action.payload as { message?: string }).message ||
+        (action.payload as { error?: string })?.error ||
+        (action.payload as { message?: string })?.message ||
+        "An error occurred, please try again";
+    });
+  },
+});
+
+export const getOnePost = createAsyncThunk(
+  "posts/fetchPost",
+  async (id: number | null, { rejectWithValue }) => {
+    try {
+      const response = await base.get(`/post/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error occurred during signup:", error);
+      if (axios.isAxiosError(error)) {
+        return rejectWithValue(error.response?.data);
+      } else {
+        return rejectWithValue(error);
+      }
+    }
+  }
+);
+
+export const FetchOnePostSlice = createSlice({
+  name: "getPost",
+  initialState,
+  reducers: {
+    clearState: (state) => {
+      state.isError = false;
+      state.isSuccess = false;
+      state.isFetching = false;
+    },
+  },
+
+  extraReducers: (builder) => {
+    builder.addCase(getOnePost.pending, (state) => {
+      state.isFetching = true;
+    });
+    builder.addCase(getOnePost.fulfilled, (state, action) => {
+      state.isFetching = false;
+      state.isSuccess = true;
+      state.post = action.payload;
+
+      return state;
+    });
+    builder.addCase(getOnePost.rejected, (state, action) => {
+      state.isFetching = false;
+      state.isError = true;
+      state.errorMessage =
+        (action.payload as { error?: string })?.error ||
+        (action.payload as { message?: string })?.message ||
         "An error occurred, please try again";
     });
   },
 });
 
 export const { clearState } = CreatePostSlice.actions;
+export const { filterPosts, getSearchValue } = FetchPostsSlice.actions;
 export const createPostReducer = CreatePostSlice.reducer;
 export const fetchPostsReducer = FetchPostsSlice.reducer;
+export const fetchOnePostReducer = FetchOnePostSlice.reducer;

@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.18",
     "@hookform/resolvers": "^3.3.4",
     "@nextui-org/react": "^2.2.9",
     "@reduxjs/toolkit": "^2.2.1",

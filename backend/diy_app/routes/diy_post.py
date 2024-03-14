@@ -18,21 +18,21 @@ def configure_file_uploads(app):
 # Route to serve uploaded images
 @app_routes.route('/_uploads/photos/<path:filename>', methods=['GET'])
 def ownload_file(filename):
-    path = '/Users/apple/Documents/DIY_Creative_Display/backend/uploaded/images'
+    path = '/Users/apple/Documents/DIY_Creative_Display/backend/diy_app/uploaded/images'
     return send_from_directory(path, filename)
 
 # Route to serve uploaded images
-@app_routes.route('/_uploads/photos/<path:filename>', methods=['GET'])
-def download_file(filename):
-    path = '/mnt/c/Users/banwy/OneDrive/Desktop/DIY_Creative_Display/backend/uploaded/images'
-    return send_from_directory(path, filename)
+# @app_routes.route('/_uploads/photos/<path:filename>', methods=['GET'])
+# def download_file(filename):
+#     path = '/mnt/c/Users/banwy/OneDrive/Desktop/DIY_Creative_Display/backend/uploaded/images'
+#     return send_from_directory(path, filename)
 
 
 # Creates a post
 @app_routes.route('/post', methods=['POST'])
 @token_required
 def create_post(current_user):
-    title = request.form['title']
+    title = request.form['title'] 
     content = request.form['content']
     categories = request.form['categories']
     user_id = current_user.id
@@ -95,7 +95,7 @@ def get_post(post_id):
     image_urls = [photos.url(filename) for filename in image_filenames]
 
     post_data = post.to_dict()
-    post_data['image_urls'] = image_urls
+    post_data['photos'] = image_urls
 
     return jsonify(post_data), 200
 

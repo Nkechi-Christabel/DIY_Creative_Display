@@ -8,7 +8,7 @@ import Default from "../../../public/assets/default.jpg";
 import { ProfilePic } from "./ProfilePic";
 import { LiaSave } from "react-icons/lia";
 import Link from "next/link";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useAppSelector, RootState } from "@/redux/store";
 import { LikedIcon } from "./LikedIcon";
 import { MdOutlineDeleteOutline } from "react-icons/md";
@@ -26,6 +26,7 @@ export const Post: React.FC<Iprops> = ({
   selectedCategory,
   users,
 }: Iprops) => {
+  const router = useRouter();
   const dispatch = useAppDispatch();
   const token = localStorage.getItem("token");
   const { currentUser } = useAppSelector((state: RootState) => state.signup);
@@ -62,7 +63,8 @@ export const Post: React.FC<Iprops> = ({
 
   const handleDelete = (postId: number) => {
     if (!token) {
-      redirect("/login");
+      router.push("/login");
+      return;
     }
     dispatch(deletePost(postId));
     dispatch(filterPosts(postId));
@@ -119,14 +121,12 @@ export const Post: React.FC<Iprops> = ({
                 </span>
               </h2>
               <div className="flex items-center space-x-2">
-                <Link href={token ? `/post/${post.id}` : "/login"}>
-                  <LikedIcon postId={post.id} showCount={true} />
-                </Link>
+                <LikedIcon postId={post.id} showCount={true} />
                 <MdOutlineDeleteOutline
-                  className={`text-xl text-red-600 hover:text-red-400 active:scale-150 cursor-pointer${
+                  className={`text-xl text-red-600 hover:text-red-400 active:scale-150 ${
                     token && currentUser.id === post.user_id
-                      ? "pointer-events-auto active:scale-150"
-                      : "pointer-events-none active:scale-0"
+                      ? "pointer-events-auto active:scale-150 cursor-pointer"
+                      : "pointer-events-none active:scale-0  cursor-pointer"
                   }`}
                   onClick={() => handleDelete(post.id as number)}
                 />

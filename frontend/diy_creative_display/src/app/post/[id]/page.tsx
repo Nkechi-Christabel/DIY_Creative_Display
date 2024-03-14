@@ -17,6 +17,8 @@ import {
   postComment,
   filterComments,
   updateCommentOpenState,
+  updateComment,
+  updatedComment,
 } from "@/redux/features/projectSlice/commentSlice";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { CommentValues } from "@/types";
@@ -27,7 +29,6 @@ const PostDetails = React.memo(() => {
   const [index, setIndex] = useState(0);
   const [comment_id, setComment_id] = useState<number>();
   const [commentValue, setCommentValue] = useState("");
-  const [commentIsOpen, setCommentIsOpen] = useState<CommentValues[]>();
   const id = params?.id ? parseInt(params.id.toString()) : null;
   const { post } = useAppSelector((state: RootState) => state.fetchPost);
   const { users } = useAppSelector((state: RootState) => state.users);
@@ -48,6 +49,8 @@ const PostDetails = React.memo(() => {
   useEffect(() => {
     dispatch(getComments(post.id));
   }, [post.id]);
+
+  // console.log("Current User", currentUser), console.log("Comments", comments);
 
   function timeAgo(dateString: string): string {
     const now = new Date();
@@ -91,7 +94,7 @@ const PostDetails = React.memo(() => {
     dispatch(filterComments(commentId));
   };
 
-  const handleEditIcon = (postId: number, commentId: number) => {
+  const handleEditIcon = (commentId: number) => {
     setComment_id(commentId);
     const commentToEdit = comments.find((comment) => comment.id === commentId);
     commentToEdit && setUpdatedCommentValue(commentToEdit.content);
@@ -100,6 +103,23 @@ const PostDetails = React.memo(() => {
   };
   const handleEditOnchange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setUpdatedCommentValue(e.target.value);
+  };
+
+  const handleEditCancel = (commentId: number) => {
+    dispatch(updateCommentOpenState(commentId));
+  };
+
+  const handleUpdateSave = async (commentId: number) => {
+    const response = await dispatch(
+      updateComment({
+        postId: post.id,
+        content: updatedCommentValue,
+        commentId: comment_id,
+      })
+    );
+    dispatch(updatedComment(response.payload.updateComment));
+    dispatch(updateCommentOpenState(commentId));
+    console.log(response);
   };
 
   return (
@@ -120,7 +140,7 @@ const PostDetails = React.memo(() => {
 
               <span className="border border-gray-200 bg-slate-50 p-3 rounded-full group">
                 <AiOutlineSave className="text-lg cursor-pointer" />
-                <span className="absolute right-24 top-20 text-rose-700 bg-white py-2 px-3 shadow-lg shadow-slate-300 border border-gray-200 rounded transition-all ease-out-quart duration-500 hidden group-hover:block">
+                <span className="absolute right-24 top-20 text-yellow-700 bg-white py-2 px-3 shadow-lg shadow-slate-300 border border-gray-200 rounded transition-all ease-out-quart duration-500 hidden group-hover:block">
                   Save for later?
                 </span>
               </span>
@@ -160,7 +180,10 @@ const PostDetails = React.memo(() => {
             </div>
             <div className="flex-1">
               <h3 className="font-bold">Category:</h3>
-              <p className="text-sm">{post.categories as unknown as string}</p>
+              <p className="text-sm">
+                {typeof post.categories !== "object" &&
+                  (post.categories as unknown as string)}
+              </p>
               <CiEdit className="m-10 text-xl" />
             </div>
           </div>
@@ -183,16 +206,32 @@ const PostDetails = React.memo(() => {
                         {timeAgo(comment?.date_posted)}
                       </span>
                     </p>
-                    {comment?.isOpen && comment?.id === comment_id ? (
-                      <textarea
-                        name="updateComment"
-                        id="updateComment"
-                        cols={100}
-                        rows={2}
-                        value={updatedCommentValue}
-                        className="outline-none py-2 px-4 mt-1"
-                        onChange={(e) => handleEditOnchange(e)}
-                      ></textarea>
+                    {comment?.id === comment_id && comment?.isOpen ? (
+                      <div className="">
+                        <textarea
+                          name="updateComment"
+                          id="updateComment"
+                          cols={100}
+                          rows={2}
+                          value={updatedCommentValue}
+                          className="outline-none py-2 px-4 mt-1"
+                          onChange={(e) => handleEditOnchange(e)}
+                        ></textarea>
+                        <p className="text-sm text-amber-700  font-semibold space-x-3">
+                          <span
+                            className="cursor-pointer"
+                            onClick={() => handleEditCancel(comment.id)}
+                          >
+                            Cancel
+                          </span>
+                          <span
+                            className="cursor-pointer"
+                            onClick={() => handleUpdateSave(comment.id)}
+                          >
+                            Save
+                          </span>
+                        </p>
+                      </div>
                     ) : (
                       <p>{comment?.content}</p>
                     )}
@@ -202,10 +241,10 @@ const PostDetails = React.memo(() => {
                   <CiEdit
                     className={`text-[1.4rem] hover:text-gray-700 ${
                       currentUser.id === comment?.user.id
-                        ? "cursor-pointer"
-                        : "cursor-not-allowed"
+                        ? "pointer-events-auto cursor-pointer"
+                        : "pointer-events-none"
                     }`}
-                    onClick={() => handleEditIcon(comment.post_id, comment.id)}
+                    onClick={() => handleEditIcon(comment.id)}
                   />
                   <MdOutlineDeleteOutline
                     className="text-[1.4rem] text-red-500 hover:text-red-700 cursor-pointer"

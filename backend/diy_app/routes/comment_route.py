@@ -25,7 +25,10 @@ def create_comment(current_user, post_id):
     new_comment = Comment(user_id=user_id, post_id=post_id, content=content)
     db.session.add(new_comment)
     db.session.commit()
-    return jsonify({'message': 'Comment added Successfully'}), 201
+
+    
+    
+    return jsonify({'message': 'Comment added Successfully', 'new_comment': new_comment.to_dict()}), 201
 
 
 # Get all comment in a Post
@@ -58,6 +61,7 @@ def delete_comment(current_user, post_id, comment_id):
     if comment.user_id == user_id:
         db.session.delete(comment)
         db.session.commit()
+
         return jsonify({'message': 'Comment deleted Successfully'}), 200
     else:
         return jsonify({'message': 'Unauthorized to delete this post'}), 403
@@ -86,6 +90,7 @@ def update_comment(current_user, post_id, comment_id):
     if comment.user_id == user_id:
         comment.content = content
         db.session.commit()
-        return jsonify({'message': 'Comment updated Successfully'}), 201
+        print("Commment", comment)
+        return jsonify({'message': 'Comment updated Successfully', 'updateComment': comment.to_dict()}), 201
     else:
         return jsonify({'message': 'Unauthorized to update this post'}), 403

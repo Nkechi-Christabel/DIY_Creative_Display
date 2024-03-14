@@ -32,7 +32,7 @@ def create_app():
     # Function to configure Flask-Uploads
     configure_file_uploads(app)
 
-    CORS(app, origins='*')
+    CORS(app, origins=["http://localhost:3000"])
 
     return app
 

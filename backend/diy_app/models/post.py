@@ -36,5 +36,5 @@ class Post(Base):
             'title': self.title,
             'content': self.content,
             'categories': self.categories,
-            'image_urls': image_urls
+            'photos': image_urls,
         }

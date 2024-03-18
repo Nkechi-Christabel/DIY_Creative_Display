@@ -21,6 +21,8 @@ import {
 import {
   deletePostReducer,
   likePostReducer,
+  updatePost,
+  updatePostReducer,
 } from "./features/projectSlice/postFeaturesSlice";
 
 import {
@@ -29,6 +31,10 @@ import {
   postCommentReducer,
   updateCommentReducer,
 } from "./features/projectSlice/commentSlice";
+import {
+  fetchSavedPostsReducer,
+  savePostReducer,
+} from "./features/projectSlice/saveSlice";
 
 const createNoopStorage = () => {
   return {
@@ -58,10 +64,13 @@ const rootReducers = combineReducers({
   likes: likePostReducer,
   fetchPost: fetchOnePostReducer,
   deletePost: deletePostReducer,
+  updatePost: updatePostReducer,
   comment: postCommentReducer,
   fetchComments: fetchCommentsReducer,
   deleteComment: deleteCommentReducer,
   updateComment: updateCommentReducer,
+  savePost: savePostReducer,
+  savedPosts: fetchSavedPostsReducer,
 });
 
 const persistConfig = {

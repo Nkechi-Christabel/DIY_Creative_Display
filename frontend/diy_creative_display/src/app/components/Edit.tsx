@@ -1,19 +1,17 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { CreatePostValues, Option, PictureValues } from "../../../types";
 import {
-  createPost,
-  clearState,
-} from "../../../redux/features/projectSlice/postSlice";
+  CreatePostValues,
+  Option,
+  PictureValues,
+  PostValues,
+} from "../../types";
+import { clearState } from "../../redux/features/projectSlice/postFeaturesSlice";
 import Image from "next/image";
 import { InputField } from "@/app/components/InputField";
 import { IoCamera } from "react-icons/io5";
 import { ProfilePic } from "@/app/components/ProfilePic";
-import {
-  RootState,
-  useAppSelector,
-  useAppDispatch,
-} from "../../../redux/store";
+import { RootState, useAppSelector, useAppDispatch } from "../../redux/store";
 import { useForm, SubmitHandler, Control } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { MdOutlineCancel } from "react-icons/md";
@@ -24,55 +22,14 @@ import { SelectField } from "@/app/components/SelectField";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ImSpinner2 } from "react-icons/im";
-import withAuth from "@/app/withAuth";
+import { categories, ErrorPhotos } from "@/app/post/create/page";
+import { updatePost } from "@/redux/features/projectSlice/postFeaturesSlice";
 
-export const categories = [
-  {
-    id: "Home Decor",
-    name: "Home Decor",
-  },
-  {
-    id: "Crafts",
-    name: "Crafts",
-  },
-  { id: "Woodworking", name: "Woodworking" },
-  {
-    id: "Diy Gifts",
-    name: "Diy Gifts",
-  },
-  {
-    id: "Organization and Storage",
-    name: "Organization and Storage",
-  },
-  {
-    id: "Fashion",
-    name: "Fashion",
-  },
-  {
-    id: "Art and Design",
-    name: "Art and Design",
-  },
-  {
-    id: "Tech and Gadgets",
-    name: "Tech and Gadgets",
-  },
-  {
-    id: "Health and Wellness",
-    name: "Health and Wellness",
-  },
-  {
-    id: "Others",
-    name: "Others",
-  },
-];
-
-export interface ErrorPhotos {
-  message: string;
-  type: string;
-  ref: undefined;
+interface IProps {
+  post: PostValues;
 }
 
-const Create = React.memo(() => {
+export const Edit: React.FC<IProps> = ({ post }: IProps) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const [index, sedtIndex] = useState<number>();
@@ -80,7 +37,7 @@ const Create = React.memo(() => {
     File[] | PictureValues[]
   >([]);
   const { isSuccess, isError, errorMessage, isFetching } = useAppSelector(
-    (state: RootState) => state.createPost
+    (state: RootState) => state.updatePost
   );
 
   const { currentUser } = useAppSelector((state: RootState) => state.signup);
@@ -97,14 +54,6 @@ const Create = React.memo(() => {
     dispatch(clearState());
   }, [dispatch]);
 
-  // useEffect(() => {
-  //   return () => {
-  //     if (!token) {
-  //       redirect("/login");
-  //     }
-  //   };
-  // }, [token]);
-
   const schema = yup.object({
     title: yup
       .string()
@@ -113,22 +62,18 @@ const Create = React.memo(() => {
       .max(100, "Should contain maximum of 100 characters"),
     content: yup.string().required("Content can't be blank"),
     categories: yup.mixed<Option>().required("Please select a category"),
-    photos: yup
-      .array()
-      .of(
-        yup
-          .mixed<PictureValues>()
-          .required("This field is required")
-          .test(
-            "fileSize",
-            "File too large",
-            (value) => (value as File).size <= FILE_SIZE
-          )
-          .test("fileFormat", "Unsupported File Format", (value) =>
-            SUPPORTED_FORMATS.includes((value as File).type)
-          )
-      )
-      .required("Please upload at least one photo"),
+    photos: yup.array().of(
+      yup
+        .mixed<PictureValues>()
+        .test(
+          "fileSize",
+          "File too large",
+          (value) => (value as File)?.size <= FILE_SIZE
+        )
+        .test("fileFormat", "Unsupported File Format", (value) =>
+          SUPPORTED_FORMATS.includes((value as File)?.type)
+        )
+    ),
   });
 
   const {
@@ -145,14 +90,30 @@ const Create = React.memo(() => {
     mode: "onBlur",
   });
   const { onChange, ...params } = register("photos");
+  //Checks for errors on photo, loops through if there is and remove the error
+  //that matches he picture that was removed by the user
   const photosError =
-    (errors?.photos as ErrorPhotos[])
-      ?.filter((_, i) => i !== index)
-      ?.map(
-        (error, idx, arr) =>
-          `${arr.length > 1 ? idx + 1 + ") " : ""} ${error?.message}`
-      )
-      ?.join("\n") ?? "";
+    (errors?.photos?.length &&
+      (errors?.photos as ErrorPhotos[])
+        ?.filter((_, i) => i !== index)
+        ?.map(
+          (error, idx, arr) =>
+            `${arr.length > 1 ? idx + 1 + ") " : ""} ${error?.message}`
+        )
+        ?.join("\n")) ||
+    "";
+
+  useEffect(() => {
+    const fields: string[] = ["title", "content", "categories"];
+    fields.forEach((field: string) => {
+      setValue(
+        field as keyof CreatePostValues,
+        post[field as keyof CreatePostValues]
+      ); // Use keyof for safe access
+
+      setValue("photos", [] as File[]);
+    });
+  }, []);
 
   const handleImagePreview = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -190,11 +151,13 @@ const Create = React.memo(() => {
     formData.append("title", data.title);
     formData.append("content", data.content);
     formData.append("categories", (data.categories as Option).name);
-    data?.photos.forEach((picture: PictureValues) => {
+
+    // Iterate over 'photos' array and append each picture as a file to 'FormData'
+    data?.photos?.forEach((picture: PictureValues) => {
       formData.append("photos", picture as File);
     });
 
-    dispatch(createPost(formData));
+    dispatch(updatePost({ formData, postId: post.id }));
     reset();
     setPicturePreview([]);
   };
@@ -204,18 +167,21 @@ const Create = React.memo(() => {
       toast.success("Post created successfully.");
       dispatch(clearState());
       reset();
-      router.push("/");
     } else if (isError) {
       toast.error(errorMessage);
       dispatch(clearState());
     }
   }, [dispatch, errorMessage, isError, isSuccess, reset]);
 
+//   console.log("Photos value", getValues("photos"));
+//   console.log("Valid?", isValid, errors);
+//   console.log("Photos", getValues("photos"));
+
   return (
     <>
-      <div className="flex px-5 bg-gradient-to-br from-amber-500 via-auth-100 to-amber-900 h-screen fixed right-0 left-0">
+      <div>
         <ToastContainer position="top-right" />
-        <div className="container mx-auto max-w-2xl mt-20 bg-white shadow-lg shadow-neutral-600 backdrop-blur-2xl rounded p-5 pt-6 h-[35rem] max-h-full overflow-scroll">
+        <div>
           <div className="flex items-center space-x-3 mb-9">
             <ProfilePic name={currentUser.name} classes="text-xl w-10 h-10 " />
             <p>{currentUser.name}</p>
@@ -288,7 +254,6 @@ const Create = React.memo(() => {
                   handleImagePreview={handleImagePreview}
                   getValues={getValues}
                   accept={"image/*"}
-                  isRequired
                   hide="hidden"
                 />
                 <button
@@ -307,7 +272,4 @@ const Create = React.memo(() => {
       </div>
     </>
   );
-});
-const AuthProtectedCreatePost = withAuth(Create);
-
-export default AuthProtectedCreatePost;
+};

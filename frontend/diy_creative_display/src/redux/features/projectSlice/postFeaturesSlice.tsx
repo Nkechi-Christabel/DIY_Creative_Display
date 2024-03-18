@@ -6,10 +6,13 @@ import { CreatePostValues, Status } from "../../../types";
 
 const initialState: Status & {
   likes: Record<number, number>;
-  isLiked: Record<number, boolean | {}>;
+  // isLiked: Record<number, boolean | {}>;
+  isLiked: boolean;
+  post_id: number | null;
 } = {
   likes: {},
-  isLiked: {},
+  isLiked: false,
+  post_id: null,
   isFetching: false,
   isSuccess: false,
   isError: false,
@@ -29,9 +32,10 @@ export const likePosts = createAsyncThunk(
         null,
         authHeader()
       );
+      console.log("response", response.data);
       return response.data;
     } catch (error) {
-      console.error("Error occurred during signup:", error);
+      console.error("Error occurred while liking a post:", error);
       if (axios.isAxiosError(error)) {
         return rejectWithValue(error.response?.data);
       } else {
@@ -41,21 +45,20 @@ export const likePosts = createAsyncThunk(
   }
 );
 
-export const likePostSlice = createSlice({
+export const LikePostSlice = createSlice({
   name: "likes",
   initialState,
   reducers: {
     clearState: (state) => {
-      state.isLiked = {};
       state.isError = false;
       state.isSuccess = false;
       state.isFetching = false;
     },
-    toggleLike(state, action: { payload: number }) {
-      // Action to toggle like status
-      const postId = action.payload;
-      state.isLiked[postId] = !state.isLiked[postId] || false; // Toggle or set to false if not existing
-    },
+    // toggleLike(state, action: { payload: number }) {
+    //   // Action to toggle like status
+    //   const postId = action.payload;
+    //   state.isLiked[postId] = !state.isLiked[postId] || false; // Toggle or set to false if not existing
+    // },
   },
 
   extraReducers: (builder) => {
@@ -63,9 +66,11 @@ export const likePostSlice = createSlice({
       state.isFetching = true;
     });
     builder.addCase(likePosts.fulfilled, (state, action) => {
-      const { post_id, likes_count } = action.payload;
+      const { post_id, likes_count, isLiked } = action.payload;
       state.isFetching = false;
       state.isSuccess = true;
+      state.post_id = post_id;
+      state.isLiked = isLiked;
       state.likes = {
         ...state.likes,
         [post_id]: likes_count,
@@ -91,7 +96,7 @@ export const deletePost = createAsyncThunk(
       const response = await base.delete(`/post/${postId}`, authHeader());
       return response.data;
     } catch (error) {
-      console.error("Error occurred during signup:", error);
+      console.error("Error occurred while deleting a post:", error);
       if (axios.isAxiosError(error)) {
         return rejectWithValue(error.response?.data);
       } else {
@@ -133,6 +138,63 @@ export const DeletePostSlice = createSlice({
   },
 });
 
-export const { clearState, toggleLike } = likePostSlice.actions;
-export const likePostReducer = likePostSlice.reducer;
+export const updatePost = createAsyncThunk(
+  "posts/updatePost",
+  async (
+    payload: { formData: FormData; postId: number | null },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await base.put(
+        `/post/${payload.postId}`,
+        payload.formData,
+        authHeader()
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error occurred while updating a post:", error);
+      if (axios.isAxiosError(error)) {
+        return rejectWithValue(error.response?.data);
+      } else {
+        return rejectWithValue(error);
+      }
+    }
+  }
+);
+
+export const UpdatePostSlice = createSlice({
+  name: "updatePost",
+  initialState,
+  reducers: {
+    clearState: (state) => {
+      state.isError = false;
+      state.isSuccess = false;
+      state.isFetching = false;
+    },
+  },
+
+  extraReducers: (builder) => {
+    builder.addCase(updatePost.pending, (state) => {
+      state.isFetching = true;
+    });
+    builder.addCase(updatePost.fulfilled, (state) => {
+      state.isFetching = false;
+      state.isSuccess = true;
+
+      return state;
+    });
+    builder.addCase(updatePost.rejected, (state, action) => {
+      state.isFetching = false;
+      state.isError = true;
+      state.errorMessage =
+        (action.payload as { error?: string })?.error ||
+        (action.payload as { message?: string })?.message ||
+        "An error occurred, please try again";
+    });
+  },
+});
+
+export const { clearState } = UpdatePostSlice.actions;
+export const likePostReducer = LikePostSlice.reducer;
 export const deletePostReducer = DeletePostSlice.reducer;
+export const updatePostReducer = UpdatePostSlice.reducer;

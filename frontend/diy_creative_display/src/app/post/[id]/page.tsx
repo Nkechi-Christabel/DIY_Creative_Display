@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { RootState, useAppDispatch, useAppSelector } from "@/redux/store";
 import { getOnePost } from "@/redux/features/projectSlice/postSlice";
 import { useParams } from "next/navigation";
@@ -21,14 +21,19 @@ import {
   updatedComment,
 } from "@/redux/features/projectSlice/commentSlice";
 import { MdOutlineDeleteOutline } from "react-icons/md";
-import { CommentValues } from "@/types";
+import withAuth from "@/app/withAuth";
+import { MyModal } from "@/app/components/Modal";
+import { useRouter } from "next/navigation";
 
 const PostDetails = React.memo(() => {
+  const router = useRouter();
   const params = useParams();
   const dispatch = useAppDispatch();
   const [index, setIndex] = useState(0);
   const [comment_id, setComment_id] = useState<number>();
+  const [isModalImage, setIsModalImage] = useState(false);
   const [commentValue, setCommentValue] = useState("");
+  const [paramsId, setParamsId] = useState<number>();
   const id = params?.id ? parseInt(params.id.toString()) : null;
   const { post } = useAppSelector((state: RootState) => state.fetchPost);
   const { users } = useAppSelector((state: RootState) => state.users);
@@ -36,7 +41,7 @@ const PostDetails = React.memo(() => {
   const { comments } = useAppSelector(
     (state: RootState) => state.fetchComments
   );
-  const [updatedCommentValue, setUpdatedCommentValue] = useState("");
+  const [commentToBeUpdated, setCommentTobeUpdated] = useState("");
   const title = nameToCamelCase(post.title);
   const postUserName = nameToCamelCase(
     users.find((user) => user.id === post.user_id)?.fullName as string
@@ -44,11 +49,12 @@ const PostDetails = React.memo(() => {
 
   useEffect(() => {
     dispatch(getOnePost(id));
-  }, [id]);
+    setParamsId(id as number);
+  }, [post.id, paramsId]);
 
   useEffect(() => {
-    dispatch(getComments(post.id));
-  }, [post.id]);
+    dispatch(getComments(post.id as number));
+  }, [post.id, paramsId]);
 
   // console.log("Current User", currentUser), console.log("Comments", comments);
 
@@ -82,7 +88,7 @@ const PostDetails = React.memo(() => {
 
   const handlePostCommentDispatch = async () => {
     const response = await dispatch(
-      postComment({ content: commentValue, postId: post.id })
+      postComment({ content: commentValue, postId: post.id as number })
     );
     setCommentValue("");
     dispatch(addComment(response.payload.new_comment));
@@ -97,12 +103,12 @@ const PostDetails = React.memo(() => {
   const handleEditIcon = (commentId: number) => {
     setComment_id(commentId);
     const commentToEdit = comments.find((comment) => comment.id === commentId);
-    commentToEdit && setUpdatedCommentValue(commentToEdit.content);
+    commentToEdit && setCommentTobeUpdated(commentToEdit.content);
 
     dispatch(updateCommentOpenState(commentId));
   };
   const handleEditOnchange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setUpdatedCommentValue(e.target.value);
+    setCommentTobeUpdated(e.target.value);
   };
 
   const handleEditCancel = (commentId: number) => {
@@ -112,12 +118,23 @@ const PostDetails = React.memo(() => {
   const handleUpdateSave = async (commentId: number) => {
     const response = await dispatch(
       updateComment({
-        postId: post.id,
-        content: updatedCommentValue,
+        postId: post.id as number,
+        content: commentToBeUpdated,
         commentId: commentId,
       })
     );
     dispatch(updatedComment(response.payload.updateComment));
+  };
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsOpen(true);
+    setIsModalImage(false);
+  };
+
+  const handleCloseModal = () => {
+    setIsOpen(false);
   };
 
   return (
@@ -125,13 +142,21 @@ const PostDetails = React.memo(() => {
       className="container mx-auto max-w-5xl p-5 mb-16 scroll-smooth"
       id="top"
     >
+      <MyModal
+        isOpen={isOpen}
+        post={post}
+        isModalImage={isModalImage}
+        index={index}
+        onClose={handleCloseModal}
+      />
+
       <section className="pt-5">
         <div className="">
           <div className="flex justify-between items-center">
             <h3 className="text-2xl">{title}</h3>
             <div className="flex items-center space-x-5">
               <LikedIcon
-                postId={post.id}
+                postId={post.id as number}
                 showCount={false}
                 className="border border-gray-200 rounded-full p-3 bg-red-50"
               />
@@ -145,15 +170,21 @@ const PostDetails = React.memo(() => {
             </div>
           </div>
           <div className="md:flex md:flex-row flex-col space-y-5 md:space-x-5 md:space-y-0 pt-4">
-            <div className="flex-[4] max-h">
+            <div
+              className="flex-[4] cursor-pointer"
+              onClick={() => {
+                handleOpenModal();
+                setIsModalImage(true);
+              }}
+            >
               <img
-                src={post.photos[index] as unknown as string}
-                alt={post.title}
-                className="w-full h-full rounded-lg"
+                src={post?.photos[index] as unknown as string}
+                alt={post?.title}
+                className="w-full h-[38rem] rounded-lg object-cover"
               />
             </div>
             <div className="flex md:flex-col space-x-4 md:space-x-0 flex-1 cursor-pointer md:h-90 overflow-scroll">
-              {post.photos.map((url, idx) => (
+              {post?.photos.map((url, idx) => (
                 <img
                   key={idx}
                   src={url as unknown as string}
@@ -170,7 +201,7 @@ const PostDetails = React.memo(() => {
             <div className="flex-[3]">
               <h3 className="text-xl font-bold">Description</h3>
               <p className="">{post.content}</p>
-              <h3 className="font-bold text-lg pt-7 pb-2">Poster</h3>
+              <h3 className="font-bold text-lg pt-7 pb-2">Author</h3>
               <div className="flex space-x-2">
                 <ProfilePic name={postUserName} classes="text-sm w-8 h-8" />
                 <span>{postUserName}</span>
@@ -182,7 +213,10 @@ const PostDetails = React.memo(() => {
                 {typeof post.categories !== "object" &&
                   (post.categories as unknown as string)}
               </p>
-              <CiEdit className="m-10 text-xl" />
+              <CiEdit
+                className="m-10 text-xl cursor-pointer"
+                onClick={handleOpenModal}
+              />
             </div>
           </div>
         </div>
@@ -211,7 +245,7 @@ const PostDetails = React.memo(() => {
                           id="updateComment"
                           cols={100}
                           rows={2}
-                          value={updatedCommentValue}
+                          value={commentToBeUpdated}
                           className="outline-none py-2 px-4 mt-1"
                           onChange={(e) => handleEditOnchange(e)}
                         ></textarea>
@@ -277,4 +311,8 @@ const PostDetails = React.memo(() => {
   );
 });
 
-export default PostDetails;
+// export default PostDetails;
+
+const AuthProtectedPostDetails = withAuth(PostDetails);
+
+export default AuthProtectedPostDetails;

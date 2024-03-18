@@ -63,7 +63,8 @@ def get_all_users():
             'id': user.id,
             'fullName': user.fullName,
             'email': user.email,
-            # Add other fields as needed
+            "date_joined": user.date_joined,
+          
         } for user in users]
 
         return jsonify(users_data)

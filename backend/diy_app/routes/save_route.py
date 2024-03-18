@@ -21,14 +21,16 @@ def save_post(current_user, post_id):
     if save:
         db.session.delete(save)
         db.session.commit()
+        isSaved = False
         saves_count = Save.query.filter_by(user_id=user_id).count()
-        return jsonify({'message': 'Post Unsaved Successfully', 'Saves_count': saves_count}), 200
+        return jsonify({'message': 'Post Unsaved Successfully', 'Saves_count': saves_count, 'isSaved': isSaved,}), 200
     else:
         new_save = Save(user_id=user_id, post_id=post_id)
         db.session.add(new_save)
         db.session.commit()
+        isSaved = True
         saves_count = Save.query.filter_by(user_id=user_id).count()
-        return jsonify({'message': 'Post Saved Successfully', 'Saves_count': saves_count}), 200
+        return jsonify({'message': 'Post Saved Successfully', 'Saves_count': saves_count, 'isSaved': isSaved,}), 200
 
 
 # Get saved Post by a user

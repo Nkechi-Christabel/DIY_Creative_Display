@@ -136,7 +136,7 @@ def update_post(current_user, post_id):
             filenames_json = json.dumps(filenames)
             post.image_filenames = filenames_json
         db.session.commit()
-        return jsonify({'message': 'Post updated successfully'}), 201
+        return jsonify({'message': 'Post updated successfully', 'updatePost': post.to_dict()}), 201
     else:
         return jsonify({'message': 'Unauthorized to update this post'}), 403
 

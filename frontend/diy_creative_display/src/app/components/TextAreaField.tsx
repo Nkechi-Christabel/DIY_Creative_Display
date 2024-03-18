@@ -24,7 +24,7 @@ export const TextAreaField: React.FunctionComponent<TextAreaFieldProps> = ({
   autoFocus = false,
   registration,
   className,
-  rows = 20,
+  rows = 15,
   hasError,
   limit = 5000,
   value,
@@ -37,6 +37,7 @@ export const TextAreaField: React.FunctionComponent<TextAreaFieldProps> = ({
         placeholder={placeholder}
         autoFocus={autoFocus}
         rows={rows}
+        value={value}
         className={clsx(
           "font-WorkSans focus-within:border-secondary w-full bg-gray-150 py-2 outline-none placeholder:text-base placeholder:text-gray-400 disabled:bg-gray-100",
           hasError && "border-red-500",

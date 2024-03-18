@@ -2,21 +2,21 @@ import axios from "axios";
 import { authHeader } from "@/axiosHelper/services/auth-header";
 import { baseUrlApi } from "../../../axiosHelper/index";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { CreatePostValues, Status } from "../../../types";
+import { CreatePostValues, Status, PostValues } from "../../../types";
 
 const initialState: Status & {
-  posts: CreatePostValues[];
-  post: CreatePostValues;
+  posts: PostValues[];
+  post: PostValues;
   searchValue: string;
 } = {
   posts: [],
   post: {
-    id: 0,
+    id: null,
     title: "",
     content: "",
     categories: { id: "", name: "" },
     photos: [],
-    user_id: 0,
+    user_id: null,
   },
   searchValue: "",
   isFetching: false,
@@ -36,7 +36,7 @@ export const createPost = createAsyncThunk(
       const response = await base.post("/post", payload, authHeader());
       return response.data;
     } catch (error) {
-      console.error("Error occurred during signup:", error);
+      console.error("Error occurred while creating a post:", error);
       if (axios.isAxiosError(error)) {
         return rejectWithValue(error.response?.data);
       } else {
@@ -114,6 +114,12 @@ export const FetchPostsSlice = createSlice({
     getSearchValue: (state, action: { payload: string | undefined }) => {
       state.searchValue = action.payload as string;
     },
+    updatedPost: (state, action: { payload: PostValues }) => {
+      const update = state.posts.map((post) =>
+        post.id === action.payload.id ? action.payload : post
+      );
+      state.posts = update;
+    },
   },
 
   extraReducers: (builder) => {
@@ -145,7 +151,7 @@ export const getOnePost = createAsyncThunk(
       const response = await base.get(`/post/${id}`);
       return response.data;
     } catch (error) {
-      console.error("Error occurred during signup:", error);
+      console.error("Error occurred while fetching a post:", error);
       if (axios.isAxiosError(error)) {
         return rejectWithValue(error.response?.data);
       } else {
@@ -189,7 +195,8 @@ export const FetchOnePostSlice = createSlice({
 });
 
 export const { clearState } = CreatePostSlice.actions;
-export const { filterPosts, getSearchValue } = FetchPostsSlice.actions;
+export const { filterPosts, getSearchValue, updatedPost } =
+  FetchPostsSlice.actions;
 export const createPostReducer = CreatePostSlice.reducer;
 export const fetchPostsReducer = FetchPostsSlice.reducer;
 export const fetchOnePostReducer = FetchOnePostSlice.reducer;

@@ -1,99 +1,59 @@
-import { CreatePostValues, PostValues, Users } from "@/types";
+import { PostValues, SavePostValues, Users } from "@/types";
 import Image from "next/image";
 import React, { useEffect } from "react";
 import { useAppDispatch } from "../../redux/store";
-// import { getAllUsers } from "@/redux/features/authSlice/signupSlice";
 import clsx from "clsx";
 import Default from "../../../public/assets/default.jpg";
 import { ProfilePic } from "./ProfilePic";
 import { LiaSave } from "react-icons/lia";
-// import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAppSelector, RootState } from "@/redux/store";
-import { LikedIcon } from "./LikedIcon";
-import { MdOutlineDeleteOutline } from "react-icons/md";
-import { deletePost } from "@/redux/features/projectSlice/postFeaturesSlice";
-import { filterPosts } from "@/redux/features/projectSlice/postSlice";
-import { clearState, savePosts } from "@/redux/features/projectSlice/saveSlice";
-// import { ImSpinner2 } from "react-icons/im";
-// import { GrFormCheckmark } from "react-icons/gr";
+import {
+  clearState,
+  filterSavedPosts,
+  savePosts,
+} from "@/redux/features/projectSlice/saveSlice";
 import { GiCheckMark } from "react-icons/gi";
 
 type Iprops = {
-  posts: PostValues[];
-  selectedCategory?: string;
+  posts: SavePostValues[];
   users: Users[];
 };
 
-export const Post: React.FC<Iprops> = ({
-  posts,
-  selectedCategory,
-  users,
-}: Iprops) => {
+const SavedPost: React.FC<Iprops> = ({ posts, users }: Iprops) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const token = localStorage.getItem("token");
-  const { currentUser } = useAppSelector((state: RootState) => state.signup);
   const { searchValue } = useAppSelector(
     (state: RootState) => state.fetchPosts
   );
 
-  const { isFetching, isSuccess, isSaved } = useAppSelector(
+  const { isFetching, isSaved } = useAppSelector(
     (state: RootState) => state.savePost
   );
 
-  let filteredPosts;
+  const filteredPosts = searchValue
+    ? posts.filter((post) => post.post_details.title.includes(searchValue))
+    : posts;
 
   useEffect(() => {
     dispatch(clearState());
-  });
+  }, []);
 
-  if (searchValue) {
-    if (selectedCategory === "DIYs") {
-      filteredPosts = posts.filter((post) =>
-        post.title.toLowerCase().includes(searchValue?.toLowerCase())
-      );
-    } else {
-      filteredPosts = posts
-        .filter(
-          (post) => (post.categories as unknown as string) === selectedCategory
-        )
-        .filter((post) =>
-          post.title.toLowerCase().includes(searchValue?.toLowerCase())
-        );
-    }
-  }
-
-  if (!searchValue) {
-    if (selectedCategory === "DIYs") filteredPosts = posts;
-    else {
-      filteredPosts = posts.filter(
-        (post) => (post.categories as unknown as string) === selectedCategory
-      );
-    }
-  }
   console.log("Posts", posts);
   console.log("Success fetching", isSaved);
 
-  const handleDelete = (postId: number) => {
-    if (!token) {
-      router.push("/login");
-      return;
-    }
-    dispatch(deletePost(postId));
-    dispatch(filterPosts(postId));
-  };
-
   const handleSavePost = (
-    postId: number | undefined,
+    postId: number,
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ) => {
+    e.preventDefault();
     e.stopPropagation();
     dispatch(savePosts(postId));
+    dispatch(filterSavedPosts(postId));
   };
 
-  const handleDetailsPageRedirection = (post: PostValues) => {
-    router.push(`/post/${post.id}`);
+  const handleDetailsPageRedirection = (post: SavePostValues) => {
+    router.push(`/post/${post.post_id}`);
   };
 
   return (
@@ -107,8 +67,7 @@ export const Post: React.FC<Iprops> = ({
             >
               <img
                 src={
-                  (post?.photos && (post?.photos[0] as unknown as string)) ??
-                  Default
+                  (post?.post_details.photos[0] as unknown as string) ?? Default
                 }
                 alt=""
                 className="w-full h-72 xm:h-auto rounded-xl object-cover"
@@ -124,7 +83,7 @@ export const Post: React.FC<Iprops> = ({
 
               <div className="flex justify-around items-end  content-center absolute bottom-full top-0 p-4 bg-black bg-opacity-30 opacity-0 group-hover:opacity-100 rounded-xl w-full group-hover:bottom-0 transition-all duration-500 ease-in-out">
                 <p className="hidden group-hover:block text-white text-ellipsis text-lg font-bold">
-                  {post.title}
+                  {post.post_details.title}
                 </p>
                 <button
                   type="button"
@@ -141,7 +100,7 @@ export const Post: React.FC<Iprops> = ({
 
                   <span
                     className="text-sm hover:text-slate-300"
-                    onClick={(e) => handleSavePost(post.id as number, e)}
+                    onClick={(e) => handleSavePost(post.post_id as number, e)}
                   >
                     {`${isSaved ? "Saved" : "Save"}`}
                   </span>
@@ -162,17 +121,6 @@ export const Post: React.FC<Iprops> = ({
                     "Unknown User"}
                 </span>
               </h2>
-              <div className="flex items-center space-x-2">
-                <LikedIcon postId={post.id as number} showCount={true} />
-                <MdOutlineDeleteOutline
-                  className={`text-xl text-red-600 hover:text-red-400 active:scale-150 ${
-                    token && currentUser.id === post.user_id
-                      ? "pointer-events-auto active:scale-150 cursor-pointer"
-                      : "pointer-events-none active:scale-0  cursor-pointer"
-                  }`}
-                  onClick={() => handleDelete(post.id as number)}
-                />
-              </div>
             </div>
           </div>
         ))}
@@ -180,3 +128,5 @@ export const Post: React.FC<Iprops> = ({
     </div>
   );
 };
+
+export default SavedPost;

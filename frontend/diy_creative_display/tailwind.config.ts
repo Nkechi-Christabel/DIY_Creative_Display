@@ -15,6 +15,7 @@ const config: Config = {
         "auth-bg": "url('/assets/auth/auth-bg.jpg')",
         "auth-bg1": "url('/assets/auth/auth-bg1.jpg')",
         "about-hero": "url('/assets/about/hero.jpg')",
+        "saved-miniHero": "url('/assets/saved/mini-hero.jpg')",
       },
       colors: {
         auth: {
@@ -42,9 +43,20 @@ const config: Config = {
             transform: "rotate(360deg)",
           },
         },
+        bounce: {
+          "0%, 100%": {
+            transform: "translateY(-25%)",
+            animationTimingFunction: "cubic-bezier(0.8, 0, 1, 1)",
+          },
+          "50%": {
+            transform: "translateY(0)",
+            animationTimingFunction: "cubic-bezier(0, 0, 0.2, 1)",
+          },
+        },
       },
       animation: {
         spin: "spin 1s linear infinite",
+        animation: "bounce 1s infinite",
       },
       screens: {
         xxm: "320px",

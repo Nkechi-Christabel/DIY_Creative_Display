@@ -30,6 +30,7 @@ export type Users = {
   id: number;
   fullName: string;
   email: string;
+  date_joined: string;
 };
 
 export interface PictureValues {
@@ -41,12 +42,17 @@ export interface PictureValues {
 }
 
 export interface CreatePostValues {
-  id?: number;
   title: string;
   content: string;
   categories: Option;
   photos: PictureValues[];
-  user_id?: number;
+}
+
+export interface EditPostValues {
+  title: string;
+  content: string;
+  categories: Option;
+  photos?: PictureValues[];
 }
 
 export interface CommentReducerValues {
@@ -66,4 +72,16 @@ export interface CommentValues {
     id: number;
   };
   isOpen: boolean;
+}
+
+export interface PostValues extends CreatePostValues {
+  id: number | null;
+  user_id: number | null;
+}
+
+export interface SavePostValues {
+  id: number;
+  user_id: number;
+  post_id: number;
+  post_details: PostValues;
 }

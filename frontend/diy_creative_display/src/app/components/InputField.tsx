@@ -10,7 +10,7 @@ import {
   Merge,
   UseFormGetValues,
 } from "react-hook-form";
-import {  CreatePostValues} from "@/types";
+import { CreatePostValues } from "@/types";
 
 interface InputFieldProps {
   type?: "text" | "number" | "email" | "password" | "file";

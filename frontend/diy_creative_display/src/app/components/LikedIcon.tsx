@@ -44,7 +44,7 @@ export const LikedIcon: React.FC<Iprops> = ({
     >
       <ImHeart
         className={`text-gray-400 hover:text-pink-200 cursor-pointer transition-all active:scale-0 ease-in-out-circ duration-600
-          ${isLiked[postId as number] ? "text-red-500" : ""}  ${
+        ${isLiked && isLiked[postId as number] ? "text-red-500" : ""}  ${
           token ? "active:scale-150" : ""
         }
           
@@ -52,7 +52,7 @@ export const LikedIcon: React.FC<Iprops> = ({
       />
       {showCount && (
         <span className="text-sm text-gray-600">
-          {likes[postId as number] || 0}
+          {likes && likes[postId as number] || 0}
         </span>
       )}
     </button>

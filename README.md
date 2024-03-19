@@ -2,7 +2,7 @@
 
 DIY Creative Display is a web application where users can showcase their do-it-yourself (DIY) projects. Whether it's Home decor, Crafts, Art and Design or any other creative endeavor, users can upload images and descriptions of their projects to share with the community. The platform is built using Flask for the backend and Next.js for the frontend, providing a seamless and interactive user experience.
 
-<img src="https://res.cloudinary.com/nkechi-christabel/image/upload/v1710868052/DIY_CD.png" alt="Diy Creative Display landing page">
+<img src="https://res.cloudinary.com/nkechi-christabel/image/upload/v1710869274/DIY_CD.png" alt="Diy Creative Display landing page">
 
 ## Features
 

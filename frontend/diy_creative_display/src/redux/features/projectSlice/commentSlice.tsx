@@ -104,7 +104,6 @@ export const FetchCommentsSlice = createSlice({
         : state.comments;
     },
     addComment: (state, action) => {
-      console.log("Payload", action);
       state.comments.push(action.payload);
     },
 

@@ -173,9 +173,7 @@ export const Edit: React.FC<IProps> = ({ post }: IProps) => {
     }
   }, [dispatch, errorMessage, isError, isSuccess, reset]);
 
-//   console.log("Photos value", getValues("photos"));
-//   console.log("Valid?", isValid, errors);
-//   console.log("Photos", getValues("photos"));
+
 
   return (
     <>

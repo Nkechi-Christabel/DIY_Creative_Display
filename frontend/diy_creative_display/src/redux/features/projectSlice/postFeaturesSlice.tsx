@@ -32,7 +32,6 @@ export const likePosts = createAsyncThunk(
         null,
         authHeader()
       );
-      console.log("response", response.data);
       return response.data;
     } catch (error) {
       console.error("Error occurred while liking a post:", error);

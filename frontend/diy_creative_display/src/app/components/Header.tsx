@@ -24,6 +24,7 @@ export const Header = React.memo(() => {
   const [isOpen, setIsOpen] = useState(false);
   const [hover, setHover] = useState(false);
   const [searchValue, setSearchValue] = useState<string>();
+  const [showSearch, setShowSearch] = useState(false);
   const genericHamburgerLine = `bg-black transition ease transform duration-300`;
   const userInitials =
     "flex justify-center items-center bg-amber-950 w-10 h-10 rounded-full text-gray-200";
@@ -37,19 +38,6 @@ export const Header = React.memo(() => {
   const user = users?.find((user: Users) => user?.email === email);
   const name = nameToCamelCase(user?.fullName as string);
 
-  const handleSignout = () => {
-    if (!token) {
-      redirect("/login");
-      return;
-    }
-    dispatch(logout());
-    dispatch(clearState());
-  };
-
-  const handleSearchValue = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchValue(e.target.value);
-  };
-
   useEffect(() => {
     dispatch(handleCurrentUser({ name: name, id: user?.id }));
   }, [dispatch, name]);
@@ -58,10 +46,36 @@ export const Header = React.memo(() => {
     dispatch(getSearchValue(searchValue));
   });
 
+  const handleSignout = () => {
+    dispatch(logout());
+    dispatch(clearState());
+  };
+
+  const handleSearchValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.target.value);
+  };
+
+  const disableSearch = ["/post/saved", "/"];
+
+  const handleProfileHover = () => {
+    setHover(true);
+    setIsOpen(false);
+    setShowSearch(false);
+  };
+
+  const handleShowSearch = () => {
+    if (!disableSearch.includes(pathname)) {
+      router.push("/");
+    }
+    setShowSearch(!showSearch);
+    setHover(false);
+    setIsOpen(false);
+  };
+
   return (
     <>
       {!disableNavFooter.includes(pathname) && (
-        <header className="py-3">
+        <header className="pt-3 h-16">
           <nav
             className={`${
               isOpen
@@ -97,7 +111,7 @@ export const Header = React.memo(() => {
                     }`}
                   />
                 </button>
-                <Logo />
+                <Logo classes="block lg:hidden" />
                 <ul className="menu md:flex space-x-4 hidden">
                   {navItems.map((item) => {
                     const isActive = item.href === pathname;
@@ -117,13 +131,17 @@ export const Header = React.memo(() => {
                   })}
                 </ul>
               </div>
+              <Logo classes="hidden lg:block" />
               <div className="right flex items-center space-x-5">
                 <div className="relative">
-                  <BiSearch className="inline-block lg:absolute top-[.7rem] left-9 lg:text-gray-400 lg:text-base text-2xl lg:mr-0 mr-3 lg:cursor-none cursor-pointer" />
+                  <BiSearch
+                    className="inline-block lg:absolute top-[.8rem] lg:pointer-events-none left-9 lg:text-gray-400 lg:text-base text-2xl lg:mr-0 mr-3 lg:cursor-none cursor-pointer"
+                    onClick={handleShowSearch}
+                  />
                   <input
                     type="text"
                     placeholder="Search"
-                    className="hidden lg:block bg-slate-50 rounded-2xl pl-10 pr-7 py-2 ml-5 outline-none text-sm"
+                    className="hidden lg:block bg-gray-50 rounded-2xl pl-10 pr-7 py-[.6rem] ml-5 outline-none text-sm"
                     onChange={(e) => handleSearchValue(e)}
                   />
                 </div>
@@ -131,10 +149,7 @@ export const Header = React.memo(() => {
                   <div>
                     <div
                       className="cursor-pointer"
-                      onMouseEnter={() => {
-                        setHover(true);
-                        setIsOpen(false);
-                      }}
+                      onMouseEnter={handleProfileHover}
                     >
                       <ProfilePic name={name} classes="text-xl w-10 h-10 " />
                     </div>
@@ -225,6 +240,19 @@ export const Header = React.memo(() => {
               </div>
             </Transition>
           </nav>
+          <div
+            className={clsx(
+              "relative top-2 z-50 mx-auto max-w-2xl px-6",
+              showSearch ? "block" : "hidden"
+            )}
+          >
+            <input
+              type="text"
+              placeholder="Search"
+              className=" bg-white rounded-lg shadow-inner border border-gray-300 py-3 px-5 outline-none text-sm w-full"
+              onChange={(e) => handleSearchValue(e)}
+            />
+          </div>
         </header>
       )}
     </>

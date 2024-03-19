@@ -30,7 +30,7 @@ const Home = () => {
       className="container mx-auto max-w-7xl p-9 xl:px-0 h-screen scroll-smooth"
       id="top"
     >
-      <p className="text-4xl text-center max-w-3xl mx-auto pt-1 pb-5tracking-wide leading-normal">
+      <p className="text-4xl text-center max-w-3xl mx-auto pt-2 pb-5tracking-wide leading-normal">
         Discover, Create, and Share Your DIY Projects with the World!
         <span className="text-sm text-gray-600 block">
           Get started today and unleash your creativity with DIY Creative

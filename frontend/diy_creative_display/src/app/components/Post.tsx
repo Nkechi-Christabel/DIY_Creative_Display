@@ -18,6 +18,7 @@ import { clearState, savePosts } from "@/redux/features/projectSlice/saveSlice";
 // import { ImSpinner2 } from "react-icons/im";
 // import { GrFormCheckmark } from "react-icons/gr";
 import { GiCheckMark } from "react-icons/gi";
+import { nameToCamelCase } from "@/utils/reusables";
 
 type Iprops = {
   posts: PostValues[];
@@ -38,7 +39,7 @@ export const Post: React.FC<Iprops> = ({
     (state: RootState) => state.fetchPosts
   );
 
-  const { isFetching, isSuccess, isSaved } = useAppSelector(
+  const { isFetching, isSaved, post_id } = useAppSelector(
     (state: RootState) => state.savePost
   );
 
@@ -72,8 +73,6 @@ export const Post: React.FC<Iprops> = ({
       );
     }
   }
-  console.log("Posts", posts);
-  console.log("Success fetching", isSaved);
 
   const handleDelete = (postId: number) => {
     if (!token) {
@@ -89,12 +88,22 @@ export const Post: React.FC<Iprops> = ({
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ) => {
     e.stopPropagation();
+    if (!token) {
+      router.push("/login");
+    }
+
     dispatch(savePosts(postId));
   };
 
   const handleDetailsPageRedirection = (post: PostValues) => {
     router.push(`/post/${post.id}`);
   };
+
+  const loaderProp = ({ src }: { src: string }) => {
+    return src;
+  };
+
+  console.log(posts);
 
   return (
     <div className="posts">
@@ -105,22 +114,17 @@ export const Post: React.FC<Iprops> = ({
               className="relative group cursor-pointer"
               onClick={() => handleDetailsPageRedirection(post)}
             >
-              <img
+              <Image
                 src={
                   (post?.photos && (post?.photos[0] as unknown as string)) ??
                   Default
                 }
-                alt=""
+                alt={post.title}
+                width={300}
+                height={200}
+                loader={loaderProp}
                 className="w-full h-72 xm:h-auto rounded-xl object-cover"
               />
-              {/* <Image
-                  src={(post?.photos[0] as unknown as string) ?? Default}
-                  //   src={Default}
-                  alt={post.title}
-                  width={300}
-                  height={200}
-                  className="w-full h-72 xm:h-auto rounded-xl object-cover"
-                /> */}
 
               <div className="flex justify-around items-end  content-center absolute bottom-full top-0 p-4 bg-black bg-opacity-30 opacity-0 group-hover:opacity-100 rounded-xl w-full group-hover:bottom-0 transition-all duration-500 ease-in-out">
                 <p className="hidden group-hover:block text-white text-ellipsis text-lg font-bold">
@@ -128,12 +132,9 @@ export const Post: React.FC<Iprops> = ({
                 </p>
                 <button
                   type="button"
-                  className={clsx(
-                    "hidden group-hover:flex items-center text-white bg-black bg-opacity-45 rounded-full py-1 px-3 mt-18",
-                    isFetching ? "bg-gray-400" : ""
-                  )}
+                  className="hidden group-hover:flex items-center text-white bg-black bg-opacity-45 rounded-full py-1 px-3 mt-18"
                 >
-                  {isSaved ? (
+                  {isSaved && post.id === post_id ? (
                     <GiCheckMark className="text-green-400 mr-2 00 transition-all duration-700 ease-in-out" />
                   ) : (
                     <LiaSave className="mr-2" />
@@ -143,7 +144,7 @@ export const Post: React.FC<Iprops> = ({
                     className="text-sm hover:text-slate-300"
                     onClick={(e) => handleSavePost(post.id as number, e)}
                   >
-                    {`${isSaved ? "Saved" : "Save"}`}
+                    {`${isSaved && post.id === post_id ? "Saved" : "Save"}`}
                   </span>
                 </button>
               </div>
@@ -158,8 +159,10 @@ export const Post: React.FC<Iprops> = ({
                   }
                 />
                 <span className="text-base">
-                  {users.find((user) => user.id === post.user_id)?.fullName ??
-                    "Unknown User"}
+                  {nameToCamelCase(
+                    users.find((user) => user.id === post.user_id)
+                      ?.fullName as string
+                  ) ?? "Unknown User"}
                 </span>
               </h2>
               <div className="flex items-center space-x-2">

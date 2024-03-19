@@ -18,8 +18,6 @@ const Saved = () => {
   const user = users?.find((user: Users) => user?.email === email);
   const name = nameToCamelCase(user?.fullName as string);
 
-  console.log("Saved posts", savedPosts);
-
   useEffect(() => {
     dispatch(getSavedPosts());
   }, []);
@@ -67,7 +65,7 @@ const Saved = () => {
               even easier.
             </span>
           </p>
-          <p className="text-xs text-gray-600 text-center font-semibold">
+          <p className="text-xs mt-2 md:mt-0 text-gray-600 text-center font-semibold">
             MEMBER SINCE: {dateJoined}
           </p>
         </div>

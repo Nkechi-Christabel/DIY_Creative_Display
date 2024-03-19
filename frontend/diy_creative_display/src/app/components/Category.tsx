@@ -23,7 +23,13 @@ export const Category = ({ selectedCategory, setSelectedCategory }: Iprops) => {
   return (
     <div className="pt-6 pb-4">
       <div className="flex items-center justify-center">
-        <IoChevronBackSharp className="cursor-pointer" onClick={scrollLeft} />
+        <button type="button">
+          <IoChevronBackSharp
+            className="cursor-pointer text-lg"
+            onClick={scrollLeft}
+          />
+        </button>
+
         <ul
           className="flex justify-between max-w-3xl overflow-x-scroll no-scrollbar"
           ref={containerRef}
@@ -49,10 +55,12 @@ export const Category = ({ selectedCategory, setSelectedCategory }: Iprops) => {
             </li>
           ))}
         </ul>
-        <IoChevronForwardSharp
-          className="cursor-pointer"
-          onClick={scrollRight}
-        />
+        <button type="button">
+          <IoChevronForwardSharp
+            className="cursor-pointer text-lg"
+            onClick={scrollRight}
+          />
+        </button>
       </div>
     </div>
   );

@@ -12,20 +12,6 @@ const nextConfig = {
       },
     ],
   },
-  //   server: {
-  //     middleware: [middleware],
-  //   },
 };
 
 export default nextConfig;
-
-// export const images = {
-//   remotePatterns: [
-//     {
-//       protocol: ["https", "http"],
-//       hostname: "localhost",
-//       port: "5000",
-//       pathname: "/account123/**",
-//     },
-//   ],
-// };

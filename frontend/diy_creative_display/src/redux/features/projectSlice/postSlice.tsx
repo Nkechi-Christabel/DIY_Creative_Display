@@ -2,7 +2,7 @@ import axios from "axios";
 import { authHeader } from "@/axiosHelper/services/auth-header";
 import { baseUrlApi } from "../../../axiosHelper/index";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { CreatePostValues, Status, PostValues } from "../../../types";
+import { Status, PostValues } from "../../../types";
 
 const initialState: Status & {
   posts: PostValues[];

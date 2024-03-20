@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useEffect } from "react";
 import Modal from "react-modal";
 import clsx from "clsx";
 import { Edit } from "./Edit";
@@ -10,7 +11,7 @@ interface IProps {
   post: PostValues;
   isModalImage: boolean;
   index: number;
-  onClose?: () => void;
+  onClose: () => void;
 }
 
 export const MyModal: React.FC<IProps> = ({
@@ -23,6 +24,10 @@ export const MyModal: React.FC<IProps> = ({
   const loaderProp = ({ src }: { src: string }) => {
     return src;
   };
+
+  useEffect(() => {
+    Modal.setAppElement("body");
+  }, []);
 
   return (
     <Modal
@@ -56,7 +61,7 @@ export const MyModal: React.FC<IProps> = ({
           />
         </div>
       ) : (
-        <Edit post={post} />
+        <Edit post={post} onClose={onClose} />
       )}
     </Modal>
   );

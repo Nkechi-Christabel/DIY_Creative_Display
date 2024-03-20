@@ -137,7 +137,16 @@ def update_post(current_user, post_id):
             filenames_json = json.dumps(filenames)
             post.image_filenames = filenames_json
         db.session.commit()
-        return jsonify({'message': 'Post updated successfully', 'updatePost': post.to_dict()}), 201
+
+        #Including images in the data to be sent back
+        image_filenames = json.loads(post.image_filenames)
+
+        # Create URLs for accessing the images based on the filenames
+        image_urls = [photos.url(filename) for filename in image_filenames]
+
+        post_data = post.to_dict()
+        post_data['photos'] = image_urls
+        return jsonify({'message': 'Post updated successfully', 'updatedPost': post_data}), 201
     else:
         return jsonify({'message': 'Unauthorized to update this post'}), 403
 

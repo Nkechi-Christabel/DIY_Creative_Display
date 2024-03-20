@@ -21,7 +21,7 @@ import {
 import {
   deletePostReducer,
   likePostReducer,
-  updatePost,
+  // updatePost,
   updatePostReducer,
 } from "./features/projectSlice/postFeaturesSlice";
 

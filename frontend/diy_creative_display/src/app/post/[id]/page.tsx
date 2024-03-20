@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import clsx from "clsx";
 import { RootState, useAppDispatch, useAppSelector } from "@/redux/store";
 import { getOnePost } from "@/redux/features/projectSlice/postSlice";
 import { useParams } from "next/navigation";
@@ -118,7 +119,7 @@ const PostDetails = React.memo(() => {
     dispatch(updateCommentOpenState(commentId));
   };
 
-  const handleUpdateSave = async (commentId: number) => {
+  const handleEditSave = async (commentId: number) => {
     const response = await dispatch(
       updateComment({
         postId: post.id as number,
@@ -126,7 +127,7 @@ const PostDetails = React.memo(() => {
         commentId: commentId,
       })
     );
-    dispatch(updatedComment(response.payload.updateComment));
+    dispatch(updatedComment(response.payload.updatedComment));
   };
 
   const handleOpenModal = () => {
@@ -194,7 +195,7 @@ const PostDetails = React.memo(() => {
               }}
             >
               <Image
-                src={post?.photos[index] as unknown as string}
+                src={post?.photos && (post?.photos[index] as unknown as string)}
                 alt={post?.title}
                 width={300}
                 height={200}
@@ -203,11 +204,14 @@ const PostDetails = React.memo(() => {
               />
             </div>
             <div className="flex md:flex-col space-x-4 md:space-x-0 flex-1 cursor-pointer md:h-90 overflow-scroll">
-              {post?.photos.map((url, idx) => (
-                <img
+              {post?.photos?.map((url, idx) => (
+                <Image
                   key={idx}
                   src={url as unknown as string}
                   alt={post.title}
+                  width={300}
+                  height={200}
+                  loader={loaderProp}
                   className={`md:w-full w-3/12 h-auto rounded-lg mb-4 ${
                     idx === index && "border-2 border-pink-400"
                   }`}
@@ -233,7 +237,12 @@ const PostDetails = React.memo(() => {
                   (post.categories as unknown as string)}
               </p>
               <CiEdit
-                className="m-10 text-xl cursor-pointer"
+                className={clsx(
+                  "m-10 text-xl cursor-pointer",
+                  currentUser.id !== post.user_id
+                    ? "pointer-events-none"
+                    : "pointer-events-auto"
+                )}
                 onClick={handleOpenModal}
               />
             </div>
@@ -277,7 +286,7 @@ const PostDetails = React.memo(() => {
                           </span>
                           <span
                             className="cursor-pointer"
-                            onClick={() => handleUpdateSave(comment.id)}
+                            onClick={() => handleEditSave(comment.id)}
                           >
                             Save
                           </span>

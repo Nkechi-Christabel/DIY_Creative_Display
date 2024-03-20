@@ -91,6 +91,6 @@ def update_comment(current_user, post_id, comment_id):
         comment.content = content
         db.session.commit()
         print("Commment", comment)
-        return jsonify({'message': 'Comment updated Successfully', 'updateComment': comment.to_dict()}), 201
+        return jsonify({'message': 'Comment updated Successfully', 'updatedComment': comment.to_dict()}), 201
     else:
         return jsonify({'message': 'Unauthorized to update this post'}), 403

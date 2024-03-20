@@ -114,12 +114,6 @@ export const FetchPostsSlice = createSlice({
     getSearchValue: (state, action: { payload: string | undefined }) => {
       state.searchValue = action.payload as string;
     },
-    updatedPost: (state, action: { payload: PostValues }) => {
-      const update = state.posts.map((post) =>
-        post.id === action.payload.id ? action.payload : post
-      );
-      state.posts = update;
-    },
   },
 
   extraReducers: (builder) => {
@@ -170,6 +164,11 @@ export const FetchOnePostSlice = createSlice({
       state.isSuccess = false;
       state.isFetching = false;
     },
+    updateEditedPost: (state, action: { payload: PostValues }) => {
+      const update =
+        state.post.id === action.payload.id ? action.payload : state.post;
+      state.post = update;
+    },
   },
 
   extraReducers: (builder) => {
@@ -195,8 +194,8 @@ export const FetchOnePostSlice = createSlice({
 });
 
 export const { clearState } = CreatePostSlice.actions;
-export const { filterPosts, getSearchValue, updatedPost } =
-  FetchPostsSlice.actions;
+export const { filterPosts, getSearchValue } = FetchPostsSlice.actions;
+export const { updateEditedPost } = FetchOnePostSlice.actions;
 export const createPostReducer = CreatePostSlice.reducer;
 export const fetchPostsReducer = FetchPostsSlice.reducer;
 export const fetchOnePostReducer = FetchOnePostSlice.reducer;

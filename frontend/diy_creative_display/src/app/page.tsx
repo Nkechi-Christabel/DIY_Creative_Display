@@ -6,7 +6,6 @@ import {
 } from "@/redux/features/projectSlice/postSlice";
 import { getAllUsers } from "@/redux/features/authSlice/signupSlice";
 import { RootState, useAppDispatch, useAppSelector } from "@/redux/store";
-// import { TbLoader3 } from "react-icons/tb";
 import { Category } from "./components/Category";
 import { Post } from "./components/Post";
 import { RiLoader2Line } from "react-icons/ri";

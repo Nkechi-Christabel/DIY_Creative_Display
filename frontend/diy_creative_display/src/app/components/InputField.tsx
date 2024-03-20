@@ -3,14 +3,13 @@ import clsx from "clsx";
 import { Label } from "./Label";
 import { ErrorMessage } from "./ErrorMessage";
 import {
-  Controller,
   FieldError,
   UseFormRegisterReturn,
   FieldErrorsImpl,
   Merge,
   UseFormGetValues,
 } from "react-hook-form";
-import { CreatePostValues } from "@/types";
+import { CreatePostValues, EditPostValues, PictureValues } from "@/types";
 
 interface InputFieldProps {
   type?: "text" | "number" | "email" | "password" | "file";
@@ -33,7 +32,10 @@ interface InputFieldProps {
   control: any;
   hide?: string;
   accept?: string;
-  getValues?: UseFormGetValues<CreatePostValues>;
+  getValues?:
+    | UseFormGetValues<CreatePostValues>
+    | UseFormGetValues<EditPostValues>;
+
   handleImagePreview?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleTogglePassword?: () => void;
 }
@@ -62,6 +64,9 @@ export const InputField = ({
   isDisabled = false,
 }: InputFieldProps) => {
   const { name, onChange } = registration;
+  const images = getValues && (getValues("photos") ?? []);
+
+
 
   return (
     <>
@@ -101,7 +106,7 @@ export const InputField = ({
                     name: "photos",
                     value: getValues &&
                       e.target.files && [
-                        ...((getValues("photos") as File[]) || []),
+                        ...images,
                         ...Array.from(e.target.files),
                       ],
                   },

@@ -1,5 +1,6 @@
 "use client";
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import clsx from "clsx";
 import { RootState, useAppDispatch, useAppSelector } from "@/redux/store";
 import { getOnePost } from "@/redux/features/projectSlice/postSlice";
 import { useParams } from "next/navigation";
@@ -24,6 +25,8 @@ import { MdOutlineDeleteOutline } from "react-icons/md";
 import withAuth from "@/app/withAuth";
 import { MyModal } from "@/app/components/Modal";
 import { useRouter } from "next/navigation";
+import { savePosts } from "@/redux/features/projectSlice/saveSlice";
+import Image from "next/image";
 
 const PostDetails = React.memo(() => {
   const router = useRouter();
@@ -31,6 +34,7 @@ const PostDetails = React.memo(() => {
   const dispatch = useAppDispatch();
   const [index, setIndex] = useState(0);
   const [comment_id, setComment_id] = useState<number>();
+  const [isOpen, setIsOpen] = useState(false);
   const [isModalImage, setIsModalImage] = useState(false);
   const [commentValue, setCommentValue] = useState("");
   const [paramsId, setParamsId] = useState<number>();
@@ -46,6 +50,9 @@ const PostDetails = React.memo(() => {
   const postUserName = nameToCamelCase(
     users.find((user) => user.id === post.user_id)?.fullName as string
   );
+  const { isSaved, post_id } = useAppSelector(
+    (state: RootState) => state.savePost
+  );
 
   useEffect(() => {
     dispatch(getOnePost(id));
@@ -55,8 +62,6 @@ const PostDetails = React.memo(() => {
   useEffect(() => {
     dispatch(getComments(post.id as number));
   }, [post.id, paramsId]);
-
-  // console.log("Current User", currentUser), console.log("Comments", comments);
 
   function timeAgo(dateString: string): string {
     const now = new Date();
@@ -92,7 +97,6 @@ const PostDetails = React.memo(() => {
     );
     setCommentValue("");
     dispatch(addComment(response.payload.new_comment));
-    console.log(response.payload.new_comment);
   };
 
   const handleDelete = (postId: number, commentId: number) => {
@@ -115,7 +119,7 @@ const PostDetails = React.memo(() => {
     dispatch(updateCommentOpenState(commentId));
   };
 
-  const handleUpdateSave = async (commentId: number) => {
+  const handleEditSave = async (commentId: number) => {
     const response = await dispatch(
       updateComment({
         postId: post.id as number,
@@ -123,10 +127,8 @@ const PostDetails = React.memo(() => {
         commentId: commentId,
       })
     );
-    dispatch(updatedComment(response.payload.updateComment));
+    dispatch(updatedComment(response.payload.updatedComment));
   };
-
-  const [isOpen, setIsOpen] = useState(false);
 
   const handleOpenModal = () => {
     setIsOpen(true);
@@ -135,6 +137,14 @@ const PostDetails = React.memo(() => {
 
   const handleCloseModal = () => {
     setIsOpen(false);
+  };
+
+  const handleSavePost = (postId: number) => {
+    dispatch(savePosts(postId));
+  };
+
+  const loaderProp = ({ src }: { src: string }) => {
+    return src;
   };
 
   return (
@@ -162,9 +172,16 @@ const PostDetails = React.memo(() => {
               />
 
               <span className="border border-gray-200 bg-slate-50 p-3 rounded-full group">
-                <AiOutlineSave className="text-lg cursor-pointer" />
+                <AiOutlineSave
+                  className="text-lg cursor-pointer"
+                  onClick={() => handleSavePost(post.id as number)}
+                />
                 <span className="absolute right-24 top-20 text-yellow-700 bg-white py-2 px-3 shadow-lg shadow-slate-300 border border-gray-200 rounded transition-all ease-out-quart duration-500 hidden group-hover:block">
-                  Save for later?
+                  {`${
+                    isSaved && post.id === post_id
+                      ? "Post saved"
+                      : "Save for later?"
+                  }`}
                 </span>
               </span>
             </div>
@@ -177,18 +194,24 @@ const PostDetails = React.memo(() => {
                 setIsModalImage(true);
               }}
             >
-              <img
-                src={post?.photos[index] as unknown as string}
+              <Image
+                src={post?.photos && (post?.photos[index] as unknown as string)}
                 alt={post?.title}
+                width={300}
+                height={200}
+                loader={loaderProp}
                 className="w-full h-[38rem] rounded-lg object-cover"
               />
             </div>
             <div className="flex md:flex-col space-x-4 md:space-x-0 flex-1 cursor-pointer md:h-90 overflow-scroll">
-              {post?.photos.map((url, idx) => (
-                <img
+              {post?.photos?.map((url, idx) => (
+                <Image
                   key={idx}
                   src={url as unknown as string}
                   alt={post.title}
+                  width={300}
+                  height={200}
+                  loader={loaderProp}
                   className={`md:w-full w-3/12 h-auto rounded-lg mb-4 ${
                     idx === index && "border-2 border-pink-400"
                   }`}
@@ -214,7 +237,12 @@ const PostDetails = React.memo(() => {
                   (post.categories as unknown as string)}
               </p>
               <CiEdit
-                className="m-10 text-xl cursor-pointer"
+                className={clsx(
+                  "m-10 text-xl cursor-pointer",
+                  currentUser.id !== post.user_id
+                    ? "pointer-events-none"
+                    : "pointer-events-auto"
+                )}
                 onClick={handleOpenModal}
               />
             </div>
@@ -258,7 +286,7 @@ const PostDetails = React.memo(() => {
                           </span>
                           <span
                             className="cursor-pointer"
-                            onClick={() => handleUpdateSave(comment.id)}
+                            onClick={() => handleEditSave(comment.id)}
                           >
                             Save
                           </span>

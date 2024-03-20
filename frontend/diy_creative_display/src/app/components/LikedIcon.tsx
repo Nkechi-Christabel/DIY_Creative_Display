@@ -38,11 +38,6 @@ export const LikedIcon: React.FC<Iprops> = ({
     dispatch(likePosts(postId));
     // dispatch(toggleLike(postId));
   };
-  // console.log("isLiked", isLiked[postId as number]);
-  // localStorage.removeItem("persist:root");
-  // localStorage.clear();
-
-  // console.log("Id", postId);
 
   return (
     <button

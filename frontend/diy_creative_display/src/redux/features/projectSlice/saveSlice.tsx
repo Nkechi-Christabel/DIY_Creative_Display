@@ -7,8 +7,10 @@ import { Status, SavePostValues } from "../../../types";
 const initialState: Status & {
   savedPosts: SavePostValues[];
   isSaved: boolean;
+  post_id: number;
 } = {
   savedPosts: [],
+  post_id: 0,
   isSaved: false,
   isFetching: false,
   isSuccess: false,
@@ -29,7 +31,6 @@ export const savePosts = createAsyncThunk(
         null,
         authHeader()
       );
-      console.log(response.data);
       return response.data;
     } catch (error) {
       console.error("Error occurred during save:", error);
@@ -60,6 +61,7 @@ export const SavePostSlice = createSlice({
     builder.addCase(savePosts.fulfilled, (state, action) => {
       state.isFetching = false;
       state.isSuccess = true;
+      state.post_id = action.payload.post_id;
       state.isSaved = action.payload.isSaved;
 
       return state;

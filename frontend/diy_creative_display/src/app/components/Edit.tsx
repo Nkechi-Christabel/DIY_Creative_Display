@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import {
   CreatePostValues,
+  EditPostValues,
   Option,
   PictureValues,
   PostValues,
@@ -24,12 +25,14 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { ImSpinner2 } from "react-icons/im";
 import { categories, ErrorPhotos } from "@/app/post/create/page";
 import { updatePost } from "@/redux/features/projectSlice/postFeaturesSlice";
+import { updateEditedPost } from "@/redux/features/projectSlice/postSlice";
 
 interface IProps {
   post: PostValues;
+  onClose: () => void;
 }
 
-export const Edit: React.FC<IProps> = ({ post }: IProps) => {
+export const Edit: React.FC<IProps> = ({ post, onClose }: IProps) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const [index, sedtIndex] = useState<number>();
@@ -65,13 +68,14 @@ export const Edit: React.FC<IProps> = ({ post }: IProps) => {
     photos: yup.array().of(
       yup
         .mixed<PictureValues>()
+        .required("This field is required")
         .test(
           "fileSize",
           "File too large",
-          (value) => (value as File)?.size <= FILE_SIZE
+          (value) => (value as File).size <= FILE_SIZE
         )
         .test("fileFormat", "Unsupported File Format", (value) =>
-          SUPPORTED_FORMATS.includes((value as File)?.type)
+          SUPPORTED_FORMATS.includes((value as File).type)
         )
     ),
   });
@@ -85,11 +89,12 @@ export const Edit: React.FC<IProps> = ({ post }: IProps) => {
     reset,
     handleSubmit,
     formState: { errors, isValid },
-  } = useForm<CreatePostValues>({
-    resolver: yupResolver<CreatePostValues>(schema),
+  } = useForm<EditPostValues>({
+    resolver: yupResolver<EditPostValues>(schema),
     mode: "onBlur",
   });
   const { onChange, ...params } = register("photos");
+
   //Checks for errors on photo, loops through if there is and remove the error
   //that matches he picture that was removed by the user
   const photosError =
@@ -107,8 +112,8 @@ export const Edit: React.FC<IProps> = ({ post }: IProps) => {
     const fields: string[] = ["title", "content", "categories"];
     fields.forEach((field: string) => {
       setValue(
-        field as keyof CreatePostValues,
-        post[field as keyof CreatePostValues]
+        field as keyof EditPostValues,
+        post[field as keyof EditPostValues]
       ); // Use keyof for safe access
 
       setValue("photos", [] as File[]);
@@ -142,8 +147,9 @@ export const Edit: React.FC<IProps> = ({ post }: IProps) => {
   };
 
   const content = watch("content");
-  const onSubmit: SubmitHandler<CreatePostValues> = (
-    data: CreatePostValues,
+
+  const onSubmit: SubmitHandler<EditPostValues> = async (
+    data: EditPostValues,
     e
   ) => {
     e?.preventDefault();
@@ -157,30 +163,30 @@ export const Edit: React.FC<IProps> = ({ post }: IProps) => {
       formData.append("photos", picture as File);
     });
 
-    dispatch(updatePost({ formData, postId: post.id }));
+    const response = await dispatch(updatePost({ formData, postId: post.id }));
+    console.log("Response", response.payload.updatedPost);
+    dispatch(updateEditedPost(response.payload.updatedPost));
+
     reset();
     setPicturePreview([]);
   };
 
   useEffect(() => {
-    if (isSuccess && isValid) {
+    if (isSuccess) {
       toast.success("Post created successfully.");
       dispatch(clearState());
       reset();
+      setTimeout(() => onClose(), 2000);
     } else if (isError) {
       toast.error(errorMessage);
       dispatch(clearState());
     }
   }, [dispatch, errorMessage, isError, isSuccess, reset]);
 
-//   console.log("Photos value", getValues("photos"));
-//   console.log("Valid?", isValid, errors);
-//   console.log("Photos", getValues("photos"));
-
   return (
     <>
       <div>
-        <ToastContainer position="top-right" />
+        <ToastContainer position="bottom-left" />
         <div>
           <div className="flex items-center space-x-3 mb-9">
             <ProfilePic name={currentUser.name} classes="text-xl w-10 h-10 " />

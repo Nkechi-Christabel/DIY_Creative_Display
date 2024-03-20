@@ -95,15 +95,7 @@ const Create = React.memo(() => {
 
   useEffect(() => {
     dispatch(clearState());
-  }, [dispatch]);
-
-  // useEffect(() => {
-  //   return () => {
-  //     if (!token) {
-  //       redirect("/login");
-  //     }
-  //   };
-  // }, [token]);
+  }, []);
 
   const schema = yup.object({
     title: yup
@@ -200,11 +192,11 @@ const Create = React.memo(() => {
   };
 
   useEffect(() => {
-    if (isSuccess && isValid) {
+    if (isSuccess) {
       toast.success("Post created successfully.");
-      dispatch(clearState());
-      reset();
       router.push("/");
+      reset();
+      dispatch(clearState());
     } else if (isError) {
       toast.error(errorMessage);
       dispatch(clearState());

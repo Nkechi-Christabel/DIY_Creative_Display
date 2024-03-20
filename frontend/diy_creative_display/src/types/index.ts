@@ -52,7 +52,7 @@ export interface EditPostValues {
   title: string;
   content: string;
   categories: Option;
-  photos?: PictureValues[];
+  photos?: PictureValues[] | undefined;
 }
 
 export interface CommentReducerValues {

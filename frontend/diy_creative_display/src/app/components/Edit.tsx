@@ -164,7 +164,6 @@ export const Edit: React.FC<IProps> = ({ post, onClose }: IProps) => {
     });
 
     const response = await dispatch(updatePost({ formData, postId: post.id }));
-    console.log("Response", response.payload.updatedPost);
     dispatch(updateEditedPost(response.payload.updatedPost));
 
     reset();

@@ -103,7 +103,7 @@ export const Post: React.FC<Iprops> = ({
     return src;
   };
 
-  console.log(posts);
+  // console.log(posts);
 
   return (
     <div className="posts">

@@ -55,7 +55,7 @@ export const LikedIcon: React.FC<Iprops> = ({
       />
       {showCount && (
         <span className="text-sm text-gray-600">
-          {(likes && likes[postId as number]) || 0}
+          {likes[postId as number] || 0}
         </span>
       )}
     </button>

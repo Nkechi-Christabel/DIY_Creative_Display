@@ -1,4 +1,4 @@
-from diy_app.extensions import db
+from diy_app.models import db
 
 class Base(db.Model):
     __abstract__ = True

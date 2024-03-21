@@ -13,7 +13,8 @@ from diy_app.routes.diy_post import configure_file_uploads
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = SECRET_KEY
-    app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql://{DB_USER}:{DB_PWD}@{DB_HOST}/{DB_NAME}"
+    # app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql://{DB_USER}:{DB_PWD}@{DB_HOST}/{DB_NAME}"
+    app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://diy_cd_user:vHFUC8kG381qiZSyUU0RPlyANiu4onaL@dpg-cnu859f109ks73ed132g-a.frankfurt-postgres.render.com/diy_creative_display"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # Configure Flask-Uploads

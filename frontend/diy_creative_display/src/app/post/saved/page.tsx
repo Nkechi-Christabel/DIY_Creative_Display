@@ -9,12 +9,15 @@ import { getSavedPosts } from "@/redux/features/projectSlice/saveSlice";
 import { GiEmptyMetalBucketHandle } from "react-icons/gi";
 import withAuth from "@/app/withAuth";
 import SavedPost from "@/app/components/SavedPost";
+import { RiLoader2Line } from "react-icons/ri";
 
 const Saved = () => {
   const dispatch = useAppDispatch();
   const { email } = useAppSelector((state: RootState) => state.login);
   const { users } = useAppSelector((state: RootState) => state.users);
-  const { savedPosts } = useAppSelector((state: RootState) => state.savedPosts);
+  const { savedPosts, isFetching } = useAppSelector(
+    (state: RootState) => state.savedPosts
+  );
   const user = users?.find((user: Users) => user?.email === email);
   const name = nameToCamelCase(user?.fullName as string);
 
@@ -71,6 +74,11 @@ const Saved = () => {
         </div>
         <div className="md:pt-10 flex-1 px-5 md:-mt-0 -mt-16">
           <h2 className="font-bold py-3">Saved Posts</h2>
+          {isFetching && (
+            <div className="flex items-center justify-center h-96">
+              <RiLoader2Line className="text-5xl text-yellow-500 animate-spin" />
+            </div>
+          )}
           {savedPosts.length === 0 ? (
             <div className="grid justify-center justify-items-center mt-5">
               <p className="bg-gradient-to-r from-red-600 via-pink-500 to-orange-600 text-transparent bg-clip-text text-">

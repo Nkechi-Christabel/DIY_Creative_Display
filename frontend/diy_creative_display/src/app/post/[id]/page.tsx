@@ -13,6 +13,7 @@ import { AiOutlineSave } from "react-icons/ai";
 import { ProfilePic } from "@/app/components/ProfilePic";
 import { nameToCamelCase } from "@/utils/reusables";
 import { CiEdit } from "react-icons/ci";
+import { timeAgo } from "@/utils/reusables";
 import { TfiControlForward } from "react-icons/tfi";
 import {
   addComment,
@@ -53,9 +54,8 @@ const PostDetails = React.memo(() => {
   );
   const [commentToBeUpdated, setCommentTobeUpdated] = useState("");
   const title = nameToCamelCase(post.title);
-  const postUserName = nameToCamelCase(
-    users.find((user) => user.id === post.user_id)?.fullName as string
-  );
+  const user = users.find((user) => user.id === post.user_id);
+  const postUserName = nameToCamelCase(user?.fullName as string);
   const { isSaved, post_id } = useAppSelector(
     (state: RootState) => state.savePost
   );
@@ -64,30 +64,6 @@ const PostDetails = React.memo(() => {
     dispatch(getOnePost(id));
     dispatch(getComments(id as number));
   }, [id]);
-
-  function timeAgo(dateString: string): string {
-    const now = new Date();
-    const commentDate = new Date(dateString);
-
-    // Calculate the difference in milliseconds
-    const differenceMs = now.getTime() - commentDate.getTime();
-
-    // Convert milliseconds to seconds, minutes, hours, and days
-    const secondsAgo = Math.floor(differenceMs / 1000);
-    const minutesAgo = Math.floor(secondsAgo / 60);
-    const hoursAgo = Math.floor(minutesAgo / 60);
-    const daysAgo = Math.floor(hoursAgo / 24);
-
-    if (daysAgo > 0) {
-      return `${daysAgo} day${daysAgo > 1 ? "s" : ""} ago`;
-    } else if (hoursAgo > 0) {
-      return `${hoursAgo} hour${hoursAgo > 1 ? "s" : ""} ago`;
-    } else if (minutesAgo > 0) {
-      return `${minutesAgo} minute${minutesAgo > 1 ? "s" : ""} ago`;
-    } else {
-      return `${secondsAgo} second${secondsAgo > 1 ? "s" : ""} ago`;
-    }
-  }
 
   const handleCommentValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCommentValue(e.target.value);
@@ -240,9 +216,14 @@ const PostDetails = React.memo(() => {
                 <h3 className="text-xl font-bold">Description</h3>
                 <p className="">{post.content}</p>
                 <h3 className="font-bold text-lg pt-7 pb-2">Author</h3>
-                <div className="flex space-x-2">
+                <div className="flex  space-x-2">
                   <ProfilePic name={postUserName} classes="text-sm w-8 h-8" />
-                  <span>{postUserName}</span>
+                  <div className="">
+                    <p className="">{postUserName}</p>
+                    <p className="text-gray-600 font-light text-sm">
+                      {timeAgo(user?.date_joined as string, "Hosting")}
+                    </p>
+                  </div>
                 </div>
               </div>
               <div className="flex-1">
@@ -265,7 +246,7 @@ const PostDetails = React.memo(() => {
           </div>
         )}
       </section>
-      <section className="comments bg-zinc-100 rounded h-96 overflow-scroll mb-3 mt-10 p-5">
+      <section className="comments bg-zinc-100 rounded h-96 overflow-scroll mb-3 mt-10 p-5 relative">
         <div className="container mx-auto max-w-4xl h-full pt-7">
           {fetching ? (
             <SkeletonLoader />
@@ -281,11 +262,11 @@ const PostDetails = React.memo(() => {
                       name={comment?.user.fullName}
                       classes="h-9 w-9"
                     />
-                    <div className="">
+                    <div>
                       <p className="font-semibold text-slate-500">
                         {nameToCamelCase(comment?.user.fullName)}
                         <span className="ml-2">
-                          {timeAgo(comment?.date_posted)}
+                          {timeAgo(comment?.date_posted, "ago")}
                         </span>
                       </p>
                       {comment?.id === comment_id && comment?.isOpen ? (

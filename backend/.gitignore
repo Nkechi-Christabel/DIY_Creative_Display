@@ -1,4 +1,10 @@
+<<<<<<< HEAD
 __pycache__/
 diy_app/__pycache__/
 config.py
 
+=======
+__pycache__
+/diy_app/config.py
+/.DS_Store
+>>>>>>> 464ca9d6eaea0eb7482d025aa36d93c692e314e8

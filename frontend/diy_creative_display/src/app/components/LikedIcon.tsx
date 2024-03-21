@@ -1,11 +1,8 @@
 import React from "react";
 import { RootState, useAppDispatch, useAppSelector } from "@/redux/store";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { ImHeart } from "react-icons/im";
-import {
-  likePosts,
-  // toggleLike,
-} from "../../redux/features/projectSlice/postFeaturesSlice";
+import { likePosts } from "../../redux/features/projectSlice/postFeaturesSlice";
 
 type Iprops = {
   postId: number | undefined;
@@ -21,7 +18,6 @@ export const LikedIcon: React.FC<Iprops> = ({
   const dispatch = useAppDispatch();
   const router = useRouter();
   const token = localStorage.getItem("token");
-  // const { likes } = useAppSelector((state: RootState) => state.likes);
   const { isLiked, likes, post_id } = useAppSelector(
     (state: RootState) => state.likes
   );
@@ -36,7 +32,6 @@ export const LikedIcon: React.FC<Iprops> = ({
       return;
     }
     dispatch(likePosts(postId));
-    // dispatch(toggleLike(postId));
   };
 
   return (

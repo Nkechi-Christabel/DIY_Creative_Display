@@ -26,7 +26,7 @@ const Home = () => {
 
   return (
     <main
-      className="container mx-auto max-w-7xl p-9 xl:px-0 h-screen scroll-smooth"
+      className="container mx-auto max-w-7xl py-9 px-5 xl:px-0 h-screen scroll-smooth"
       id="top"
     >
       <p className="text-4xl text-center max-w-3xl mx-auto pt-2 pb-5tracking-wide leading-normal">
@@ -42,12 +42,15 @@ const Home = () => {
             setSelectedCategory={setSelectedCategory}
             selectedCategory={selectedCategory}
           />
-          {isFetching && (
+          {isFetching ? (
             <div className="flex items-center justify-center h-96">
               <RiLoader2Line className="text-5xl text-yellow-500 animate-spin" />
             </div>
-          )}
-          {!isFetching && (
+          ) : isError ? (
+            <div className="flex justify-center items-center text-xl text-pretty font-light font text-amber-700 h-96">
+              {errorMessage}
+            </div>
+          ) : (
             <Post
               selectedCategory={selectedCategory}
               posts={posts}

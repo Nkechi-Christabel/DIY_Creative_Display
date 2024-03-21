@@ -57,6 +57,7 @@ export const MyModal: React.FC<IProps> = ({
             width={300}
             height={200}
             loader={loaderProp}
+            unoptimized={true}
             className="w-full h-auto rounded-lg"
           />
         </div>

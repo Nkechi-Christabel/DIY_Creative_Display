@@ -75,6 +75,7 @@ const SavedPost: React.FC<Iprops> = ({ posts, users }: Iprops) => {
                 width={300}
                 height={200}
                 loader={loaderProp}
+                unoptimized={true}
                 className="w-full h-72 xm:h-auto rounded-xl object-cover"
               />
 

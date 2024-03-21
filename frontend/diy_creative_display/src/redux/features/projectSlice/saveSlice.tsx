@@ -33,7 +33,7 @@ export const savePosts = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      console.error("Error occurred during save:", error);
+      // console.error("Error occurred during save:", error);
       if (axios.isAxiosError(error)) {
         return rejectWithValue(error.response?.data);
       } else {
@@ -84,7 +84,7 @@ export const getSavedPosts = createAsyncThunk(
       const response = await base.get("/saves", authHeader());
       return response.data;
     } catch (error) {
-      console.error("Error occurred while getting posts:", error);
+      // console.error("Error occurred while getting posts:", error);
       if (axios.isAxiosError(error)) {
         return rejectWithValue(error.response?.data);
       } else {

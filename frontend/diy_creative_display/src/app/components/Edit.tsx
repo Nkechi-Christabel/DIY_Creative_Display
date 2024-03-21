@@ -238,6 +238,7 @@ export const Edit: React.FC<IProps> = ({ post, onClose }: IProps) => {
                         alt="Image upload"
                         width={250}
                         height={250}
+                        unoptimized={true}
                         className="h-40"
                       />
                     </div>

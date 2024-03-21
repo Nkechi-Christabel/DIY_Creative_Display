@@ -29,7 +29,7 @@ export const postComment = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      console.error("Error occurred while adding comment:", error);
+      // console.error("Error occurred while adding comment:", error);
       if (axios.isAxiosError(error)) {
         return rejectWithValue(error.response?.data);
       } else {
@@ -79,7 +79,7 @@ export const getComments = createAsyncThunk(
       const response = await base.get(`/post/${postId}/comments`);
       return response.data;
     } catch (error) {
-      console.error("Error occurred while fetching comments:", error);
+      // console.error("Error occurred while fetching comments:", error);
       if (axios.isAxiosError(error)) {
         return rejectWithValue(error.response?.data);
       } else {
@@ -93,7 +93,7 @@ export const FetchCommentsSlice = createSlice({
   name: "fetchComments",
   initialState,
   reducers: {
-    clearState: (state) => {
+    fetchCommentsClearState: (state) => {
       state.isError = false;
       state.isSuccess = false;
       state.isFetching = false;
@@ -159,7 +159,7 @@ export const deleteComment = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      console.error("Error occurred during signup:", error);
+      // console.error("Error occurred during signup:", error);
       if (axios.isAxiosError(error)) {
         return rejectWithValue(error.response?.data);
       } else {
@@ -219,7 +219,7 @@ export const updateComment = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      console.error("Error occurred while adding comment:", error);
+      // console.error("Error occurred while adding comment:", error);
       if (axios.isAxiosError(error)) {
         return rejectWithValue(error.response?.data);
       } else {

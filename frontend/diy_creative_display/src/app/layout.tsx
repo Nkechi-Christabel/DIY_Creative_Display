@@ -11,7 +11,11 @@ const ReduxProvider = dynamic(() => import("../redux/Provider"), {
   ssr: false,
 });
 
-const inter = Lato({ weight: ["300", "400"], subsets: ["latin"] });
+const inter = Lato({
+  weight: ["300", "400"],
+  subsets: ["latin"],
+  preload: true,
+});
 
 export const metadata: Metadata = {
   title: "DIY Creative Display",
@@ -23,7 +27,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body suppressHydrationWarning={true} className={inter.className}>
         <ReduxProvider>
           <Header />
           {children}

@@ -194,9 +194,9 @@ const Create = React.memo(() => {
   useEffect(() => {
     if (isSuccess) {
       toast.success("Post created successfully.");
-      router.push("/");
       reset();
       dispatch(clearState());
+      router.push("/");
     } else if (isError) {
       toast.error(errorMessage);
       dispatch(clearState());
@@ -259,7 +259,7 @@ const Create = React.memo(() => {
                         alt="Image upload"
                         width={250}
                         height={250}
-                        className="h-40"
+                        className="w-60 h-56 object-cover"
                       />
                     </div>
                   ))}

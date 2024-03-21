@@ -2,7 +2,10 @@
 import React, { useEffect, useState } from "react";
 import clsx from "clsx";
 import { RootState, useAppDispatch, useAppSelector } from "@/redux/store";
-import { getOnePost } from "@/redux/features/projectSlice/postSlice";
+import {
+  fetchAPostclearState,
+  getOnePost,
+} from "@/redux/features/projectSlice/postSlice";
 import { useParams } from "next/navigation";
 import { LikedIcon } from "@/app/components/LikedIcon";
 import { IoSaveOutline } from "react-icons/io5";
@@ -27,6 +30,8 @@ import { MyModal } from "@/app/components/Modal";
 import { useRouter } from "next/navigation";
 import { savePosts } from "@/redux/features/projectSlice/saveSlice";
 import Image from "next/image";
+import { TbLoaderQuarter } from "react-icons/tb";
+import { SkeletonLoader } from "@/app/components/SkeletonLoader";
 
 const PostDetails = React.memo(() => {
   const router = useRouter();
@@ -37,12 +42,13 @@ const PostDetails = React.memo(() => {
   const [isOpen, setIsOpen] = useState(false);
   const [isModalImage, setIsModalImage] = useState(false);
   const [commentValue, setCommentValue] = useState("");
-  const [paramsId, setParamsId] = useState<number>();
   const id = params?.id ? parseInt(params.id.toString()) : null;
-  const { post } = useAppSelector((state: RootState) => state.fetchPost);
+  const { post, isFetching } = useAppSelector(
+    (state: RootState) => state.fetchPost
+  );
   const { users } = useAppSelector((state: RootState) => state.users);
   const { currentUser } = useAppSelector((state: RootState) => state.signup);
-  const { comments } = useAppSelector(
+  const { comments, isFetching: fetching } = useAppSelector(
     (state: RootState) => state.fetchComments
   );
   const [commentToBeUpdated, setCommentTobeUpdated] = useState("");
@@ -56,12 +62,8 @@ const PostDetails = React.memo(() => {
 
   useEffect(() => {
     dispatch(getOnePost(id));
-    setParamsId(id as number);
-  }, [post.id, paramsId]);
-
-  useEffect(() => {
-    dispatch(getComments(post.id as number));
-  }, [post.id, paramsId]);
+    dispatch(getComments(id as number));
+  }, [id]);
 
   function timeAgo(dateString: string): string {
     const now = new Date();
@@ -161,159 +163,180 @@ const PostDetails = React.memo(() => {
       />
 
       <section className="pt-5">
-        <div className="">
-          <div className="flex justify-between items-center">
-            <h3 className="text-2xl">{title}</h3>
-            <div className="flex items-center space-x-5">
-              <LikedIcon
-                postId={post.id as number}
-                showCount={false}
-                className="border border-gray-200 rounded-full p-3 bg-red-50"
-              />
-
-              <span className="border border-gray-200 bg-slate-50 p-3 rounded-full group">
-                <AiOutlineSave
-                  className="text-lg cursor-pointer"
-                  onClick={() => handleSavePost(post.id as number)}
-                />
-                <span className="absolute right-24 top-20 text-yellow-700 bg-white py-2 px-3 shadow-lg shadow-slate-300 border border-gray-200 rounded transition-all ease-out-quart duration-500 hidden group-hover:block">
-                  {`${
-                    isSaved && post.id === post_id
-                      ? "Post saved"
-                      : "Save for later?"
-                  }`}
-                </span>
-              </span>
-            </div>
+        {isFetching ? (
+          <div className="flex justify-center">
+            <TbLoaderQuarter className="text-5xl text-amber-700 animate-spin" />
           </div>
-          <div className="md:flex md:flex-row flex-col space-y-5 md:space-x-5 md:space-y-0 pt-4">
-            <div
-              className="flex-[4] cursor-pointer"
-              onClick={() => {
-                handleOpenModal();
-                setIsModalImage(true);
-              }}
-            >
-              <Image
-                src={post?.photos && (post?.photos[index] as unknown as string)}
-                alt={post?.title}
-                width={300}
-                height={200}
-                loader={loaderProp}
-                className="w-full h-[38rem] rounded-lg object-cover"
-              />
+        ) : (
+          <div className="">
+            <div className="flex justify-between items-center">
+              <h3 className="text-2xl">{title}</h3>
+              <div className="flex items-center space-x-5">
+                <LikedIcon
+                  postId={post.id as number}
+                  showCount={false}
+                  className="border border-gray-200 rounded-full p-3 bg-red-50"
+                />
+
+                <span className="border border-gray-200 bg-slate-50 p-3 rounded-full group cursor-pointer">
+                  <AiOutlineSave
+                    className="text-lg "
+                    onClick={() => handleSavePost(post.id as number)}
+                  />
+                  <span className="absolute right-24 top-20 text-yellow-700 bg-white py-2 px-3 shadow-lg shadow-slate-300 border border-gray-200 rounded transition-all ease-out-quart duration-500 hidden group-hover:block">
+                    {`${
+                      isSaved && post.id === post_id
+                        ? "Post saved"
+                        : "Save for later?"
+                    }`}
+                  </span>
+                </span>
+              </div>
             </div>
-            <div className="flex md:flex-col space-x-4 md:space-x-0 flex-1 cursor-pointer md:h-90 overflow-scroll">
-              {post?.photos?.map((url, idx) => (
+
+            <div className="md:flex md:flex-row flex-col space-y-5 md:space-x-5 md:space-y-0 pt-4">
+              <div
+                className="flex-[4] cursor-pointer"
+                onClick={() => {
+                  handleOpenModal();
+                  setIsModalImage(true);
+                }}
+              >
                 <Image
-                  key={idx}
-                  src={url as unknown as string}
-                  alt={post.title}
+                  src={
+                    post?.photos && (post?.photos[index] as unknown as string)
+                  }
+                  alt={post?.title}
                   width={300}
                   height={200}
                   loader={loaderProp}
-                  className={`md:w-full w-3/12 h-auto rounded-lg mb-4 ${
-                    idx === index && "border-2 border-pink-400"
-                  }`}
-                  onClick={() => setIndex(idx)}
+                  unoptimized={true}
+                  priority={true}
+                  className="w-full h-[38rem] rounded-lg object-cover"
                 />
-              ))}
-            </div>
-          </div>
-          <div className="details sm:flex space-x-10 my-5">
-            <div className="flex-[3]">
-              <h3 className="text-xl font-bold">Description</h3>
-              <p className="">{post.content}</p>
-              <h3 className="font-bold text-lg pt-7 pb-2">Author</h3>
-              <div className="flex space-x-2">
-                <ProfilePic name={postUserName} classes="text-sm w-8 h-8" />
-                <span>{postUserName}</span>
+              </div>
+              <div className="flex md:flex-col space-x-4 md:space-x-0 flex-1 cursor-pointer md:h-90 overflow-scroll">
+                {post?.photos?.map((url, idx) => (
+                  <Image
+                    key={idx}
+                    src={url as unknown as string}
+                    alt={post.title}
+                    width={300}
+                    height={200}
+                    loader={loaderProp}
+                    unoptimized={true}
+                    priority={true}
+                    className={`md:w-full w-3/12 h-auto rounded-lg mb-4 ${
+                      idx === index && "border-2 border-pink-400"
+                    }`}
+                    onClick={() => setIndex(idx)}
+                  />
+                ))}
               </div>
             </div>
-            <div className="flex-1">
-              <h3 className="font-bold">Category:</h3>
-              <p className="text-sm">
-                {typeof post.categories !== "object" &&
-                  (post.categories as unknown as string)}
-              </p>
-              <CiEdit
-                className={clsx(
-                  "m-10 text-xl cursor-pointer",
-                  currentUser.id !== post.user_id
-                    ? "pointer-events-none"
-                    : "pointer-events-auto"
-                )}
-                onClick={handleOpenModal}
-              />
+
+            <div className="details sm:flex space-x-10 my-5">
+              <div className="flex-[3]">
+                <h3 className="text-xl font-bold">Description</h3>
+                <p className="">{post.content}</p>
+                <h3 className="font-bold text-lg pt-7 pb-2">Author</h3>
+                <div className="flex space-x-2">
+                  <ProfilePic name={postUserName} classes="text-sm w-8 h-8" />
+                  <span>{postUserName}</span>
+                </div>
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold">Category:</h3>
+                <p className="text-sm">
+                  {typeof post.categories !== "object" &&
+                    (post.categories as unknown as string)}
+                </p>
+                <CiEdit
+                  className={clsx(
+                    "m-10 text-xl cursor-pointer",
+                    currentUser.id !== post.user_id
+                      ? "pointer-events-none"
+                      : "pointer-events-auto"
+                  )}
+                  onClick={handleOpenModal}
+                />
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </section>
       <section className="comments bg-zinc-100 rounded h-96 overflow-scroll mb-3 mt-10 p-5">
         <div className="container mx-auto max-w-4xl h-full pt-7">
-          <div className="">
-            {comments?.map((comment, idx) => (
-              <div
-                key={comment?.id}
-                className={`relative group ${idx !== 0 && "mt-6"}`}
-              >
-                <div className="flex space-x-3">
-                  <ProfilePic name={comment?.user.fullName} classes="h-9 w-9" />
-                  <div className="">
-                    <p className="font-semibold text-slate-500">
-                      {nameToCamelCase(comment?.user.fullName)}
-                      <span className="ml-2">
-                        {timeAgo(comment?.date_posted)}
-                      </span>
-                    </p>
-                    {comment?.id === comment_id && comment?.isOpen ? (
-                      <div className="">
-                        <textarea
-                          name="updateComment"
-                          id="updateComment"
-                          cols={100}
-                          rows={2}
-                          value={commentToBeUpdated}
-                          className="outline-none py-2 px-4 mt-1"
-                          onChange={(e) => handleEditOnchange(e)}
-                        ></textarea>
-                        <p className="text-sm text-amber-700  font-semibold space-x-3">
-                          <span
-                            className="cursor-pointer"
-                            onClick={() => handleEditCancel(comment.id)}
-                          >
-                            Cancel
-                          </span>
-                          <span
-                            className="cursor-pointer"
-                            onClick={() => handleEditSave(comment.id)}
-                          >
-                            Save
-                          </span>
-                        </p>
-                      </div>
-                    ) : (
-                      <p>{comment?.content}</p>
-                    )}
+          {fetching ? (
+            <SkeletonLoader />
+          ) : (
+            <div>
+              {comments?.map((comment, idx) => (
+                <div
+                  key={comment?.id}
+                  className={`relative group ${idx !== 0 && "mt-6"}`}
+                >
+                  <div className="flex space-x-3">
+                    <ProfilePic
+                      name={comment?.user.fullName}
+                      classes="h-9 w-9"
+                    />
+                    <div className="">
+                      <p className="font-semibold text-slate-500">
+                        {nameToCamelCase(comment?.user.fullName)}
+                        <span className="ml-2">
+                          {timeAgo(comment?.date_posted)}
+                        </span>
+                      </p>
+                      {comment?.id === comment_id && comment?.isOpen ? (
+                        <div className="">
+                          <textarea
+                            name="updateComment"
+                            id="updateComment"
+                            cols={100}
+                            rows={2}
+                            value={commentToBeUpdated}
+                            className="outline-none py-2 px-4 mt-1"
+                            onChange={(e) => handleEditOnchange(e)}
+                          ></textarea>
+                          <p className="text-sm text-amber-700  font-semibold space-x-3">
+                            <span
+                              className="cursor-pointer"
+                              onClick={() => handleEditCancel(comment.id)}
+                            >
+                              Cancel
+                            </span>
+                            <span
+                              className="cursor-pointer"
+                              onClick={() => handleEditSave(comment.id)}
+                            >
+                              Save
+                            </span>
+                          </p>
+                        </div>
+                      ) : (
+                        <p>{comment?.content}</p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="editDelete hidden group-hover:flex items-center space-x-3 absolute -top-1 right-10 bg-slate-200 rounded py-1 px-3 transition-all">
+                    <CiEdit
+                      className={`text-[1.4rem] hover:text-gray-700 ${
+                        currentUser.id === comment?.user.id
+                          ? "pointer-events-auto cursor-pointer"
+                          : "pointer-events-none"
+                      }`}
+                      onClick={() => handleEditIcon(comment.id)}
+                    />
+                    <MdOutlineDeleteOutline
+                      className="text-[1.4rem] text-red-500 hover:text-red-700 cursor-pointer"
+                      onClick={() => handleDelete(comment.post_id, comment.id)}
+                    />
                   </div>
                 </div>
-                <div className="editDelete hidden group-hover:flex items-center space-x-3 absolute -top-1 right-10 bg-slate-200 rounded py-1 px-3 transition-all">
-                  <CiEdit
-                    className={`text-[1.4rem] hover:text-gray-700 ${
-                      currentUser.id === comment?.user.id
-                        ? "pointer-events-auto cursor-pointer"
-                        : "pointer-events-none"
-                    }`}
-                    onClick={() => handleEditIcon(comment.id)}
-                  />
-                  <MdOutlineDeleteOutline
-                    className="text-[1.4rem] text-red-500 hover:text-red-700 cursor-pointer"
-                    onClick={() => handleDelete(comment.post_id, comment.id)}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
           <div className="relative flex items-end h-full">
             <ProfilePic
               name={currentUser?.name}

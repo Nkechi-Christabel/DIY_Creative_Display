@@ -7,7 +7,7 @@ import clsx from "clsx";
 import Default from "../../../public/assets/default.jpg";
 import { ProfilePic } from "./ProfilePic";
 import { LiaSave } from "react-icons/lia";
-// import Link from "next/link";
+
 import { useRouter } from "next/navigation";
 import { useAppSelector, RootState } from "@/redux/store";
 import { LikedIcon } from "./LikedIcon";
@@ -103,8 +103,6 @@ export const Post: React.FC<Iprops> = ({
     return src;
   };
 
-  // console.log(posts);
-
   return (
     <div className="posts">
       <div className="grid grid-cols-[repeat(auto-fill,minmax(270px,1fr))] gap-7 mt-4 pb-32">
@@ -123,6 +121,8 @@ export const Post: React.FC<Iprops> = ({
                 width={300}
                 height={200}
                 loader={loaderProp}
+                unoptimized={true}
+                priority={true}
                 className="w-full h-72 xm:h-auto rounded-xl object-cover"
               />
 

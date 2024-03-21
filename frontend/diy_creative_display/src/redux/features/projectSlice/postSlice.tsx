@@ -11,12 +11,12 @@ const initialState: Status & {
 } = {
   posts: [],
   post: {
-    id: null,
+    id: 0,
     title: "",
     content: "",
     categories: { id: "", name: "" },
     photos: [],
-    user_id: null,
+    user_id: 0,
   },
   searchValue: "",
   isFetching: false,
@@ -36,7 +36,7 @@ export const createPost = createAsyncThunk(
       const response = await base.post("/post", payload, authHeader());
       return response.data;
     } catch (error) {
-      console.error("Error occurred while creating a post:", error);
+      // console.error("Error occurred while creating a post:", error);
       if (axios.isAxiosError(error)) {
         return rejectWithValue(error.response?.data);
       } else {
@@ -87,7 +87,7 @@ export const getAllPosts = createAsyncThunk(
       const response = await base.get("/posts");
       return response.data;
     } catch (error) {
-      console.error("Error occurred while getting posts:", error);
+      // console.error("Error occurred while getting posts:", error);
       if (axios.isAxiosError(error)) {
         return rejectWithValue(error.response?.data);
       } else {
@@ -121,6 +121,7 @@ export const FetchPostsSlice = createSlice({
       state.isFetching = true;
     });
     builder.addCase(getAllPosts.fulfilled, (state, action) => {
+      state.isError = false;
       state.isFetching = false;
       state.isSuccess = true;
       state.posts = action.payload;
@@ -128,6 +129,7 @@ export const FetchPostsSlice = createSlice({
       return state;
     });
     builder.addCase(getAllPosts.rejected, (state, action) => {
+      state.isSuccess = false;
       state.isFetching = false;
       state.isError = true;
       state.errorMessage =
@@ -145,7 +147,7 @@ export const getOnePost = createAsyncThunk(
       const response = await base.get(`/post/${id}`);
       return response.data;
     } catch (error) {
-      console.error("Error occurred while fetching a post:", error);
+      // console.error("Error occurred while fetching a post:", error);
       if (axios.isAxiosError(error)) {
         return rejectWithValue(error.response?.data);
       } else {
@@ -159,7 +161,7 @@ export const FetchOnePostSlice = createSlice({
   name: "getPost",
   initialState,
   reducers: {
-    clearState: (state) => {
+    fetchAPostclearState: (state) => {
       state.isError = false;
       state.isSuccess = false;
       state.isFetching = false;
@@ -194,6 +196,7 @@ export const FetchOnePostSlice = createSlice({
 });
 
 export const { clearState } = CreatePostSlice.actions;
+export const { fetchAPostclearState } = FetchOnePostSlice.actions;
 export const { filterPosts, getSearchValue } = FetchPostsSlice.actions;
 export const { updateEditedPost } = FetchOnePostSlice.actions;
 export const createPostReducer = CreatePostSlice.reducer;

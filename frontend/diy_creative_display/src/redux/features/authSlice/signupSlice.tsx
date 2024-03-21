@@ -9,7 +9,7 @@ const base = axios.create({
 });
 
 const initialState: Status & {
-  currentUser: { name: string; id: number | undefined };
+  currentUser: { name: string; id: number };
   users: Users[];
 } = {
   currentUser: { name: "", id: 0 },
@@ -29,7 +29,7 @@ export const signupUser = createAsyncThunk(
       });
       return response.data;
     } catch (error) {
-      console.error("Error occurred during signup:", error);
+      // console.error("Error occurred during signup:", error);
       if (axios.isAxiosError(error)) {
         return rejectWithValue(error.response?.data);
       } else {
@@ -47,7 +47,7 @@ export const SignupSlice = createSlice({
       state.isError = false;
       state.isSuccess = false;
       state.isFetching = false;
-      state.currentUser = {name: "", id: 0}
+      // state.currentUser = { name: "", id: 0 };
 
       return state;
     },
@@ -57,7 +57,7 @@ export const SignupSlice = createSlice({
     ) => {
       state.currentUser = {
         name: payload.name,
-        id: payload.id,
+        id: payload.id as number,
       };
     },
   },

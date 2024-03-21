@@ -75,8 +75,8 @@ export interface CommentValues {
 }
 
 export interface PostValues extends CreatePostValues {
-  id: number | null;
-  user_id: number | null;
+  id: number;
+  user_id: number;
 }
 
 export interface SavePostValues {

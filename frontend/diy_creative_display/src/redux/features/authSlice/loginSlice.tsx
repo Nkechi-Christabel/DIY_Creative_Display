@@ -31,7 +31,7 @@ export const loginUser = createAsyncThunk(
       }
       return response.data;
     } catch (error) {
-      console.error("Error occurred during login:", error);
+      // console.error("Error occurred during login:", error);
       if (axios.isAxiosError(error)) {
         return rejectWithValue(error.response?.data);
       } else {

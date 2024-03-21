@@ -8,11 +8,11 @@ const initialState: Status & {
   likes: Record<number, number>;
   // isLiked: Record<number, boolean | {}>;
   isLiked: boolean;
-  post_id: number | null;
+  post_id: number;
 } = {
   likes: {},
   isLiked: false,
-  post_id: null,
+  post_id: 0,
   isFetching: false,
   isSuccess: false,
   isError: false,
@@ -34,7 +34,7 @@ export const likePosts = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      console.error("Error occurred while liking a post:", error);
+      // console.error("Error occurred while liking a post:", error);
       if (axios.isAxiosError(error)) {
         return rejectWithValue(error.response?.data);
       } else {
@@ -95,7 +95,7 @@ export const deletePost = createAsyncThunk(
       const response = await base.delete(`/post/${postId}`, authHeader());
       return response.data;
     } catch (error) {
-      console.error("Error occurred while deleting a post:", error);
+      // console.error("Error occurred while deleting a post:", error);
       if (axios.isAxiosError(error)) {
         return rejectWithValue(error.response?.data);
       } else {
@@ -151,7 +151,7 @@ export const updatePost = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      console.error("Error occurred while updating a post:", error);
+      // console.error("Error occurred while updating a post:", error);
       if (axios.isAxiosError(error)) {
         return rejectWithValue(error.response?.data);
       } else {

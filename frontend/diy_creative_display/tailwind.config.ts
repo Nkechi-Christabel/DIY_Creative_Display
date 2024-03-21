@@ -53,10 +53,19 @@ const config: Config = {
             animationTimingFunction: "cubic-bezier(0, 0, 0.2, 1)",
           },
         },
+        pulse: {
+          "0%, 100%": {
+            opacity: "1",
+          },
+          "50%": {
+            opacity: ".5",
+          },
+        },
       },
       animation: {
         spin: "spin 1s linear infinite",
-        animation: "bounce 1s infinite",
+        boune: "bounce 1s infinite",
+        pulse: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
       },
       screens: {
         xxm: "320px",

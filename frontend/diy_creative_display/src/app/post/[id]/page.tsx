@@ -2,10 +2,7 @@
 import React, { useEffect, useState } from "react";
 import clsx from "clsx";
 import { RootState, useAppDispatch, useAppSelector } from "@/redux/store";
-import {
-  fetchAPostclearState,
-  getOnePost,
-} from "@/redux/features/projectSlice/postSlice";
+import { getOnePost } from "@/redux/features/projectSlice/postSlice";
 import { useParams } from "next/navigation";
 import { LikedIcon } from "@/app/components/LikedIcon";
 import { IoSaveOutline } from "react-icons/io5";

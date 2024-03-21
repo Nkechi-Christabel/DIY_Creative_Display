@@ -8,12 +8,13 @@ from diy_app.models.likes import Like
 from diy_app.models.comment import Comment
 from diy_app.models.save import Save
 from diy_app.routes.diy_post import configure_file_uploads
-
+import os
 
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = SECRET_KEY
-    app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql://{DB_USER}:{DB_PWD}@{DB_HOST}/{DB_NAME}"
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
+
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # Configure Flask-Uploads

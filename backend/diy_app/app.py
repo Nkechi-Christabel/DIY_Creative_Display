@@ -10,6 +10,8 @@ from diy_app.models.save import Save
 from diy_app.routes.diy_post import configure_file_uploads
 import os
 
+
+
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = SECRET_KEY
@@ -42,4 +44,4 @@ if __name__ == "__main__":
     # HOST = os.getenv('FLASK_HOST', '0.0.0.0') 
     # PORT = int(os.getenv('FLASK_PORT', 5000)) 
 
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    # app.run(host='0.0.0.0', port=5000, debug=True)

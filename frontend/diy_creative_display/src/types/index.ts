@@ -85,3 +85,9 @@ export interface SavePostValues {
   post_id: number;
   post_details: PostValues;
 }
+
+export interface ErrorPhotos {
+  message: string;
+  type: string;
+  ref: undefined;
+}

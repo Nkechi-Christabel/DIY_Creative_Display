@@ -1,5 +1,5 @@
-import React, { useRef, useState } from "react";
-import { categories } from "../post/create/page";
+import React, { useRef } from "react";
+import { categories } from "../../utils/reusables";
 import { IoChevronBackSharp, IoChevronForwardSharp } from "react-icons/io5";
 
 type Iprops = {

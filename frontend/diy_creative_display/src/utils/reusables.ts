@@ -39,3 +39,43 @@ export function timeAgo(dateString: string, ending: string): string {
     return `${secondsAgo} second${secondsAgo > 1 ? "s" : ""} ${ending}`;
   }
 }
+
+export const categories = [
+  {
+    id: "Home Decor",
+    name: "Home Decor",
+  },
+  {
+    id: "Crafts",
+    name: "Crafts",
+  },
+  { id: "Woodworking", name: "Woodworking" },
+  {
+    id: "Diy Gifts",
+    name: "Diy Gifts",
+  },
+  {
+    id: "Organization and Storage",
+    name: "Organization and Storage",
+  },
+  {
+    id: "Fashion",
+    name: "Fashion",
+  },
+  {
+    id: "Art and Design",
+    name: "Art and Design",
+  },
+  {
+    id: "Tech and Gadgets",
+    name: "Tech and Gadgets",
+  },
+  {
+    id: "Health and Wellness",
+    name: "Health and Wellness",
+  },
+  {
+    id: "Others",
+    name: "Others",
+  },
+];

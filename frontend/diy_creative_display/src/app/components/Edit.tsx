@@ -1,13 +1,14 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import {
-  CreatePostValues,
   EditPostValues,
   Option,
   PictureValues,
   PostValues,
+  ErrorPhotos,
 } from "../../types";
 import { clearState } from "../../redux/features/projectSlice/postFeaturesSlice";
+import { categories } from "@/utils/reusables";
 import Image from "next/image";
 import { InputField } from "@/app/components/InputField";
 import { IoCamera } from "react-icons/io5";
@@ -23,7 +24,6 @@ import { SelectField } from "@/app/components/SelectField";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ImSpinner2 } from "react-icons/im";
-import { categories, ErrorPhotos } from "@/app/post/create/page";
 import { updatePost } from "@/redux/features/projectSlice/postFeaturesSlice";
 import { updateEditedPost } from "@/redux/features/projectSlice/postSlice";
 
@@ -239,7 +239,7 @@ export const Edit: React.FC<IProps> = ({ post, onClose }: IProps) => {
                         width={250}
                         height={250}
                         unoptimized={true}
-                        className="h-40"
+                        className="w-60 h-56 object-cover"
                       />
                     </div>
                   ))}

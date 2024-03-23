@@ -1,10 +1,16 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { CreatePostValues, Option, PictureValues } from "../../../types";
+import {
+  CreatePostValues,
+  Option,
+  PictureValues,
+  ErrorPhotos,
+} from "../../../types";
 import {
   createPost,
   clearState,
 } from "../../../redux/features/projectSlice/postSlice";
+import { categories } from "../../../utils/reusables";
 import Image from "next/image";
 import { InputField } from "@/app/components/InputField";
 import { IoCamera } from "react-icons/io5";
@@ -25,52 +31,6 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ImSpinner2 } from "react-icons/im";
 import withAuth from "@/app/withAuth";
-
-export const categories = [
-  {
-    id: "Home Decor",
-    name: "Home Decor",
-  },
-  {
-    id: "Crafts",
-    name: "Crafts",
-  },
-  { id: "Woodworking", name: "Woodworking" },
-  {
-    id: "Diy Gifts",
-    name: "Diy Gifts",
-  },
-  {
-    id: "Organization and Storage",
-    name: "Organization and Storage",
-  },
-  {
-    id: "Fashion",
-    name: "Fashion",
-  },
-  {
-    id: "Art and Design",
-    name: "Art and Design",
-  },
-  {
-    id: "Tech and Gadgets",
-    name: "Tech and Gadgets",
-  },
-  {
-    id: "Health and Wellness",
-    name: "Health and Wellness",
-  },
-  {
-    id: "Others",
-    name: "Others",
-  },
-];
-
-export interface ErrorPhotos {
-  message: string;
-  type: string;
-  ref: undefined;
-}
 
 const Create = React.memo(() => {
   const dispatch = useAppDispatch();
@@ -300,6 +260,7 @@ const Create = React.memo(() => {
     </>
   );
 });
+
 const AuthProtectedCreatePost = withAuth(Create);
 
 export default AuthProtectedCreatePost;

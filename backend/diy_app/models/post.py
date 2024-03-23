@@ -30,7 +30,7 @@ class Post(Base):
     
     def to_dict_with_images(self):
         images = json.loads(self.image_filenames)
-        image_urls = ['http://127.0.0.1:5000/_uploads/photos/' + image for image in images]
+        image_urls = ['http://100.26.50.175/_uploads/photos/' + image for image in images]
         return {
             'id': self.id,
             'title': self.title,

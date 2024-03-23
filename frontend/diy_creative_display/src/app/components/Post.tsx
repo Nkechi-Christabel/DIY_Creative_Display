@@ -2,7 +2,6 @@ import { CreatePostValues, PostValues, Users } from "@/types";
 import Image from "next/image";
 import React, { useEffect } from "react";
 import { useAppDispatch } from "../../redux/store";
-// import { getAllUsers } from "@/redux/features/authSlice/signupSlice";
 import clsx from "clsx";
 import Default from "../../../public/assets/default.jpg";
 import { ProfilePic } from "./ProfilePic";
@@ -102,6 +101,8 @@ export const Post: React.FC<Iprops> = ({
   const loaderProp = ({ src }: { src: string }) => {
     return src;
   };
+
+  console.log("Post", posts);
 
   return (
     <div className="posts">

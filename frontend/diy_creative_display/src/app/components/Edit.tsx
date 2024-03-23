@@ -239,7 +239,7 @@ export const Edit: React.FC<IProps> = ({ post, onClose }: IProps) => {
                         width={250}
                         height={250}
                         unoptimized={true}
-                        className="h-40"
+                        className="w-60 h-56 object-cover"
                       />
                     </div>
                   ))}

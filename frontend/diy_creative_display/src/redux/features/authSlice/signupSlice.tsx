@@ -47,7 +47,7 @@ export const SignupSlice = createSlice({
       state.isError = false;
       state.isSuccess = false;
       state.isFetching = false;
-      // state.currentUser = { name: "", id: 0 };
+      state.currentUser = { name: "", id: 0 };
 
       return state;
     },

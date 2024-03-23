@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 from diy_app.models import db  # Import db from extensions.py
-# from diy_app.config import SECRET_KEY
+from diy_app.config import SECRET_KEY, DB_USER, DB_PWD, DB_HOST, DB_NAME
 from diy_app.models.user import User
 from diy_app.models.post import Post
 from diy_app.models.likes import Like
@@ -14,8 +14,10 @@ import os
 
 def create_app():
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
+    app.config['SECRET_KEY'] = SECRET_KEY
+    app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql://{DB_USER}:{DB_PWD}@{DB_HOST}/{DB_NAME}"
+    # app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
+    # app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -35,15 +37,16 @@ def create_app():
     # Function to configure Flask-Uploads
     configure_file_uploads(app)
 
-    CORS(app, origins=["http://localhost:3000"])
+    CORS(app, origins=["*"])
 
     return app
 
 app = create_app()
 
-# if __name__ == "__main__":
-   
+
+if __name__ == "__main__":
+    # app = create_app()
     # HOST = os.getenv('FLASK_HOST', '0.0.0.0') 
     # PORT = int(os.getenv('FLASK_PORT', 5000)) 
 
-    # app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)

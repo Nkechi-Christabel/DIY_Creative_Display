@@ -1,6 +1,5 @@
 import axios from "axios";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { WritableDraft } from "immer";
 import { LoginState } from "../../../types";
 import { LoginValues } from "../../../types";
 import { baseUrlApi } from "../../../axiosHelper/index";

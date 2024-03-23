@@ -32,12 +32,14 @@ def create_app():
     # Function to configure Flask-Uploads
     configure_file_uploads(app)
 
-    CORS(app, origins=["http://localhost:3000"])
+    CORS(app, origins=["*"])
 
     return app
 
+app = create_app()
+
 if __name__ == "__main__":
-    app = create_app()
+    # app = create_app()
     # HOST = os.getenv('FLASK_HOST', '0.0.0.0') 
     # PORT = int(os.getenv('FLASK_PORT', 5000)) 
 

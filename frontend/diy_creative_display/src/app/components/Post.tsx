@@ -102,6 +102,8 @@ export const Post: React.FC<Iprops> = ({
     return src;
   };
 
+  console.log("Post", posts);
+
   return (
     <div className="posts">
       <div className="grid grid-cols-[repeat(auto-fill,minmax(270px,1fr))] gap-7 mt-4 pb-32">

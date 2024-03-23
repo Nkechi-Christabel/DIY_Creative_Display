@@ -179,12 +179,14 @@ export const FetchOnePostSlice = createSlice({
     });
     builder.addCase(getOnePost.fulfilled, (state, action) => {
       state.isFetching = false;
+      state.isError = false;
       state.isSuccess = true;
       state.post = action.payload;
 
       return state;
     });
     builder.addCase(getOnePost.rejected, (state, action) => {
+      state.isSuccess = false;
       state.isFetching = false;
       state.isError = true;
       state.errorMessage =

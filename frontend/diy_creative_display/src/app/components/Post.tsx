@@ -14,8 +14,6 @@ import { MdOutlineDeleteOutline } from "react-icons/md";
 import { deletePost } from "@/redux/features/projectSlice/postFeaturesSlice";
 import { filterPosts } from "@/redux/features/projectSlice/postSlice";
 import { clearState, savePosts } from "@/redux/features/projectSlice/saveSlice";
-// import { ImSpinner2 } from "react-icons/im";
-// import { GrFormCheckmark } from "react-icons/gr";
 import { GiCheckMark } from "react-icons/gi";
 import { nameToCamelCase } from "@/utils/reusables";
 
@@ -101,8 +99,6 @@ export const Post: React.FC<Iprops> = ({
   const loaderProp = ({ src }: { src: string }) => {
     return src;
   };
-
-  console.log("Post", posts);
 
   return (
     <div className="posts">

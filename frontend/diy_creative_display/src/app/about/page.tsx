@@ -28,7 +28,7 @@ const About = () => {
     },
   ];
   return (
-    <div className="sm:pb-0 pb-32">
+    <div className="">
       <section className="hero scroll-smooth" id="top">
         <div className="bg-about-hero bg-cover bg-no-repeat h-[35rem] relative">
           <div className=" w-full h-full flex flex-col justify-center backdrop-brightness-[.60] text-white">

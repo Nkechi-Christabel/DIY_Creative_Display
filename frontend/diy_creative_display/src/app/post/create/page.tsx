@@ -154,8 +154,8 @@ const Create = React.memo(() => {
   useEffect(() => {
     if (isSuccess) {
       toast.success("Post created successfully.");
-      reset();
       dispatch(clearState());
+      reset();
       router.push("/");
     } else if (isError) {
       toast.error(errorMessage);

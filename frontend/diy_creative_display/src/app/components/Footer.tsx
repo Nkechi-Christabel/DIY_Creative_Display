@@ -18,7 +18,7 @@ export const Footer = () => {
     <>
       {!disableNavFooter.includes(pathname) && (
         <footer className="py-2 border-t bg-white shadow-2xl shadow-gray-700 fixed bottom-0 left-0 right-0">
-          <div className="container mx-auto max-w-7xl px-9 xl:px-0">
+          <div className="container mx-auto max-w-7xl px-5 xl:px-0">
             <div className="flex items-center flex-wrap gap-x-28 gap-y-3">
               <Logo />
               <ul className="flex flex-wrap gap-x-14 gap-y-2">

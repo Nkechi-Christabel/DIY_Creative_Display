@@ -27,7 +27,10 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body suppressHydrationWarning={true} className={inter.className}>
+      <body
+        suppressHydrationWarning={true}
+        className={`pb-32 md:pb-0 ${inter.className}`}
+      >
         <ReduxProvider>
           <Header />
           {children}

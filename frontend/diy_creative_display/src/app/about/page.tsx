@@ -28,7 +28,7 @@ const About = () => {
     },
   ];
   return (
-    <div>
+    <div className="sm:pb-0 pb-32">
       <section className="hero scroll-smooth" id="top">
         <div className="bg-about-hero bg-cover bg-no-repeat h-[35rem] relative">
           <div className=" w-full h-full flex flex-col justify-center backdrop-brightness-[.60] text-white">
@@ -189,9 +189,10 @@ const About = () => {
                 <Image
                   src={team.image}
                   alt="Team member"
-                  width={250}
-                  height={300}
-                  className="w-full h-3/6 rounded"
+                  width={0}
+                  height={0}
+                  priority={true}
+                  className="sm:w-80 w-full h-3/6 rounded hover:scale-100 hover:shadow-xl hover:shadow-gray-400 transition-all ease-in-out duration-700"
                 />
                 <h3 className="text-yellow-700 text-lg font-bold py-2">
                   {team.name}

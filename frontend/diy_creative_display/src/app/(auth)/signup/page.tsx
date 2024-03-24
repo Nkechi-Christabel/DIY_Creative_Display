@@ -101,7 +101,7 @@ const Signup: React.FC = () => {
         <div className="bg-auth-bg bg-cover bg-no-repeat w-full h-full shadow-lg shadow-slate-800">
           <Logo classes="text-white px-4 py-3" />
         </div>
-        <div className="flex flex-col items-center text-white bg-auth-200 bg-opacity-70 sm:pt-44 p-6 sml:w-[400px] sm:h-screen absolute z-10">
+        <div className="flex flex-col items-center text-white bg-auth-200 bg-opacity-70 sm:pt-44 p-6 sm:p-0 max-w-md w-11/12 sm:h-screen absolute z-10">
           <h1 className="text-3xl">SIGN UP</h1>
           <form
             onSubmit={handleSubmit(onSubmit)}

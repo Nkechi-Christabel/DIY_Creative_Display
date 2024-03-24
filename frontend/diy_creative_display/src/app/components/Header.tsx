@@ -119,7 +119,7 @@ export const Header = React.memo(() => {
                       <li key={item.name}>
                         <Link
                           className={clsx(
-                            "hover:text-gray-600",
+                            "hover:text-gray-600 font-semibold",
                             isActive && "text-yellow-700"
                           )}
                           href={item.href}
@@ -188,10 +188,10 @@ export const Header = React.memo(() => {
                   </div>
                 ) : (
                   <>
-                    <div className="md:block hidden hover:text-gray-600">
+                    <div className="md:block hidden hover:text-gray-600 font-semibold">
                       <Link href="/login">Log in</Link>
                     </div>
-                    <div className="text-white bg-black rounded-3xl py-2 px-4 hover:bg-gray-600">
+                    <div className="text-white bg-black rounded-3xl py-2 px-4 hover:bg-gray-700  font-semibold">
                       <Link href="signup">Sign Up</Link>
                     </div>
                   </>
@@ -227,7 +227,7 @@ export const Header = React.memo(() => {
                     );
                   })}
 
-                  <div className="border-t border-gray-200 py-4 mt-3 hover:text-gray-600">
+                  <div className="border-t border-gray-200 py-4 mt-3 hover:text-gray-600 font-semibold">
                     {token ? (
                       <Link href="/" onClick={() => handleSignout()}>
                         Sign out

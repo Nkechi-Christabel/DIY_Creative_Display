@@ -72,4 +72,4 @@ To run the DIY Creative Display locally, follow these steps:
 
 ## Licensing
 
-This project is licensed under the MIT License - see the[LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

@@ -42,7 +42,7 @@ export const LikedIcon: React.FC<Iprops> = ({
     >
       <ImHeart
         className={`text-gray-400 hover:text-pink-200 cursor-pointer transition-all active:scale-0 ease-in-out-circ duration-600
-          ${isLiked && postId === post_id ? "text-red-500" : ""}  ${
+          ${token && isLiked && postId === post_id ? "text-red-500" : ""}  ${
           token ? "active:scale-150" : ""
         }
           

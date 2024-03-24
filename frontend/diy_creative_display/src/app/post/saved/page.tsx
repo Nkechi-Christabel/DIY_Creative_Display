@@ -45,7 +45,7 @@ const Saved = () => {
       <div className="h-64 bg-saved-miniHero bg-no-repeat bg-cover bg-center">
         <div className=" w-full h-full backdrop-brightness-[.70]"></div>
       </div>
-      <section className="md:flex md:gap-x-36 pb-20">
+      <section className="md:flex md:gap-x-32">
         <div className=" md:bg-white md:shadow-md md:rounded pt-10 md:pb-10 pb-0 px-5 md:w-80 relative -md:top-40 -top-20 md:left-24">
           <div className="flex flex-col flex-1 items-center">
             <ProfilePic

@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Playfair_Display } from "next/font/google";
+import { Dancing_Script, Playfair_Display } from "next/font/google";
 import { LiaEyeSlashSolid, LiaEyeSolid } from "react-icons/lia";
 import Link from "next/link";
 import { LoginValues } from "../../../types";
@@ -25,6 +25,7 @@ import { InputField } from "../../components/InputField";
 import { Logo } from "@/app/components/Logo";
 
 const Playfair = Playfair_Display({ weight: "400", subsets: ["latin"] });
+const DancingScript = Dancing_Script({ weight: "400", subsets: ["latin"] });
 const schema = yup
   .object({
     email: yup
@@ -143,6 +144,11 @@ const Login: React.FC = () => {
             >
               Sign up.
             </Link>{" "}
+          </p>
+          <p
+            className={`text-xl font-light font-mono pt-2 ${DancingScript.className}`}
+          >
+            Creativity is you
           </p>
         </div>
       </div>

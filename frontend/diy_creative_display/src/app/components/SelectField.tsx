@@ -157,7 +157,7 @@ export const SelectField: React.FC<SelectFieldProps> = (props) => {
             leaveTo="opacity-0 scale-0"
           >
             <Listbox.Options
-              className="absolute z-20 mt-1  max-h-60 w-full overflow-auto rounded-md border bg-white py-1 text-base shadow-lg ring-opacity-5 focus:outline-none sm:text-sm"
+              className="relative z-20 max-h-60 w-full overflow-auto rounded-md border bg-white py-1 text-base shadow-lg ring-opacity-5 focus:outline-none sm:text-sm"
               ref={ref}
             >
               {arr &&

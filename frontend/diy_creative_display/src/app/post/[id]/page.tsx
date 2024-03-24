@@ -123,10 +123,7 @@ const PostDetails = React.memo(() => {
   };
 
   return (
-    <div
-      className="container mx-auto max-w-5xl p-5 mb-16 scroll-smooth"
-      id="top"
-    >
+    <div className="container mx-auto max-w-5xl p-5 scroll-smooth" id="top">
       <MyModal
         isOpen={isOpen}
         post={post}
@@ -171,6 +168,10 @@ const PostDetails = React.memo(() => {
               <div
                 className="flex-[4] cursor-pointer"
                 onClick={() => {
+                  handleOpenModal();
+                  setIsModalImage(true);
+                }}
+                onTouchEnd={() => {
                   handleOpenModal();
                   setIsModalImage(true);
                 }}
@@ -224,7 +225,7 @@ const PostDetails = React.memo(() => {
                 </div>
               </div>
               <div className="flex-1">
-                <h3 className="font-bold">Category:</h3>
+                <h3 className="font-bold pt-2 sm:pt-0">Category:</h3>
                 <p className="text-sm">
                   {typeof post.categories !== "object" &&
                     (post.categories as unknown as string)}
@@ -237,6 +238,7 @@ const PostDetails = React.memo(() => {
                       : "pointer-events-auto"
                   )}
                   onClick={handleOpenModal}
+                  onTouchEnd={handleOpenModal}
                 />
               </div>
             </div>

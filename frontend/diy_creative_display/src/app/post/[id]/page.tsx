@@ -74,6 +74,12 @@ const PostDetails = React.memo(() => {
     dispatch(addComment(response.payload.new_comment));
   };
 
+  const handlePressEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handlePostCommentDispatch();
+    }
+  };
+
   const handleDelete = (postId: number, commentId: number) => {
     dispatch(deleteComment({ postId, commentId }));
     dispatch(filterComments(commentId));
@@ -171,10 +177,6 @@ const PostDetails = React.memo(() => {
                   handleOpenModal();
                   setIsModalImage(true);
                 }}
-                onTouchEnd={() => {
-                  handleOpenModal();
-                  setIsModalImage(true);
-                }}
               >
                 <Image
                   src={
@@ -230,16 +232,16 @@ const PostDetails = React.memo(() => {
                   {typeof post.categories !== "object" &&
                     (post.categories as unknown as string)}
                 </p>
-                <CiEdit
-                  className={clsx(
-                    "m-10 text-xl cursor-pointer",
-                    currentUser.id !== post.user_id
-                      ? "pointer-events-none"
-                      : "pointer-events-auto"
-                  )}
-                  onClick={handleOpenModal}
-                  onTouchEnd={handleOpenModal}
-                />
+                <button type="button" onClick={handleOpenModal}>
+                  <CiEdit
+                    className={clsx(
+                      "m-10 text-xl cursor-pointer",
+                      currentUser.id !== post.user_id
+                        ? "pointer-events-none"
+                        : "pointer-events-auto"
+                    )}
+                  />
+                </button>
               </div>
             </div>
           </div>
@@ -330,6 +332,7 @@ const PostDetails = React.memo(() => {
               value={commentValue}
               className="bg-white border border-gray-50 rounded-full shadow-lg px-14 py-4 w-full outline-none mb-10"
               onChange={(e) => handleCommentValue(e)}
+              onKeyDown={(e) => handlePressEnter(e)}
             />
             <TfiControlForward
               className="text-2xl text-gray-600 hover:text-gray-800 absolute bottom-14 right-5 cursor-pointer"

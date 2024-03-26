@@ -214,7 +214,7 @@ const PostDetails = React.memo(() => {
             <div className="details sm:flex space-x-10 my-5">
               <div className="flex-[3]">
                 <h3 className="text-xl font-bold">Description</h3>
-                <p className="">{post.content}</p>
+                <p className="whitespace-pre-line">{post.content}</p>
                 <h3 className="font-bold text-lg pt-7 pb-2">Author</h3>
                 <div className="flex  space-x-2">
                   <ProfilePic name={postUserName} classes="text-sm w-8 h-8" />
@@ -299,7 +299,7 @@ const PostDetails = React.memo(() => {
                           </p>
                         </div>
                       ) : (
-                        <pre>{comment?.content}</pre>
+                        <p>{comment?.content}</p>
                       )}
                     </div>
                   </div>

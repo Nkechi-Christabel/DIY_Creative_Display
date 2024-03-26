@@ -45,7 +45,7 @@ export const MyModal: React.FC<IProps> = ({
       className={clsx(
         "container mx-auto rounded p-5 pt-6  max-h-full overflow-scroll",
         !isModalImage
-          ? "h-[35rem] mt-32 max-w-2xl bg-white shadow-lg shadow-neutral-600 backdrop-blur-2xl"
+          ? "h-[35rem] mt-32 max-w-2xl w-[95%] bg-white shadow-lg shadow-neutral-600 backdrop-blur-2xl"
           : "h-full max-w-3xl grid items-center"
       )}
     >

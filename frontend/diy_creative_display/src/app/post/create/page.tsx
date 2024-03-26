@@ -39,9 +39,8 @@ const Create = React.memo(() => {
   const [picturePreview, setPicturePreview] = useState<
     File[] | PictureValues[]
   >([]);
-  const { isSuccess, isError, errorMessage, isFetching } = useAppSelector(
-    (state: RootState) => state.createPost
-  );
+  const { isSuccess, isError, errorMessage, isFetching } =
+    useAppSelector((state: RootState) => state.createPost);
 
   const { currentUser } = useAppSelector((state: RootState) => state.signup);
 
@@ -167,7 +166,7 @@ const Create = React.memo(() => {
     <>
       <div className="flex px-5 bg-gradient-to-br from-amber-500 via-auth-100 to-amber-900 h-screen fixed right-0 left-0">
         <ToastContainer position="top-right" />
-        <div className="container mx-auto max-w-2xl mt-20 bg-white shadow-lg shadow-neutral-600 backdrop-blur-2xl rounded p-5 pt-6 h-[35rem] max-h-full overflow-scroll">
+        <div className="container mx-auto max-w-2xl md:mt-20 my-10 bg-white shadow-lg shadow-neutral-600 backdrop-blur-2xl rounded p-5 pt-6 h-[35rem] max-h-full overflow-scroll">
           <div className="flex items-center space-x-3 mb-9">
             <ProfilePic name={currentUser.name} classes="text-xl w-10 h-10 " />
             <p>{currentUser.name}</p>

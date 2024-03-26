@@ -23,7 +23,7 @@ export const Header = React.memo(() => {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [hover, setHover] = useState(false);
-  const [searchValue, setSearchValue] = useState<string>();
+  const [searchValue, setSearchValue] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const genericHamburgerLine = `bg-black transition ease transform duration-300`;
   const userInitials =
@@ -37,6 +37,7 @@ export const Header = React.memo(() => {
   const { users } = useAppSelector((state: RootState) => state.users);
   const user = users?.find((user: Users) => user?.email === email);
   const name = nameToCamelCase(user?.fullName as string);
+  const disableSearch = ["/post/saved", "/"];
 
   useEffect(() => {
     dispatch(handleCurrentUser({ name: name, id: user?.id }));
@@ -44,7 +45,7 @@ export const Header = React.memo(() => {
 
   useEffect(() => {
     dispatch(getSearchValue(searchValue));
-  });
+  }, []);
 
   const handleSignout = () => {
     dispatch(logout());
@@ -55,22 +56,20 @@ export const Header = React.memo(() => {
     setSearchValue(e.target.value);
   };
 
-  const disableSearch = ["/post/saved", "/"];
-
   const handleProfileHover = () => {
     setHover(true);
     setIsOpen(false);
-    setShowSearch(false);
   };
 
   const handleShowSearch = () => {
     if (!disableSearch.includes(pathname)) {
       router.push("/");
     }
-    setShowSearch(!showSearch);
     setHover(false);
     setIsOpen(false);
+    setShowSearch(!showSearch);
   };
+
 
   return (
     <>
@@ -208,7 +207,7 @@ export const Header = React.memo(() => {
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <div className="small_screen_dopdown_menu px-5">
+              <div className="small_screen_dopdown_menu px-1">
                 <ul className="px-5">
                   {navItems.map((item) => {
                     const isActive = item.href === pathname;
@@ -243,7 +242,9 @@ export const Header = React.memo(() => {
           <div
             className={clsx(
               "relative top-2 z-50 mx-auto max-w-2xl px-6",
-              showSearch ? "block" : "hidden"
+              showSearch && disableSearch.includes(pathname)
+                ? "block"
+                : "hidden"
             )}
           >
             <input

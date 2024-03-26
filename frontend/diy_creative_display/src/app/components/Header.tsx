@@ -23,7 +23,7 @@ export const Header = React.memo(() => {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [hover, setHover] = useState(false);
-  const [searchValue, setSearchValue] = useState(pathname);
+  const [searchValue, setSearchValue] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const genericHamburgerLine = `bg-black transition ease transform duration-300`;
   const userInitials =
@@ -69,6 +69,7 @@ export const Header = React.memo(() => {
     setIsOpen(false);
     setShowSearch(!showSearch);
   };
+
 
   return (
     <>

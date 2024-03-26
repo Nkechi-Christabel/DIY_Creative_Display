@@ -85,6 +85,7 @@ export const Post: React.FC<Iprops> = ({
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ) => {
     e.stopPropagation();
+    e.preventDefault();
     if (!token) {
       router.push("/login");
     }
@@ -130,6 +131,7 @@ export const Post: React.FC<Iprops> = ({
                 <button
                   type="button"
                   className="hidden group-hover:flex items-center text-white bg-black bg-opacity-45 rounded-full py-1 px-3 mt-18"
+                  onClick={(e) => handleSavePost(post.id as number, e)}
                 >
                   {isSaved && post.id === post_id ? (
                     <GiCheckMark className="text-green-400 mr-2 00 transition-all duration-700 ease-in-out" />
@@ -137,10 +139,7 @@ export const Post: React.FC<Iprops> = ({
                     <LiaSave className="mr-2" />
                   )}
 
-                  <span
-                    className="text-sm hover:text-slate-300"
-                    onClick={(e) => handleSavePost(post.id as number, e)}
-                  >
+                  <span className="text-sm hover:text-slate-300">
                     {`${isSaved && post.id === post_id ? "Saved" : "Save"}`}
                   </span>
                 </button>

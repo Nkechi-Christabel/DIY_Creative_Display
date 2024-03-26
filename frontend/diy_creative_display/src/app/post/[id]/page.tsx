@@ -232,15 +232,17 @@ const PostDetails = React.memo(() => {
                   {typeof post.categories !== "object" &&
                     (post.categories as unknown as string)}
                 </p>
-                <button type="button" onClick={handleOpenModal}>
-                  <CiEdit
-                    className={clsx(
-                      "m-10 text-xl cursor-pointer",
-                      currentUser.id !== post.user_id
-                        ? "pointer-events-none"
-                        : "pointer-events-auto"
-                    )}
-                  />
+                <button
+                  type="button"
+                  onClick={handleOpenModal}
+                  className={clsx(
+                    "m-10 text-xl cursor-pointer",
+                    currentUser.id !== post.user_id
+                      ? "pointer-events-none"
+                      : "pointer-events-auto"
+                  )}
+                >
+                  <CiEdit className="text-xl" />
                 </button>
               </div>
             </div>

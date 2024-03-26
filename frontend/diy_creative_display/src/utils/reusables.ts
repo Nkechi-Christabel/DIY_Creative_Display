@@ -15,7 +15,7 @@ export function timeAgo(dateString: string, ending: string): string {
   const differenceMs = now.getTime() - commentDate.getTime();
 
   // Convert milliseconds to seconds, minutes, hours, days, weeks, months, and years
-  const secondsAgo = Math.floor(differenceMs / 1000);
+  const secondsAgo = Math.floor(differenceMs / 1000) + 1;
   const minutesAgo = Math.floor(secondsAgo / 60);
   const hoursAgo = Math.floor(minutesAgo / 60);
   const daysAgo = Math.floor(hoursAgo / 24);

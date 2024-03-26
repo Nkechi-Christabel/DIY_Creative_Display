@@ -297,7 +297,7 @@ const PostDetails = React.memo(() => {
                           </p>
                         </div>
                       ) : (
-                        <p>{comment?.content}</p>
+                        <pre>{comment?.content}</pre>
                       )}
                     </div>
                   </div>

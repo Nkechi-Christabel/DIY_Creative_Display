@@ -24,6 +24,8 @@ const Home = () => {
     dispatch(getAllUsers());
   }, []);
 
+  console.log("Page posts", posts);
+
   return (
     <main
       className="container mx-auto max-w-7xl py-9 px-5 xl:px-0 h-screen scroll-smooth"

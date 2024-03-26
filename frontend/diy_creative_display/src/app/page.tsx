@@ -24,7 +24,7 @@ const Home = () => {
     dispatch(getAllUsers());
   }, []);
 
-  console.log("Page posts", posts);
+  // console.log("Page posts", posts);
 
   return (
     <main

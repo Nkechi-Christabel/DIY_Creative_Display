@@ -133,7 +133,7 @@ export const Post: React.FC<Iprops> = ({
                 <div className="flex justify-end">
                   <button
                     type="button"
-                    className=" hidden group-hover:flex items-center text-white bg-black  hover:bg-gray-700 bg-opacity-45 rounded-full py-1 px-3 mt-18"
+                    className=" hidden group-hover:flex items-center text-white bg-black bg-opacity-45  hover:bg-gray-700 hover:bg-opacity-60  rounded-full py-1 px-3 mt-18"
                     onClick={(e) => handleSavePost(post.id as number, e)}
                   >
                     {isSaved && post.id === post_id ? (

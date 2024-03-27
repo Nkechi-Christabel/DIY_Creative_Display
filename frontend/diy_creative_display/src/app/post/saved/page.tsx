@@ -25,8 +25,6 @@ const Saved = () => {
     dispatch(getSavedPosts());
   }, []);
 
-  console.log(savedPosts);
-
   function formatDate(dateString: string): string {
     const date = new Date(dateString);
     const options: Intl.DateTimeFormatOptions = {

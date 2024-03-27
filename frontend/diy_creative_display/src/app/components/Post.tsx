@@ -2,11 +2,9 @@ import { CreatePostValues, PostValues, Users } from "@/types";
 import Image from "next/image";
 import React, { useEffect } from "react";
 import { useAppDispatch } from "../../redux/store";
-import clsx from "clsx";
 import Default from "../../../public/assets/default.jpg";
 import { ProfilePic } from "./ProfilePic";
 import { LiaSave } from "react-icons/lia";
-
 import { useRouter } from "next/navigation";
 import { useAppSelector, RootState } from "@/redux/store";
 import { LikedIcon } from "./LikedIcon";
@@ -40,7 +38,14 @@ export const Post: React.FC<Iprops> = ({
     (state: RootState) => state.savePost
   );
 
-  let filteredPosts;
+  const sortedPosts = posts
+    .slice()
+    .sort(
+      (a, b) =>
+        new Date(b.date_posted).getTime() - new Date(a.date_posted).getTime()
+    );
+
+  let filteredSortedPosts;
 
   useEffect(() => {
     dispatch(clearState());
@@ -48,11 +53,11 @@ export const Post: React.FC<Iprops> = ({
 
   if (searchValue) {
     if (selectedCategory === "DIYs") {
-      filteredPosts = posts.filter((post) =>
+      filteredSortedPosts = sortedPosts.filter((post) =>
         post.title.toLowerCase().includes(searchValue?.toLowerCase())
       );
     } else {
-      filteredPosts = posts
+      filteredSortedPosts = sortedPosts
         .filter(
           (post) => (post.categories as unknown as string) === selectedCategory
         )
@@ -63,9 +68,9 @@ export const Post: React.FC<Iprops> = ({
   }
 
   if (!searchValue) {
-    if (selectedCategory === "DIYs") filteredPosts = posts;
+    if (selectedCategory === "DIYs") filteredSortedPosts = sortedPosts;
     else {
-      filteredPosts = posts.filter(
+      filteredSortedPosts = posts.filter(
         (post) => (post.categories as unknown as string) === selectedCategory
       );
     }
@@ -104,7 +109,7 @@ export const Post: React.FC<Iprops> = ({
   return (
     <div className="posts">
       <div className="grid grid-cols-[repeat(auto-fill,minmax(270px,1fr))] gap-7 mt-4 pb-32">
-        {filteredPosts?.map((post) => (
+        {filteredSortedPosts?.map((post) => (
           <div key={post.id} className="post ">
             <div
               className="relative group cursor-pointer"
@@ -121,28 +126,30 @@ export const Post: React.FC<Iprops> = ({
                 loader={loaderProp}
                 unoptimized={true}
                 priority={true}
-                className="w-full h-72 xm:h-auto rounded-xl object-cover"
+                className="w-full h-64 xm:h-auto rounded-md object-cover"
               />
 
-              <div className="flex justify-around items-end  content-center absolute bottom-full top-0 p-4 bg-black bg-opacity-30 opacity-0 group-hover:opacity-100 rounded-xl w-full group-hover:bottom-0 transition-all duration-500 ease-in-out">
-                <p className="hidden group-hover:block text-white text-ellipsis text-lg font-bold">
+              <div className="absolute bottom-full top-0 p-4 bg-black bg-opacity-30 opacity-0 group-hover:opacity-100 rounded-xl w-full group-hover:bottom-0 transition-all duration-500 ease-in-out">
+                <div className="flex justify-end">
+                  <button
+                    type="button"
+                    className=" hidden group-hover:flex items-center text-white bg-black  hover:bg-gray-700 bg-opacity-45 rounded-full py-1 px-3 mt-18"
+                    onClick={(e) => handleSavePost(post.id as number, e)}
+                  >
+                    {isSaved && post.id === post_id ? (
+                      <GiCheckMark className="text-green-400 mr-2 00 transition-all duration-700 ease-in-out" />
+                    ) : (
+                      <LiaSave className="mr-2" />
+                    )}
+
+                    <span className="text-sm">
+                      {`${isSaved && post.id === post_id ? "Saved" : "Save"}`}
+                    </span>
+                  </button>
+                </div>
+                <p className="items-end hidden group-hover:flex h-5/6 text-white text-ellipsis text-md font-bold">
                   {post.title}
                 </p>
-                <button
-                  type="button"
-                  className="hidden group-hover:flex items-center text-white bg-black bg-opacity-45 rounded-full py-1 px-3 mt-18"
-                  onClick={(e) => handleSavePost(post.id as number, e)}
-                >
-                  {isSaved && post.id === post_id ? (
-                    <GiCheckMark className="text-green-400 mr-2 00 transition-all duration-700 ease-in-out" />
-                  ) : (
-                    <LiaSave className="mr-2" />
-                  )}
-
-                  <span className="text-sm hover:text-slate-300">
-                    {`${isSaved && post.id === post_id ? "Saved" : "Save"}`}
-                  </span>
-                </button>
               </div>
             </div>
             <div className="posts_user flex items-center justify-between">

@@ -32,6 +32,14 @@ const SavedPost: React.FC<Iprops> = ({ posts, users }: Iprops) => {
     (state: RootState) => state.savePost
   );
 
+  const sortedPosts = posts
+    .slice()
+    .sort(
+      (a, b) =>
+        new Date(b.post_details.date_posted).getTime() -
+        new Date(a.post_details.date_posted).getTime()
+    );
+
   const filteredPosts = searchValue
     ? posts.filter((post) => post.post_details.title.includes(searchValue))
     : posts;

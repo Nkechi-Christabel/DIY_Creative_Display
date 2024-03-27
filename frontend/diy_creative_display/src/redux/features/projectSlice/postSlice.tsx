@@ -17,6 +17,7 @@ const initialState: Status & {
     categories: { id: "", name: "" },
     photos: [],
     user_id: 0,
+    date_posted: new Date(),
   },
   searchValue: "",
   isFetching: false,

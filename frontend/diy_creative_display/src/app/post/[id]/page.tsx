@@ -67,15 +67,17 @@ const PostDetails = React.memo(() => {
   };
 
   const handlePostCommentDispatch = async () => {
-    const response = await dispatch(
-      postComment({ content: commentValue, postId: post.id as number })
-    );
-    setCommentValue("");
-    dispatch(addComment(response.payload.new_comment));
+    if (commentValue !== "") {
+      const response = await dispatch(
+        postComment({ content: commentValue, postId: post.id as number })
+      );
+      setCommentValue("");
+      dispatch(addComment(response.payload.new_comment));
+    }
   };
 
   const handlePressEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && commentValue !== "") {
       handlePostCommentDispatch();
     }
   };
@@ -202,7 +204,7 @@ const PostDetails = React.memo(() => {
                     loader={loaderProp}
                     unoptimized={true}
                     priority={true}
-                    className={`md:w-full w-3/12 h-auto rounded-lg mb-4 ${
+                    className={`md:w-full w-3/12 h-auto rounded-lg mb-4 object-cover ${
                       idx === index && "border-2 border-pink-400"
                     }`}
                     onClick={() => setIndex(idx)}
@@ -249,7 +251,7 @@ const PostDetails = React.memo(() => {
           </div>
         )}
       </section>
-      <section className="comments bg-zinc-100 rounded h-96 overflow-scroll mb-3 mt-10 p-5 relative">
+      <section className="comments bg-zinc-100 rounded h-96 overflow-scroll mb-20 mt-10 p-5 relative">
         <div className="container mx-auto max-w-4xl h-full pt-7">
           {fetching ? (
             <SkeletonLoader />
@@ -324,7 +326,7 @@ const PostDetails = React.memo(() => {
           <div className="relative flex items-end h-full">
             <ProfilePic
               name={currentUser?.name}
-              classes="h-7 w-7 text-lg absolute bottom-14 left-5"
+              classes="h-7 w-7 text-lg absolute bottom-10 left-5"
             />
             <input
               type="text"
@@ -332,12 +334,15 @@ const PostDetails = React.memo(() => {
               id="comment"
               placeholder="Add a comment..."
               value={commentValue}
-              className="bg-white border border-gray-50 rounded-full shadow-lg px-14 py-4 w-full outline-none mb-10"
+              className="bg-white border border-gray-50 rounded-full shadow-lg px-14 py-4 w-full outline-none mb-6"
               onChange={(e) => handleCommentValue(e)}
               onKeyDown={(e) => handlePressEnter(e)}
             />
             <TfiControlForward
-              className="text-2xl text-gray-600 hover:text-gray-800 absolute bottom-14 right-5 cursor-pointer"
+              className={clsx(
+                "text-2xl text-gray-600 hover:text-gray-800 absolute bottom-10 right-5 cursor-pointer transition-all ease-in-out duration-500",
+                commentValue !== "" && "active:-rotate-180"
+              )}
               onClick={() => handlePostCommentDispatch()}
             />
           </div>

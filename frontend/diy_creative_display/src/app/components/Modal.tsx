@@ -43,10 +43,10 @@ export const MyModal: React.FC<IProps> = ({
         },
       }}
       className={clsx(
-        "container mx-auto rounded p-5 pt-6  max-h-full overflow-scroll",
+        "container mx-auto p-5 pt-6 overflow-scroll",
         !isModalImage
-          ? "h-[35rem] mt-32 max-w-2xl w-[95%] bg-white shadow-lg shadow-neutral-600 backdrop-blur-2xl"
-          : "h-full max-w-3xl grid items-center"
+          ? "h-[40rem] mt-20 max-w-2xl w-[95%] bg-white shadow-lg shadow-neutral-600 backdrop-blur-2xl rounded"
+          : "max-w-5xl md:h-full grid items-center mt-40 md:mt-0"
       )}
     >
       {isModalImage ? (
@@ -54,8 +54,8 @@ export const MyModal: React.FC<IProps> = ({
           <Image
             src={post?.photos[index] as unknown as string}
             alt={post?.title}
-            width={300}
-            height={200}
+            width={0}
+            height={0}
             loader={loaderProp}
             unoptimized={true}
             className="w-full h-auto rounded-lg"

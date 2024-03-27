@@ -70,7 +70,6 @@ export const Header = React.memo(() => {
     setShowSearch(!showSearch);
   };
 
-
   return (
     <>
       {!disableNavFooter.includes(pathname) && (
@@ -78,11 +77,11 @@ export const Header = React.memo(() => {
           <nav
             className={`${
               isOpen
-                ? "relative w-full h-screen bg-black bg-opacity-40 transition-all ease-in-circ delay-[200ms]"
+                ? "fixed left-0 right-0 top-0 z-50 w-full h-screen bg-black bg-opacity-40 transition-all ease-in-circ delay-[200ms]"
                 : ""
             }`}
           >
-            <div className="flex justify-between items-center big_screen md:pl-0 px-5 pb-3 bg-white">
+            <div className="flex justify-between items-center big_screen md:pl-0 px-5 lg:pr-7 pb-3 bg-white">
               <div className="left flex space-x-5">
                 <button
                   className="group flex flex-col items-center justify-center md:hidden"
@@ -118,7 +117,7 @@ export const Header = React.memo(() => {
                       <li key={item.name}>
                         <Link
                           className={clsx(
-                            "hover:text-gray-600 font-semibold",
+                            "hover:text-gray-600",
                             isActive && "text-yellow-700"
                           )}
                           href={item.href}
@@ -187,10 +186,10 @@ export const Header = React.memo(() => {
                   </div>
                 ) : (
                   <>
-                    <div className="md:block hidden hover:text-gray-600 font-semibold">
+                    <div className="md:block hidden hover:text-gray-60">
                       <Link href="/login">Log in</Link>
                     </div>
-                    <div className="text-white bg-black rounded-3xl py-2 px-4 hover:bg-gray-700  font-semibold">
+                    <div className="text-white bg-black rounded-3xl py-2 px-4 hover:bg-gray-700">
                       <Link href="signup">Sign Up</Link>
                     </div>
                   </>
@@ -226,7 +225,7 @@ export const Header = React.memo(() => {
                     );
                   })}
 
-                  <div className="border-t border-gray-200 py-4 mt-3 hover:text-gray-600 font-semibold">
+                  <div className="border-t border-gray-200 py-4 mt-3 hover:text-gray-600">
                     {token ? (
                       <Link href="/" onClick={() => handleSignout()}>
                         Sign out

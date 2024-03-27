@@ -26,7 +26,7 @@ const Home = () => {
 
   return (
     <main
-      className="container mx-auto max-w-7xl py-9 px-5 xl:px-0 h-screen scroll-smooth"
+      className="container mx-auto max-w-[85rem] py-9 px-5 xl:px-0 h-screen scroll-smooth"
       id="top"
     >
       <p className="text-4xl text-center max-w-3xl mx-auto pt-2 pb-5tracking-wide leading-normal">

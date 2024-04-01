@@ -22,7 +22,7 @@ export const LikedIcon: React.FC<Iprops> = ({
   const dispatch = useAppDispatch();
   const router = useRouter();
   const token = localStorage.getItem("token");
-  const { isLiked, likesCount, user_ids } = useAppSelector(
+  const { isLiked, likesCount, user_id } = useAppSelector(
     (state: RootState) => state.likes
   );
   const { currentUser } = useAppSelector((state: RootState) => state.signup);
@@ -53,7 +53,7 @@ export const LikedIcon: React.FC<Iprops> = ({
       <ImHeart
         className={` hover:text-pink-200 cursor-pointer transition-all active:scale-0 ease-in-out-circ duration-600
           ${
-            token && isLiked[postId as number]
+            token && isLiked[postId as number]?.liked
               ? "text-red-500"
               : "text-gray-400"
           }  ${token ? "active:scale-150" : ""}

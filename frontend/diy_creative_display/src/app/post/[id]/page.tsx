@@ -56,6 +56,7 @@ const PostDetails = React.memo(() => {
   const { isSaved, post_id } = useAppSelector(
     (state: RootState) => state.savePost
   );
+  
 
   useEffect(() => {
     dispatch(getOnePost(id));

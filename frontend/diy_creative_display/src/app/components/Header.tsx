@@ -87,7 +87,7 @@ export const Header = React.memo(() => {
             }`}
           >
             <div className="flex justify-between items-center big_screen md:pl-0 px-5 lg:pr-7 pb-3 bg-white">
-              <div className="left flex space-x-5">
+              <div className="flex items-center space-x-5">
                 <button
                   className="group flex flex-col items-center justify-center md:hidden"
                   onClick={() => setIsOpen(!isOpen)}
@@ -115,7 +115,7 @@ export const Header = React.memo(() => {
                   />
                 </button>
                 <Logo classes="block lg:hidden" />
-                <ul className="menu md:flex space-x-4 hidden">
+                <ul className="menu md:flex items-center space-x-4 hidden">
                   {navItems.map((item) => {
                     const isActive = item.href === pathname;
                     return (
@@ -135,7 +135,7 @@ export const Header = React.memo(() => {
                 </ul>
               </div>
               <Logo classes="hidden lg:block" />
-              <div className="right flex items-center space-x-5">
+              <div className="flex items-center space-x-5">
                 <div className="relative">
                   <BiSearch
                     className="inline-block lg:absolute top-[.8rem] lg:pointer-events-none left-9 lg:text-gray-400 lg:text-base text-2xl lg:mr-0 mr-3 lg:cursor-none cursor-pointer"

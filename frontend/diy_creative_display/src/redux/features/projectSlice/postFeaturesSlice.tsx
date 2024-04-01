@@ -4,17 +4,20 @@ import { baseUrlApi } from "../../../axiosHelper/index";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { CreatePostValues, Status } from "../../../types";
 
+interface LikedStatus {
+  liked: boolean;
+  user_ids: number[];
+}
+
 const initialState: Status & {
   likesCount: Record<number, number>;
-  isLiked: Record<number, boolean | {}>;
+  isLiked: Record<number, LikedStatus>;
   post_id: number | null;
-  user_ids: number[];
   user_id: number | null;
 } = {
   likesCount: {},
   isLiked: {},
   post_id: null,
-  user_ids: [],
   user_id: null,
   isFetching: false,
   isSuccess: false,
@@ -62,16 +65,26 @@ export const PostLikesSlice = createSlice({
       const postId = action.payload;
       const userId = state.user_id as number;
 
+      // Initialize isLiked if it doesn't exist
+      if (!state.isLiked[postId]) {
+        state.isLiked[postId] = { liked: false, user_ids: [] };
+      }
+
       // Toggle like status
-      state.isLiked[postId] = !state.isLiked[postId] || false;
+      state.isLiked[postId].liked = !state.isLiked[postId].liked;
 
       // Check if the post is liked by the current user and add/remove userId accordingly
-      if (state.isLiked[postId]) {
-        if (!state.user_ids.includes(userId)) {
-          state.user_ids.push(userId);
+      if (state.isLiked[postId].liked) {
+        if (
+          !state.isLiked[postId].user_ids.includes(userId) &&
+          userId !== null
+        ) {
+          state.isLiked[postId].user_ids.push(userId);
         }
       } else {
-        state.user_ids = state.user_ids.filter((id) => id !== userId);
+        state.isLiked[postId].user_ids = state.isLiked[postId].user_ids.filter(
+          (id) => id !== userId
+        );
       }
     },
     resetIsLiked(
@@ -80,10 +93,14 @@ export const PostLikesSlice = createSlice({
     ) {
       const currentUserId = action.payload.currentUserId;
       const postId = action.payload.postId as number;
-      if (!state.user_ids.includes(currentUserId)) {
-        state.isLiked[postId] = false;
-      } else {
-        state.isLiked[postId] = true;
+
+      // Check if state.isLiked[postId] exists
+      if (state.isLiked[postId]) {
+        if (!state.isLiked[postId].user_ids?.includes(currentUserId)) {
+          state.isLiked[postId].liked = false;
+        } else {
+          state.isLiked[postId].liked = true;
+        }
       }
     },
   },

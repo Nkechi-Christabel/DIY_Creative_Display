@@ -44,7 +44,7 @@ export const Header = React.memo(() => {
 
   useEffect(() => {
     dispatch(handleCurrentUser({ name: name, id: user?.id }));
-  }, [dispatch, name]);
+  }, [dispatch, name, user]);
 
   useEffect(() => {
     dispatch(getSearchValue(searchValue));

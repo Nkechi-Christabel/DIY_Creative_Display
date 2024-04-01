@@ -88,7 +88,6 @@ export const store = configureStore({
       immutableCheck: false,
     }),
 });
-storage.removeItem("persist:root");
 
 // Infer the type of makeStore
 export type RootState = ReturnType<typeof store.getState>;

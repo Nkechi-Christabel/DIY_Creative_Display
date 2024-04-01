@@ -61,5 +61,6 @@ def like_post(current_user, post_id):
         'message': 'Post like status updated successfully',
         'likes_count': likes_count,
         'post_id': post_id,
-        'isLiked': not bool(like)  # Flag indicating current like status
+        # 'isLiked': not bool(like),  # Flag indicating current like status
+        'user_id': user_id,
     }), 200

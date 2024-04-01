@@ -20,7 +20,7 @@ import {
 } from "./features/projectSlice/postSlice";
 import {
   deletePostReducer,
-  likePostReducer,
+  postLikesReducer,
   // updatePost,
   updatePostReducer,
 } from "./features/projectSlice/postFeaturesSlice";
@@ -61,7 +61,7 @@ const rootReducers = combineReducers({
   createPost: createPostReducer,
   fetchPosts: fetchPostsReducer,
   users: usersReducer,
-  likes: likePostReducer,
+  likes: postLikesReducer,
   fetchPost: fetchOnePostReducer,
   deletePost: deletePostReducer,
   updatePost: updatePostReducer,

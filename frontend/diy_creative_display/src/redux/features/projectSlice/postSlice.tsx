@@ -8,6 +8,7 @@ const initialState: Status & {
   posts: PostValues[];
   post: PostValues;
   searchValue: string;
+  isShowSearch: boolean;
 } = {
   posts: [],
   post: {
@@ -20,6 +21,7 @@ const initialState: Status & {
     date_posted: new Date(),
   },
   searchValue: "",
+  isShowSearch: false,
   isFetching: false,
   isSuccess: false,
   isError: false,
@@ -115,6 +117,9 @@ export const FetchPostsSlice = createSlice({
     getSearchValue: (state, action: { payload: string | undefined }) => {
       state.searchValue = action.payload as string;
     },
+    ShowSearch: (state, action) => {
+      state.isShowSearch = action.payload;
+    },
   },
 
   extraReducers: (builder) => {
@@ -200,7 +205,8 @@ export const FetchOnePostSlice = createSlice({
 
 export const { clearState } = CreatePostSlice.actions;
 export const { fetchAPostclearState } = FetchOnePostSlice.actions;
-export const { filterPosts, getSearchValue } = FetchPostsSlice.actions;
+export const { filterPosts, getSearchValue, ShowSearch } =
+  FetchPostsSlice.actions;
 export const { updateEditedPost } = FetchOnePostSlice.actions;
 export const createPostReducer = CreatePostSlice.reducer;
 export const fetchPostsReducer = FetchPostsSlice.reducer;

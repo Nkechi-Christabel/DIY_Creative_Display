@@ -6,7 +6,7 @@ import { logout } from "../../redux/features/authSlice/loginSlice";
 import { BiSearch } from "react-icons/bi";
 import { Logo } from "./Logo";
 import { RootState, useAppSelector, useAppDispatch } from "../../redux/store";
-import { useRouter, usePathname, redirect } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { ProfilePic } from "./ProfilePic";
 import {
@@ -15,7 +15,10 @@ import {
 } from "../../redux/features/authSlice/signupSlice";
 import { Transition } from "@headlessui/react";
 import { Users } from "@/types";
-import { getSearchValue } from "@/redux/features/projectSlice/postSlice";
+import {
+  ShowSearch,
+  getSearchValue,
+} from "@/redux/features/projectSlice/postSlice";
 
 export const Header = React.memo(() => {
   const router = useRouter();
@@ -59,6 +62,7 @@ export const Header = React.memo(() => {
   const handleProfileHover = () => {
     setHover(true);
     setIsOpen(false);
+    setShowSearch(false);
   };
 
   const handleShowSearch = () => {
@@ -68,6 +72,7 @@ export const Header = React.memo(() => {
     setHover(false);
     setIsOpen(false);
     setShowSearch(!showSearch);
+    dispatch(ShowSearch(!showSearch));
   };
 
   return (
@@ -77,7 +82,7 @@ export const Header = React.memo(() => {
           <nav
             className={`${
               isOpen
-                ? "fixed left-0 right-0 top-0 z-50 w-full h-screen bg-black bg-opacity-40 transition-all ease-in-circ delay-[200ms]"
+                ? "fixed left-0 right-0 top-3 z-50 w-full h-screen bg-black bg-opacity-40 transition-all ease-in-circ delay-[200ms]"
                 : ""
             }`}
           >
@@ -240,7 +245,7 @@ export const Header = React.memo(() => {
           </nav>
           <div
             className={clsx(
-              "relative top-2 z-50 mx-auto max-w-2xl px-6",
+              "relative top-5 z-40 mx-auto max-w-2xl px-6",
               showSearch && disableSearch.includes(pathname)
                 ? "block"
                 : "hidden"
@@ -249,7 +254,7 @@ export const Header = React.memo(() => {
             <input
               type="text"
               placeholder="Search"
-              className=" bg-white rounded-lg shadow-inner border border-gray-300 py-3 px-5 outline-none text-sm w-full"
+              className=" bg-white rounded-lg shadow-md border border-gray-200 py-3 px-5 outline-none text-sm w-full"
               onChange={(e) => handleSearchValue(e)}
             />
           </div>

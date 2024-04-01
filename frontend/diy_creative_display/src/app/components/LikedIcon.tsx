@@ -44,11 +44,6 @@ export const LikedIcon: React.FC<Iprops> = ({
     dispatch(toggleClickedLike(postId));
   };
 
-  console.log("Liked?", isLiked[postId as number]?.liked);
-  console.log("IDS", isLiked[postId as number]?.user_ids);
-  console.log("Current User", currentUser.id);
-  console.log("User id", user_id);
-
   return (
     <button
       type="button"

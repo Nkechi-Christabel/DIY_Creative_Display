@@ -114,7 +114,10 @@ export const Header = React.memo(() => {
                     }`}
                   />
                 </button>
-                <Logo classes="block lg:hidden" />
+                <div>
+                  <Logo classes="block lg:hidden" />
+                </div>
+
                 <ul className="menu md:flex items-center space-x-4 hidden">
                   {navItems.map((item) => {
                     const isActive = item.href === pathname;

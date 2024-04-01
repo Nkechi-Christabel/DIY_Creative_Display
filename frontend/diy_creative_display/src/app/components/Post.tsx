@@ -129,7 +129,7 @@ export const Post: React.FC<Iprops> = ({
                 className="w-full h-64 xm:h-auto rounded-md object-cover"
               />
 
-              <div className="absolute bottom-full top-0 p-4 bg-black bg-opacity-30 opacity-0 group-hover:opacity-100 rounded-xl w-full group-hover:bottom-0 transition-all duration-500 ease-in-out">
+              <div className="absolute bottom-full top-0 p-4 bg-black bg-opacity-30 opacity-0 group-hover:opacity-100 rounded-md w-full group-hover:bottom-0 transition-all duration-500 ease-in-out">
                 <div className="flex justify-end">
                   <button
                     type="button"

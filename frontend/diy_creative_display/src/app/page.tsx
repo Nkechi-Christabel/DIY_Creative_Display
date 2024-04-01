@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import clsx from "clsx";
 import {
   clearState,
   getAllPosts,
@@ -14,9 +15,8 @@ const Home = () => {
   const dispatch = useAppDispatch();
   const { users } = useAppSelector((state: RootState) => state.users);
   const [selectedCategory, setSelectedCategory] = useState("DIYs");
-  const { posts, isError, errorMessage, isFetching } = useAppSelector(
-    (state: RootState) => state.fetchPosts
-  );
+  const { posts, isError, errorMessage, isFetching, isShowSearch } =
+    useAppSelector((state: RootState) => state.fetchPosts);
 
   useEffect(() => {
     dispatch(clearState());
@@ -26,10 +26,15 @@ const Home = () => {
 
   return (
     <main
-      className="container mx-auto max-w-7xl py-9 px-5 xl:px-0 h-screen scroll-smooth"
+      className="container mx-auto max-w-[85rem] py-9 px-5 xl:px-0 h-screen scroll-smooth"
       id="top"
     >
-      <p className="text-4xl text-center max-w-3xl mx-auto pt-2 pb-5tracking-wide leading-normal">
+      <p
+        className={clsx(
+          "text-4xl text-center max-w-3xl mx-auto pb-5tracking-wide leading-normal",
+          isShowSearch ? "pt-14" : "pt-2"
+        )}
+      >
         Discover, Create, and Share Your DIY Projects with the World!
         <span className="text-sm text-gray-600 block">
           Get started today and unleash your creativity with DIY Creative

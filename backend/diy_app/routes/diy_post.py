@@ -24,7 +24,7 @@ def ownload_file(filename):
 # Route to serve uploaded images
 # @app_routes.route('/_uploads/photos/<path:filename>', methods=['GET'])
 # def download_file(filename):
-#     path = '/mnt/c/Users/banwy/OneDrive/Desktop/DIY_Creative_Display/backend/diy_app/uploaded/images'
+#     path = '/Users/apple/Documents/DIY_Creative_Display/backend/diy_app/uploaded/images'
 #     return send_from_directory(path, filename)
 
 # Creates a post

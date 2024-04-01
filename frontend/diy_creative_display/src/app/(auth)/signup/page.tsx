@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Playfair_Display } from "next/font/google";
+import { Playfair_Display, Dancing_Script } from "next/font/google";
 import { LiaEyeSlashSolid, LiaEyeSolid } from "react-icons/lia";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -25,6 +25,7 @@ import {
 import { InputField } from "../../components/InputField";
 
 const Playfair = Playfair_Display({ weight: "400", subsets: ["latin"] });
+const DancingScript = Dancing_Script({ weight: "400", subsets: ["latin"] });
 const schema = yup
   .object({
     fullName: yup
@@ -101,7 +102,7 @@ const Signup: React.FC = () => {
         <div className="bg-auth-bg bg-cover bg-no-repeat w-full h-full shadow-lg shadow-slate-800">
           <Logo classes="text-white px-4 py-3" />
         </div>
-        <div className="flex flex-col items-center text-white bg-auth-200 bg-opacity-70 sm:pt-44 p-6 sml:w-[400px] sm:h-screen absolute z-10">
+        <div className="flex flex-col items-center text-white bg-auth-200 bg-opacity-70 sm:pt-44 p-6 sm:p-0 max-w-md w-11/12 sm:h-screen absolute z-10">
           <h1 className="text-3xl">SIGN UP</h1>
           <form
             onSubmit={handleSubmit(onSubmit)}
@@ -158,7 +159,11 @@ const Signup: React.FC = () => {
             </Link>{" "}
             if you already have an account
           </p>
-          <p className="text-xs font-light font-mono pt-2">Creativity is you</p>
+          <p
+            className={`text-xl font-light font-mono pt-2 ${DancingScript.className}`}
+          >
+            Creativity is you
+          </p>
         </div>
       </div>
     </div>

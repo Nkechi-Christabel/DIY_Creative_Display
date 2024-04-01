@@ -77,6 +77,7 @@ export interface CommentValues {
 export interface PostValues extends CreatePostValues {
   id: number;
   user_id: number;
+  date_posted: Date;
 }
 
 export interface SavePostValues {
@@ -84,4 +85,10 @@ export interface SavePostValues {
   user_id: number;
   post_id: number;
   post_details: PostValues;
+}
+
+export interface ErrorPhotos {
+  message: string;
+  type: string;
+  ref: undefined;
 }

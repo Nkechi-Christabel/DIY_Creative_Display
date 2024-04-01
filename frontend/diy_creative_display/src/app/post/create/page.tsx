@@ -1,10 +1,16 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { CreatePostValues, Option, PictureValues } from "../../../types";
+import {
+  CreatePostValues,
+  Option,
+  PictureValues,
+  ErrorPhotos,
+} from "../../../types";
 import {
   createPost,
   clearState,
 } from "../../../redux/features/projectSlice/postSlice";
+import { categories } from "../../../utils/reusables";
 import Image from "next/image";
 import { InputField } from "@/app/components/InputField";
 import { IoCamera } from "react-icons/io5";
@@ -25,52 +31,6 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ImSpinner2 } from "react-icons/im";
 import withAuth from "@/app/withAuth";
-
-export const categories = [
-  {
-    id: "Home Decor",
-    name: "Home Decor",
-  },
-  {
-    id: "Crafts",
-    name: "Crafts",
-  },
-  { id: "Woodworking", name: "Woodworking" },
-  {
-    id: "Diy Gifts",
-    name: "Diy Gifts",
-  },
-  {
-    id: "Organization and Storage",
-    name: "Organization and Storage",
-  },
-  {
-    id: "Fashion",
-    name: "Fashion",
-  },
-  {
-    id: "Art and Design",
-    name: "Art and Design",
-  },
-  {
-    id: "Tech and Gadgets",
-    name: "Tech and Gadgets",
-  },
-  {
-    id: "Health and Wellness",
-    name: "Health and Wellness",
-  },
-  {
-    id: "Others",
-    name: "Others",
-  },
-];
-
-export interface ErrorPhotos {
-  message: string;
-  type: string;
-  ref: undefined;
-}
 
 const Create = React.memo(() => {
   const dispatch = useAppDispatch();
@@ -194,8 +154,8 @@ const Create = React.memo(() => {
   useEffect(() => {
     if (isSuccess) {
       toast.success("Post created successfully.");
-      reset();
       dispatch(clearState());
+      reset();
       router.push("/");
     } else if (isError) {
       toast.error(errorMessage);
@@ -207,7 +167,7 @@ const Create = React.memo(() => {
     <>
       <div className="flex px-5 bg-gradient-to-br from-amber-500 via-auth-100 to-amber-900 h-screen fixed right-0 left-0">
         <ToastContainer position="top-right" />
-        <div className="container mx-auto max-w-2xl mt-20 bg-white shadow-lg shadow-neutral-600 backdrop-blur-2xl rounded p-5 pt-6 h-[35rem] max-h-full overflow-scroll">
+        <div className="container mx-auto max-w-2xl sm:mt-[4.5rem] my-10 bg-white shadow-lg shadow-neutral-600 backdrop-blur-2xl rounded p-5 pt-6 h-[35rem] max-h-full overflow-scroll">
           <div className="flex items-center space-x-3 mb-9">
             <ProfilePic name={currentUser.name} classes="text-xl w-10 h-10 " />
             <p>{currentUser.name}</p>
@@ -300,6 +260,7 @@ const Create = React.memo(() => {
     </>
   );
 });
+
 const AuthProtectedCreatePost = withAuth(Create);
 
 export default AuthProtectedCreatePost;

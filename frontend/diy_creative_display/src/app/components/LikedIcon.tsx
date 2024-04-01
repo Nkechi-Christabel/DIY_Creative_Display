@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { RootState, useAppDispatch, useAppSelector } from "@/redux/store";
 import { useRouter } from "next/navigation";
 import { ImHeart } from "react-icons/im";
-import { likePosts } from "../../redux/features/projectSlice/postFeaturesSlice";
+import {
+  postLikes,
+  resetIsLiked,
+  toggleClickedLike,
+} from "../../redux/features/projectSlice/postFeaturesSlice";
 
 type Iprops = {
   postId: number | undefined;
@@ -18,9 +22,14 @@ export const LikedIcon: React.FC<Iprops> = ({
   const dispatch = useAppDispatch();
   const router = useRouter();
   const token = localStorage.getItem("token");
-  const { isLiked, likes, post_id } = useAppSelector(
+  const { isLiked, likesCount, user_id } = useAppSelector(
     (state: RootState) => state.likes
   );
+  const { currentUser } = useAppSelector((state: RootState) => state.signup);
+
+  useEffect(() => {
+    dispatch(resetIsLiked({ currentUserId: currentUser.id, postId }));
+  }, [postId, currentUser]);
 
   const handleLikes = (
     postId: number,
@@ -31,7 +40,8 @@ export const LikedIcon: React.FC<Iprops> = ({
       router.push("/login");
       return;
     }
-    dispatch(likePosts(postId));
+    dispatch(postLikes(postId));
+    dispatch(toggleClickedLike(postId));
   };
 
   return (
@@ -41,16 +51,18 @@ export const LikedIcon: React.FC<Iprops> = ({
       onClick={(e) => handleLikes(postId as number, e)}
     >
       <ImHeart
-        className={`text-gray-400 hover:text-pink-200 cursor-pointer transition-all active:scale-0 ease-in-out-circ duration-600
-          ${isLiked && postId === post_id ? "text-red-500" : ""}  ${
-          token ? "active:scale-150" : ""
-        }
+        className={` hover:text-pink-200 cursor-pointer transition-all active:scale-0 ease-in-out-circ duration-600
+          ${
+            token && isLiked[postId as number]?.liked
+              ? "text-red-500"
+              : "text-gray-400"
+          }  ${token ? "active:scale-150" : ""}
           
           `}
       />
       {showCount && (
         <span className="text-sm text-gray-600">
-          {likes[postId as number] || 0}
+          {likesCount[postId as number] || 0}
         </span>
       )}
     </button>

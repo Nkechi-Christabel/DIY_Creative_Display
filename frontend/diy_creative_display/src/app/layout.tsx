@@ -2,7 +2,7 @@
 import React from "react";
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
-import { Lato } from "next/font/google";
+import { Nunito_Sans } from "next/font/google";
 import { Header } from "./components/Header";
 import "./globals.css";
 import { Footer } from "./components/Footer";
@@ -11,7 +11,7 @@ const ReduxProvider = dynamic(() => import("../redux/Provider"), {
   ssr: false,
 });
 
-const inter = Lato({
+const inter = Nunito_Sans({
   weight: ["300", "400"],
   subsets: ["latin"],
   preload: true,
@@ -27,7 +27,10 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body suppressHydrationWarning={true} className={inter.className}>
+      <body
+        suppressHydrationWarning={true}
+        className={`pb-32 md:pb-0 ${inter.className}`}
+      >
         <ReduxProvider>
           <Header />
           {children}

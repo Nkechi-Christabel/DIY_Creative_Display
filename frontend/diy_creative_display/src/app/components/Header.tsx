@@ -6,7 +6,7 @@ import { logout } from "../../redux/features/authSlice/loginSlice";
 import { BiSearch } from "react-icons/bi";
 import { Logo } from "./Logo";
 import { RootState, useAppSelector, useAppDispatch } from "../../redux/store";
-import { useRouter, usePathname, redirect } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { ProfilePic } from "./ProfilePic";
 import {
@@ -15,7 +15,10 @@ import {
 } from "../../redux/features/authSlice/signupSlice";
 import { Transition } from "@headlessui/react";
 import { Users } from "@/types";
-import { getSearchValue } from "@/redux/features/projectSlice/postSlice";
+import {
+  ShowSearch,
+  getSearchValue,
+} from "@/redux/features/projectSlice/postSlice";
 
 export const Header = React.memo(() => {
   const router = useRouter();
@@ -23,7 +26,7 @@ export const Header = React.memo(() => {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [hover, setHover] = useState(false);
-  const [searchValue, setSearchValue] = useState<string>();
+  const [searchValue, setSearchValue] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const genericHamburgerLine = `bg-black transition ease transform duration-300`;
   const userInitials =
@@ -37,14 +40,15 @@ export const Header = React.memo(() => {
   const { users } = useAppSelector((state: RootState) => state.users);
   const user = users?.find((user: Users) => user?.email === email);
   const name = nameToCamelCase(user?.fullName as string);
+  const disableSearch = ["/post/saved", "/"];
 
   useEffect(() => {
     dispatch(handleCurrentUser({ name: name, id: user?.id }));
-  }, [dispatch, name]);
+  }, [dispatch, name, user]);
 
   useEffect(() => {
     dispatch(getSearchValue(searchValue));
-  });
+  }, []);
 
   const handleSignout = () => {
     dispatch(logout());
@@ -54,8 +58,6 @@ export const Header = React.memo(() => {
   const handleSearchValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
   };
-
-  const disableSearch = ["/post/saved", "/"];
 
   const handleProfileHover = () => {
     setHover(true);
@@ -67,9 +69,10 @@ export const Header = React.memo(() => {
     if (!disableSearch.includes(pathname)) {
       router.push("/");
     }
-    setShowSearch(!showSearch);
     setHover(false);
     setIsOpen(false);
+    setShowSearch(!showSearch);
+    dispatch(ShowSearch(!showSearch));
   };
 
   return (
@@ -79,12 +82,12 @@ export const Header = React.memo(() => {
           <nav
             className={`${
               isOpen
-                ? "relative w-full h-screen bg-black bg-opacity-40 transition-all ease-in-circ delay-[200ms]"
+                ? "fixed left-0 right-0 top-3 z-50 w-full h-screen bg-black bg-opacity-40 transition-all ease-in-circ delay-[200ms]"
                 : ""
             }`}
           >
-            <div className="flex justify-between items-center big_screen md:pl-0 px-5 pb-3 bg-white">
-              <div className="left flex space-x-5">
+            <div className="flex justify-between items-center big_screen md:pl-0 px-5 lg:pr-7 pb-3 bg-white">
+              <div className="flex items-center space-x-5">
                 <button
                   className="group flex flex-col items-center justify-center md:hidden"
                   onClick={() => setIsOpen(!isOpen)}
@@ -112,7 +115,7 @@ export const Header = React.memo(() => {
                   />
                 </button>
                 <Logo classes="block lg:hidden" />
-                <ul className="menu md:flex space-x-4 hidden">
+                <ul className="menu md:flex items-center space-x-4 hidden">
                   {navItems.map((item) => {
                     const isActive = item.href === pathname;
                     return (
@@ -132,7 +135,7 @@ export const Header = React.memo(() => {
                 </ul>
               </div>
               <Logo classes="hidden lg:block" />
-              <div className="right flex items-center space-x-5">
+              <div className="flex items-center space-x-5">
                 <div className="relative">
                   <BiSearch
                     className="inline-block lg:absolute top-[.8rem] lg:pointer-events-none left-9 lg:text-gray-400 lg:text-base text-2xl lg:mr-0 mr-3 lg:cursor-none cursor-pointer"
@@ -188,10 +191,10 @@ export const Header = React.memo(() => {
                   </div>
                 ) : (
                   <>
-                    <div className="md:block hidden hover:text-gray-600">
+                    <div className="md:block hidden hover:text-gray-60">
                       <Link href="/login">Log in</Link>
                     </div>
-                    <div className="text-white bg-black rounded-3xl py-2 px-4 hover:bg-gray-600">
+                    <div className="text-white bg-black rounded-3xl py-2 px-4 hover:bg-gray-700">
                       <Link href="signup">Sign Up</Link>
                     </div>
                   </>
@@ -208,7 +211,7 @@ export const Header = React.memo(() => {
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <div className="small_screen_dopdown_menu px-5">
+              <div className="small_screen_dopdown_menu px-1">
                 <ul className="px-5">
                   {navItems.map((item) => {
                     const isActive = item.href === pathname;
@@ -242,14 +245,16 @@ export const Header = React.memo(() => {
           </nav>
           <div
             className={clsx(
-              "relative top-2 z-50 mx-auto max-w-2xl px-6",
-              showSearch ? "block" : "hidden"
+              "relative top-5 z-40 mx-auto max-w-2xl px-6",
+              showSearch && disableSearch.includes(pathname)
+                ? "block"
+                : "hidden"
             )}
           >
             <input
               type="text"
               placeholder="Search"
-              className=" bg-white rounded-lg shadow-inner border border-gray-300 py-3 px-5 outline-none text-sm w-full"
+              className=" bg-white rounded-lg shadow-md border border-gray-200 py-3 px-5 outline-none text-sm w-full"
               onChange={(e) => handleSearchValue(e)}
             />
           </div>

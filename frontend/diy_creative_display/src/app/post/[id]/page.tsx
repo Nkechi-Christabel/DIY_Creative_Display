@@ -67,11 +67,19 @@ const PostDetails = React.memo(() => {
   };
 
   const handlePostCommentDispatch = async () => {
-    const response = await dispatch(
-      postComment({ content: commentValue, postId: post.id as number })
-    );
-    setCommentValue("");
-    dispatch(addComment(response.payload.new_comment));
+    if (commentValue !== "") {
+      const response = await dispatch(
+        postComment({ content: commentValue, postId: post.id as number })
+      );
+      setCommentValue("");
+      dispatch(addComment(response.payload.new_comment));
+    }
+  };
+
+  const handlePressEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && commentValue !== "") {
+      handlePostCommentDispatch();
+    }
   };
 
   const handleDelete = (postId: number, commentId: number) => {
@@ -123,10 +131,7 @@ const PostDetails = React.memo(() => {
   };
 
   return (
-    <div
-      className="container mx-auto max-w-5xl p-5 mb-16 scroll-smooth"
-      id="top"
-    >
+    <div className="container mx-auto max-w-5xl p-5 scroll-smooth" id="top">
       <MyModal
         isOpen={isOpen}
         post={post}
@@ -199,7 +204,7 @@ const PostDetails = React.memo(() => {
                     loader={loaderProp}
                     unoptimized={true}
                     priority={true}
-                    className={`md:w-full w-3/12 h-auto rounded-lg mb-4 ${
+                    className={`md:w-full w-3/12 h-auto rounded-lg mb-4 object-cover ${
                       idx === index && "border-2 border-pink-400"
                     }`}
                     onClick={() => setIndex(idx)}
@@ -211,7 +216,7 @@ const PostDetails = React.memo(() => {
             <div className="details sm:flex space-x-10 my-5">
               <div className="flex-[3]">
                 <h3 className="text-xl font-bold">Description</h3>
-                <p className="">{post.content}</p>
+                <p className="whitespace-pre-line">{post.content}</p>
                 <h3 className="font-bold text-lg pt-7 pb-2">Author</h3>
                 <div className="flex  space-x-2">
                   <ProfilePic name={postUserName} classes="text-sm w-8 h-8" />
@@ -224,26 +229,29 @@ const PostDetails = React.memo(() => {
                 </div>
               </div>
               <div className="flex-1">
-                <h3 className="font-bold">Category:</h3>
+                <h3 className="font-bold pt-2 sm:pt-0">Category:</h3>
                 <p className="text-sm">
                   {typeof post.categories !== "object" &&
                     (post.categories as unknown as string)}
                 </p>
-                <CiEdit
+                <button
+                  type="button"
+                  onClick={handleOpenModal}
                   className={clsx(
                     "m-10 text-xl cursor-pointer",
                     currentUser.id !== post.user_id
                       ? "pointer-events-none"
                       : "pointer-events-auto"
                   )}
-                  onClick={handleOpenModal}
-                />
+                >
+                  <CiEdit className="text-xl" />
+                </button>
               </div>
             </div>
           </div>
         )}
       </section>
-      <section className="comments bg-zinc-100 rounded h-96 overflow-scroll mb-3 mt-10 p-5 relative">
+      <section className="comments bg-zinc-100 rounded h-96 overflow-scroll mb-20 mt-10 p-5 relative">
         <div className="container mx-auto max-w-4xl h-full pt-7">
           {fetching ? (
             <SkeletonLoader />
@@ -318,7 +326,7 @@ const PostDetails = React.memo(() => {
           <div className="relative flex items-end h-full">
             <ProfilePic
               name={currentUser?.name}
-              classes="h-7 w-7 text-lg absolute bottom-14 left-5"
+              classes="h-7 w-7 text-lg absolute bottom-10 left-5"
             />
             <input
               type="text"
@@ -326,11 +334,15 @@ const PostDetails = React.memo(() => {
               id="comment"
               placeholder="Add a comment..."
               value={commentValue}
-              className="bg-white border border-gray-50 rounded-full shadow-lg px-14 py-4 w-full outline-none mb-10"
+              className="bg-white border border-gray-50 rounded-full shadow-lg px-14 py-4 w-full outline-none mb-6"
               onChange={(e) => handleCommentValue(e)}
+              onKeyDown={(e) => handlePressEnter(e)}
             />
             <TfiControlForward
-              className="text-2xl text-gray-600 hover:text-gray-800 absolute bottom-14 right-5 cursor-pointer"
+              className={clsx(
+                "text-2xl text-gray-600 hover:text-gray-800 absolute bottom-10 right-5 cursor-pointer transition-all ease-in-out duration-500",
+                commentValue !== "" && "active:-rotate-180"
+              )}
               onClick={() => handlePostCommentDispatch()}
             />
           </div>

@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { Dancing_Script, Playfair_Display } from "next/font/google";
 import { LiaEyeSlashSolid, LiaEyeSolid } from "react-icons/lia";
 import Link from "next/link";
 import { LoginValues } from "../../../types";
@@ -23,6 +24,8 @@ import {
 import { InputField } from "../../components/InputField";
 import { Logo } from "@/app/components/Logo";
 
+const Playfair = Playfair_Display({ weight: "400", subsets: ["latin"] });
+const DancingScript = Dancing_Script({ weight: "400", subsets: ["latin"] });
 const schema = yup
   .object({
     email: yup
@@ -83,14 +86,16 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="bg-gradient-to-r from-auth-100 via-auth-50 to-auth-200 h-screen">
+    <div
+      className={`bg-gradient-to-r from-auth-100 via-auth-50 to-auth-200 h-screen ${Playfair.className}`}
+    >
       <ToastContainer position="top-right" />
       <div className="sm:container sm:mx-auto h-screen flex justify-center items-center sm:py-16">
         {" "}
         <div className="bg-auth-bg bg-cover bg-no-repeat w-full h-full shadow-lg shadow-slate-800">
           <Logo classes="text-white px-4 py-3" />
         </div>
-        <div className="flex flex-col items-center text-white bg-auth-200 bg-opacity-70 sm:pt-44 p-6 sml:w-[400px] sm:h-screen absolute z-10">
+        <div className="flex flex-col items-center text-white bg-auth-200 bg-opacity-70 sm:pt-44 p-6 sm:p-0 max-w-md w-11/12 sm:h-screen absolute z-10">
           <h1 className="text-3xl">Welcome back!</h1>
           <p className="text-[.9rem] text text-start pt-2">
             Please login to your account
@@ -139,6 +144,11 @@ const Login: React.FC = () => {
             >
               Sign up.
             </Link>{" "}
+          </p>
+          <p
+            className={`text-xl font-light font-mono pt-2 ${DancingScript.className}`}
+          >
+            Creativity is you
           </p>
         </div>
       </div>

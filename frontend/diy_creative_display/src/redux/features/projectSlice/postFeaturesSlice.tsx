@@ -2,23 +2,16 @@ import axios from "axios";
 import { authHeader } from "@/axiosHelper/services/auth-header";
 import { baseUrlApi } from "../../../axiosHelper/index";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { CreatePostValues, Status } from "../../../types";
-
-interface LikedStatus {
-  liked: boolean;
-  user_ids: number[];
-}
+import { Status, UserLikedStatus, UserState } from "../../../types";
 
 const initialState: Status & {
   likesCount: Record<number, number>;
-  isLiked: Record<number, LikedStatus>;
+  users: Record<number, UserState>;
   post_id: number | null;
-  user_id: number | null;
 } = {
   likesCount: {},
-  isLiked: {},
+  users: {},
   post_id: null,
-  user_id: null,
   isFetching: false,
   isSuccess: false,
   isError: false,
@@ -62,46 +55,25 @@ export const PostLikesSlice = createSlice({
 
     toggleClickedLike(state, action) {
       // Action to toggle like status
-      const postId = action.payload;
-      const userId = state.user_id as number;
+      const { postId, currentUserId } = action.payload;
 
-      // Initialize isLiked if it doesn't exist
-      if (!state.isLiked[postId]) {
-        state.isLiked[postId] = { liked: false, user_ids: [] };
+      // Initialize users if it doesn't exist
+      if (!state.users[currentUserId]) {
+        state.users[currentUserId] = {
+          isLiked: {},
+        };
+      }
+
+      // Initialize isLiked for the postId if it doesn't exist
+      if (!state.users[currentUserId].isLiked[postId]) {
+        state.users[currentUserId].isLiked[postId] = {
+          liked: false,
+        };
       }
 
       // Toggle like status
-      state.isLiked[postId].liked = !state.isLiked[postId].liked;
-
-      // Check if the post is liked by the current user and add/remove userId accordingly
-      if (state.isLiked[postId].liked) {
-        if (
-          !state.isLiked[postId].user_ids.includes(userId) &&
-          userId !== null
-        ) {
-          state.isLiked[postId].user_ids.push(userId);
-        }
-      } else {
-        state.isLiked[postId].user_ids = state.isLiked[postId].user_ids.filter(
-          (id) => id !== userId
-        );
-      }
-    },
-    resetIsLiked(
-      state,
-      action: { payload: { currentUserId: number; postId: number | undefined } }
-    ) {
-      const currentUserId = action.payload.currentUserId;
-      const postId = action.payload.postId as number;
-
-      // Check if state.isLiked[postId] exists
-      if (state.isLiked[postId]) {
-        if (!state.isLiked[postId].user_ids?.includes(currentUserId)) {
-          state.isLiked[postId].liked = false;
-        } else {
-          state.isLiked[postId].liked = true;
-        }
-      }
+      state.users[currentUserId].isLiked[postId].liked =
+        !state.users[currentUserId].isLiked[postId]?.liked;
     },
   },
 
@@ -110,11 +82,10 @@ export const PostLikesSlice = createSlice({
       state.isFetching = true;
     });
     builder.addCase(postLikes.fulfilled, (state, action) => {
-      const { post_id, likes_count, user_id } = action.payload;
+      const { post_id, likes_count } = action.payload;
       state.isFetching = false;
       state.isSuccess = true;
       state.post_id = post_id;
-      state.user_id = user_id;
       state.likesCount = {
         ...state.likesCount,
         [post_id]: likes_count,
@@ -239,7 +210,7 @@ export const UpdatePostSlice = createSlice({
 });
 
 export const { clearState } = UpdatePostSlice.actions;
-export const { toggleClickedLike, resetIsLiked } = PostLikesSlice.actions;
+export const { toggleClickedLike } = PostLikesSlice.actions;
 export const postLikesReducer = PostLikesSlice.reducer;
 export const deletePostReducer = DeletePostSlice.reducer;
 export const updatePostReducer = UpdatePostSlice.reducer;

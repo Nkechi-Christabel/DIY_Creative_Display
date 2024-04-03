@@ -9,11 +9,11 @@ type Name = {
 
 export const ProfilePic: React.FC<Name> = ({ name, classes }: Name) => {
   return (
-    <div>
+    <div
+      className={`flex justify-center items-center  bg-amber-950 rounded-full ${classes}`}
+    >
       {" "}
-      <p
-        className={`flex justify-center items-center bg-amber-950 rounded-full text-gray-200 font-bold ${classes}`}
-      >
+      <p className={` text-gray-200 font-bold `}>
         {name && name[0]?.toUpperCase()}
       </p>
     </div>

@@ -49,6 +49,20 @@ export const LikedIcon: React.FC<Iprops> = ({
     );
   };
 
+  console.log("Liked?", users[currentUserId]?.isLiked[postId as number]?.liked);
+  // console.log(
+  //   "Current user liked",
+  //   users[currentUserId]?.isLiked[postId as number]?.user_ids[user_id as number]
+  // );
+  console.log("Current User", currentUserId);
+  // console.log("User id", user_id);
+  console.log("IsLiked object", users[currentUserId]?.isLiked);
+  // console.log(
+  //   "Keys",
+  //   users[currentUserId]?.isLiked[postId as number]?.user_ids &&
+  //     Object.keys(users[currentUserId]?.isLiked[postId as number]?.user_ids)
+  // );
+
   return (
     <button
       type="button"

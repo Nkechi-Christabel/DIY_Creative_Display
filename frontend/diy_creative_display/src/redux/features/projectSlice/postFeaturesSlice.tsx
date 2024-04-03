@@ -58,7 +58,7 @@ export const PostLikesSlice = createSlice({
       const { postId, currentUserId } = action.payload;
 
       // Initialize users if it doesn't exist
-      if (!state?.users[currentUserId]) {
+      if (state.users && !state?.users[currentUserId]) {
         state.users[currentUserId] = {
           isLiked: {},
         };

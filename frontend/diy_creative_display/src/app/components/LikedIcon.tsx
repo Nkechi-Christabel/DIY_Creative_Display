@@ -28,8 +28,7 @@ export const LikedIcon: React.FC<Iprops> = ({
   const { currentUser } = useAppSelector((state: RootState) => state.signup);
   const currentUserId = currentUser?.id;
   const isLikedByUser =
-    users[currentUserId] &&
-    users[currentUserId]?.isLiked[postId as number]?.liked;
+    users && users[currentUserId]?.isLiked[postId as number]?.liked;
 
   const handleLikes = async (
     postId: number,
@@ -49,7 +48,6 @@ export const LikedIcon: React.FC<Iprops> = ({
       })
     );
   };
-
 
   return (
     <button

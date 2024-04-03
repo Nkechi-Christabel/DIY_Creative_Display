@@ -57,25 +57,31 @@ export const PostLikesSlice = createSlice({
       // Action to toggle like status
       const { postId, currentUserId } = action.payload;
 
-      if (state?.users) {
-        if (!state?.users[currentUserId]) {
-          // Initialize users if it doesn't exist
-          state.users[currentUserId] = {
-            isLiked: {},
-          };
-        }
-
-        // Initialize isLiked for the postId if it doesn't exist
-        if (!state?.users[currentUserId]?.isLiked[postId]) {
-          state.users[currentUserId].isLiked[postId] = {
-            liked: false,
-          };
-        }
-
-        // Toggle like status
-        state.users[currentUserId].isLiked[postId].liked =
-          state?.users && !state?.users[currentUserId]?.isLiked[postId]?.liked;
+      if (!state?.users) {
+        state.users = {
+          [currentUserId]: {
+            isLiked: {}
+          },
+        };
       }
+      
+      if (!state?.users[currentUserId]) {
+        // Initialize users if it doesn't exist
+        state.users[currentUserId] = {
+          isLiked: {},
+        };
+      }
+
+      // Initialize isLiked for the postId if it doesn't exist
+      if (!state?.users[currentUserId]?.isLiked[postId]) {
+        state.users[currentUserId].isLiked[postId] = {
+          liked: false,
+        };
+      }
+
+      // Toggle like status
+      state.users[currentUserId].isLiked[postId].liked =
+        state?.users && !state?.users[currentUserId]?.isLiked[postId]?.liked;
     },
   },
 

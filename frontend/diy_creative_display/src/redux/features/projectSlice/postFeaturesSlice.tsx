@@ -72,8 +72,10 @@ export const PostLikesSlice = createSlice({
       }
 
       // Toggle like status
-      state.users[currentUserId].isLiked[postId].liked =
-        state?.users && !state?.users[currentUserId]?.isLiked[postId]?.liked;
+      if (state.users) {
+        state.users[currentUserId].isLiked[postId].liked =
+          !state?.users[currentUserId]?.isLiked[postId]?.liked;
+      }
     },
   },
 

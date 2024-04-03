@@ -65,7 +65,7 @@ export const PostLikesSlice = createSlice({
       }
 
       // Initialize isLiked for the postId if it doesn't exist
-      if (!state?.users[currentUserId]?.isLiked[postId]) {
+      if (state.users && !state?.users[currentUserId]?.isLiked[postId]) {
         state.users[currentUserId].isLiked[postId] = {
           liked: false,
         };

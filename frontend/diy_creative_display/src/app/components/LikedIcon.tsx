@@ -4,9 +4,9 @@ import { useRouter } from "next/navigation";
 import { ImHeart } from "react-icons/im";
 import {
   postLikes,
-  resetIsLiked,
   toggleClickedLike,
 } from "../../redux/features/projectSlice/postFeaturesSlice";
+import { PostValues } from "@/types";
 
 type Iprops = {
   postId: number | undefined;
@@ -22,16 +22,14 @@ export const LikedIcon: React.FC<Iprops> = ({
   const dispatch = useAppDispatch();
   const router = useRouter();
   const token = localStorage.getItem("token");
-  const { isLiked, likesCount, user_id } = useAppSelector(
+  const { likesCount, users } = useAppSelector(
     (state: RootState) => state.likes
   );
   const { currentUser } = useAppSelector((state: RootState) => state.signup);
+  const currentUserId = currentUser.id;
+  const isLikedByUser = users[currentUserId]?.isLiked[postId as number]?.liked;
 
-  useEffect(() => {
-    dispatch(resetIsLiked({ currentUserId: currentUser.id, postId }));
-  }, [postId, currentUser]);
-
-  const handleLikes = (
+  const handleLikes = async (
     postId: number,
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
@@ -40,8 +38,14 @@ export const LikedIcon: React.FC<Iprops> = ({
       router.push("/login");
       return;
     }
-    dispatch(postLikes(postId));
-    dispatch(toggleClickedLike(postId));
+    const res = await dispatch(postLikes(postId));
+    dispatch(
+      toggleClickedLike({
+        postId,
+        user_id: res.payload?.user_id,
+        currentUserId,
+      })
+    );
   };
 
   return (
@@ -52,11 +56,9 @@ export const LikedIcon: React.FC<Iprops> = ({
     >
       <ImHeart
         className={` hover:text-pink-200 cursor-pointer transition-all active:scale-0 ease-in-out-circ duration-600
-          ${
-            token && isLiked[postId as number]?.liked
-              ? "text-red-500"
-              : "text-gray-400"
-          }  ${token ? "active:scale-150" : ""}
+          ${token && isLikedByUser ? "text-red-500" : "text-gray-400"}  ${
+          token ? "active:scale-150" : ""
+        }
           
           `}
       />

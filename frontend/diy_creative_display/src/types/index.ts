@@ -92,3 +92,11 @@ export interface ErrorPhotos {
   type: string;
   ref: undefined;
 }
+
+export interface UserLikedStatus {
+  liked: boolean;
+}
+
+export interface UserState {
+  isLiked: Record<number, UserLikedStatus>;
+}

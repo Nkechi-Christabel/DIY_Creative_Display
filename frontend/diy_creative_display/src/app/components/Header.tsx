@@ -114,11 +114,8 @@ export const Header = React.memo(() => {
                     }`}
                   />
                 </button>
-                <div>
-                  <Logo classes="block lg:hidden" />
-                </div>
-
-                <ul className="menu md:flex items-center space-x-4 hidden">
+                <Logo classes="block lg:hidden" />
+                <ul className="menu md:flex items-center space-x-4 lg:-mt-2 md:mt-1 hidden">
                   {navItems.map((item) => {
                     const isActive = item.href === pathname;
                     return (
@@ -141,7 +138,7 @@ export const Header = React.memo(() => {
               <div className="flex items-center space-x-5">
                 <div className="relative">
                   <BiSearch
-                    className="inline-block lg:absolute top-[.8rem] lg:pointer-events-none left-9 lg:text-gray-400 lg:text-base text-2xl lg:mr-0 mr-3 lg:cursor-none cursor-pointer"
+                    className="inline-block lg:absolute top-[.7rem] lg:pointer-events-none left-9 lg:text-gray-400 lg:text-base text-2xl lg:mr-0 mr-3 lg:cursor-none cursor-pointer"
                     onClick={handleShowSearch}
                   />
                   <input

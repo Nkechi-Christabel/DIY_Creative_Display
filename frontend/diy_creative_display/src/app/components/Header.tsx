@@ -29,8 +29,8 @@ export const Header = React.memo(() => {
   const [searchValue, setSearchValue] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const genericHamburgerLine = `bg-black transition ease transform duration-300`;
-  const userInitials =
-    "flex justify-center items-center bg-amber-950 w-10 h-10 rounded-full text-gray-200";
+  // const userInitials =
+  //   "flex justify-center items-center bg-amber-950 w-10 h-10 rounded-full text-gray-200";
   const navItems = [
     { name: "About Us", href: "/about" },
     { name: "DIY New Post", href: "/post/create" },
@@ -95,22 +95,22 @@ export const Header = React.memo(() => {
                   <div
                     className={`my-[.14rem] h-[.14rem] ${genericHamburgerLine} ${
                       isOpen
-                        ? "translate-y-3 rotate-45 opacity-50 group-hover:opacity-100 my-1 w-5"
-                        : "opacity-50 group-hover:opacity-100 w-6"
+                        ? "translate-y-3 rotate-45 opacity-100 group-hover:opacity-50 my-1 w-5"
+                        : "opacity-100 group-hover:opacity-50 w-6"
                     }`}
                   />
                   <div
                     className={`${genericHamburgerLine} ${
                       isOpen
-                        ? "opacity-0 my-1 w-5 h-[.53rem]"
-                        : "opacity-50 group-hover:opacity-100 w-6 h-[.14rem] my-[.14rem]"
+                        ? "opacity-0 my-1 w-5 h-[.59rem]"
+                        : "opacity-100 group-hover:opacity-50 w-6 h-[.14rem] my-[.14rem]"
                     }`}
                   />
                   <div
                     className={`my-[.14rem] h-[.14rem] ${genericHamburgerLine} ${
                       isOpen
-                        ? "-translate-y-3 -rotate-45 opacity-50 group-hover:opacity-100 my-1 w-5"
-                        : "opacity-50 group-hover:opacity-100 w-3"
+                        ? "-translate-y-3 -rotate-45 opacity-100 group-hover:opacity-50 my-1 w-5"
+                        : "opacity-100 group-hover:opacity-50 w-3"
                     }`}
                   />
                 </button>

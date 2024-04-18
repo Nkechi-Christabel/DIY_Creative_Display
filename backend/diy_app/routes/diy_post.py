@@ -22,7 +22,8 @@ def configure_file_uploads(app):
 # Route to serve uploaded images
 @app_routes.route('/_uploads/photos/<path:filename>', methods=['GET'])
 def download_file(filename):
-    return send_from_directory(app_routes.config['UPLOADS_DEFAULT_DEST'], filename)
+    app = app_routes._get_current_object().app
+    return send_from_directory(app.config['UPLOADS_DEFAULT_DEST'], filename)
 
 # Function to configure Flask-Uploads
 # def configure_file_uploads(app):

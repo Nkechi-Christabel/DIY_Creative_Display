@@ -11,21 +11,30 @@ from flask import send_from_directory
 
 photos = UploadSet('photos', IMAGES)
 
+
 # Function to configure Flask-Uploads
 def configure_file_uploads(app):
+    # Set the upload folder to a directory named "uploaded_images" within your Flask app directory
+    upload_folder = os.path.join(os.getcwd(), 'uploaded_images')
+    app.config['UPLOADS_DEFAULT_DEST'] = upload_folder
     configure_uploads(app, photos)
 
 # Route to serve uploaded images
 @app_routes.route('/_uploads/photos/<path:filename>', methods=['GET'])
-def ownload_file(filename):
-    path = '/home/ubuntu/DIY_Creative_Display/backend/diy_app/uploaded/images'
-    return send_from_directory(path, filename)
+def download_file(filename):
+    return send_from_directory(app_routes.config['UPLOADS_DEFAULT_DEST'], filename)
+
+# Function to configure Flask-Uploads
+# def configure_file_uploads(app):
+#     configure_uploads(app, photos)
 
 # Route to serve uploaded images
 # @app_routes.route('/_uploads/photos/<path:filename>', methods=['GET'])
-# def download_file(filename):
-#     path = '/Users/apple/Documents/DIY_Creative_Display/backend/diy_app/uploaded/images'
+# def ownload_file(filename):
+#     path = '/home/ubuntu/DIY_Creative_Display/backend/diy_app/uploaded/images'
 #     return send_from_directory(path, filename)
+
+
 
 # Creates a post
 @app_routes.route('/post', methods=['POST'])

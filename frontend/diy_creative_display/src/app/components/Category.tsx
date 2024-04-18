@@ -36,7 +36,7 @@ export const Category = ({ selectedCategory, setSelectedCategory }: Iprops) => {
         >
           <li
             key="DIY"
-            className={`cursor-pointer text-nowrap py-2 px-3 rounded-3xl hover:text-gray-500 ${
+            className={`cursor-pointer text-nowrap py-2 px-3 rounded-3xl hover:text-gray-500 font-semibold ${
               selectedCategory === "DIYs" ? "bg-gray-100" : ""
             }`}
             onClick={() => setSelectedCategory("DIYs")}
@@ -46,7 +46,7 @@ export const Category = ({ selectedCategory, setSelectedCategory }: Iprops) => {
           {categories.map((category) => (
             <li
               key={category.id}
-              className={`font-bold cursor-pointer text-nowrap py-2 px-3 rounded-3xl hover:text-gray-500 ${
+              className={`font-semibold cursor-pointer text-nowrap py-2 px-3 rounded-3xl hover:text-gray-500 ${
                 selectedCategory === category.name ? "bg-gray-100" : ""
               }`}
               onClick={() => setSelectedCategory(category.name)}

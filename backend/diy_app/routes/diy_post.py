@@ -15,7 +15,7 @@ photos = UploadSet('photos', IMAGES)
 # Function to configure Flask-Uploads
 def configure_file_uploads(app):
     # Set the upload folder to a directory named "uploaded_images" within your Flask app directory
-    upload_folder = os.path.join(os.getcwd(), 'uploaded_images')
+    upload_folder = os.path.join(os.getcwd(), 'uploaded')
     app.config['UPLOADS_DEFAULT_DEST'] = upload_folder
     configure_uploads(app, photos)
 

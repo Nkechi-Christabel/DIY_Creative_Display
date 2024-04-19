@@ -14,15 +14,13 @@ photos = UploadSet('photos', IMAGES)
 
 # Function to configure Flask-Uploads
 def configure_file_uploads(app):
-    # Set the upload folder to a directory named "uploaded_images" within your Flask app directory
-    upload_folder = os.path.join(os.getcwd(), 'uploaded')
-    app.config['UPLOADS_DEFAULT_DEST'] = upload_folder
+    # Set the upload folder to a directory named "uploaded" within your Flask app directory
     configure_uploads(app, photos)
 
 # Route to serve uploaded images
 @app_routes.route('/_uploads/photos/<path:filename>', methods=['GET'])
 def download_file(filename):
-    upload_folder = current_app.config['UPLOADS_DEFAULT_DEST']
+    upload_folder = os.path.join(os.getcwd(), 'diy_app', 'uploaded', 'images')
     return send_from_directory(upload_folder, filename)
 
 # Function to configure Flask-Uploads

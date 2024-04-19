@@ -22,7 +22,7 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # Configure Flask-Uploads
-    app.config['UPLOADED_PHOTOS_DEST'] = './diy_app/uploaded/images'
+    app.config['UPLOADED_PHOTOS_DEST'] = './diy_app/uploaded/images'   
 
     # Initialize extensions
     db.init_app(app)  # Initialize db with the Flask app
@@ -38,7 +38,7 @@ def create_app():
     configure_file_uploads(app)
 
     CORS(app, origins=["*"])
-
+   
     return app
 
 app = create_app()

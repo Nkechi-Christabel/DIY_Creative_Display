@@ -20,19 +20,8 @@ def configure_file_uploads(app):
 # Route to serve uploaded images
 @app_routes.route('/_uploads/photos/<path:filename>', methods=['GET'])
 def download_file(filename):
-    upload_folder = os.path.join(os.getcwd(), 'diy_app', 'uploaded', 'images')
-    return send_from_directory(upload_folder, filename)
-
-# Function to configure Flask-Uploads
-# def configure_file_uploads(app):
-#     configure_uploads(app, photos)
-
-# Route to serve uploaded images
-# @app_routes.route('/_uploads/photos/<path:filename>', methods=['GET'])
-# def ownload_file(filename):
-#     path = '/home/ubuntu/DIY_Creative_Display/backend/diy_app/uploaded/images'
-#     return send_from_directory(path, filename)
-
+    path = os.path.join(os.getcwd(), 'diy_app', 'uploaded', 'images')
+    return send_from_directory(path, filename)
 
 
 # Creates a post

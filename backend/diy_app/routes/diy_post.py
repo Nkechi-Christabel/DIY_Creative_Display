@@ -1,4 +1,4 @@
-from flask import jsonify, request, send_from_directory
+from flask import jsonify, request, send_from_directory, current_app
 from diy_app.models.post import Post
 from . import app_routes
 from diy_app.models import db
@@ -11,21 +11,18 @@ from flask import send_from_directory
 
 photos = UploadSet('photos', IMAGES)
 
+
 # Function to configure Flask-Uploads
 def configure_file_uploads(app):
+    # Set the upload folder to a directory named "uploaded" within your Flask app directory
     configure_uploads(app, photos)
 
 # Route to serve uploaded images
 @app_routes.route('/_uploads/photos/<path:filename>', methods=['GET'])
-def ownload_file(filename):
-    path = '/home/ubuntu/DIY_Creative_Display/backend/diy_app/uploaded/images'
+def download_file(filename):
+    path = os.path.join(os.getcwd(), 'diy_app', 'uploaded', 'images')
     return send_from_directory(path, filename)
 
-# Route to serve uploaded images
-# @app_routes.route('/_uploads/photos/<path:filename>', methods=['GET'])
-# def download_file(filename):
-#     path = '/Users/apple/Documents/DIY_Creative_Display/backend/diy_app/uploaded/images'
-#     return send_from_directory(path, filename)
 
 # Creates a post
 @app_routes.route('/post', methods=['POST'])

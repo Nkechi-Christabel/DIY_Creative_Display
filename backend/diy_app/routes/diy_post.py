@@ -14,7 +14,6 @@ photos = UploadSet('photos', IMAGES)
 
 # Function to configure Flask-Uploads
 def configure_file_uploads(app):
-    # Set the upload folder to a directory named "uploaded" within your Flask app directory
     configure_uploads(app, photos)
 
 # Route to serve uploaded images

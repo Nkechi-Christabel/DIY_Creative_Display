@@ -1,6 +1,7 @@
-from flask import jsonify, request, send_from_directory, current_app
+from flask import jsonify, request, send_from_directory
 from diy_app.models.post import Post
 from . import app_routes
+from diy_app.app import app
 from diy_app.models import db
 from diy_app.auth import token_required
 from flask_uploads import UploadSet, configure_uploads, IMAGES, UploadNotAllowed
@@ -20,7 +21,7 @@ def configure_file_uploads(app):
 @app_routes.route('/_uploads/photos/<path:filename>', methods=['GET'])
 def download_file(filename):
     path = os.path.join(os.getcwd(), 'diy_app', 'uploaded', 'images')
-    return send_from_directory('./diy_app/uploaded/images', filename)
+    return send_from_directory(app.config['UPLOADED_PHOTOS_DEST'], filename)
 
 
 # Creates a post
@@ -160,7 +161,7 @@ def delete_post(current_user, post_id):
 
         # Deletes Images Associated with the post
         for filename in image_filenames:
-            file_path = os.path.join('./diy_app/uploaded/images', filename)
+            file_path = os.path.join(app.config['UPLOADED_PHOTOS_DEST'], filename)
             if os.path.exists(file_path):
                 os.remove(file_path)
 

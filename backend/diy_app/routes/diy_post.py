@@ -20,7 +20,7 @@ def configure_file_uploads(app):
 @app_routes.route('/_uploads/photos/<path:filename>', methods=['GET'])
 def download_file(filename):
     path = os.path.join(os.getcwd(), 'diy_app', 'uploaded', 'images')
-    return send_from_directory(path, filename)
+    return send_from_directory('./diy_app/uploaded/images', filename)
 
 
 # Creates a post

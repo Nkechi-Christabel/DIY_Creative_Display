@@ -1,4 +1,4 @@
-from flask import jsonify, request, send_from_directory, current_app
+from flask import jsonify, request, send_from_directory
 from diy_app.models.post import Post
 from . import app_routes
 from diy_app.models import db

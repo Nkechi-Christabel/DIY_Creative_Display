@@ -28,6 +28,7 @@ class Post(Base):
             'user_id': self.user_id
         }
     
+    # Save Images
     def to_dict_with_images(self):
         images = json.loads(self.image_filenames)
         image_urls = ['https://web-02.bammietop.tech/_uploads/photos/' + image for image in images]

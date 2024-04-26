@@ -97,14 +97,15 @@ const Create = React.memo(() => {
     mode: "onBlur",
   });
   const { onChange, ...params } = register("photos");
-  const photosError =
-    (errors?.photos as ErrorPhotos[])
-      ?.filter((_, i) => i !== index)
-      ?.map(
-        (error, idx, arr) =>
-          `${arr.length > 1 ? idx + 1 + ") " : ""} ${error?.message}`
-      )
-      ?.join("\n") ?? "";
+  const photosError = Array.isArray(errors.photos)
+    ? (errors?.photos as ErrorPhotos[])
+        ?.filter((_, i) => i !== index)
+        ?.map(
+          (error, idx, arr) =>
+            `${arr.length > 1 ? idx + 1 + ") " : ""} ${error?.message}`
+        )
+        ?.join("\n")
+    : errors?.photos?.message;
 
   const handleImagePreview = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {

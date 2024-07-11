@@ -57,7 +57,8 @@ To run the DIY Creative Display locally, follow these steps:
 
 #### Run the Flask backend:
 
-    python3 -m diy_app.app
+MySQL Database: python3 -m diy_app.app
+PostgreSQL daatabase: gunicorn diy_app.app:app
 
 #### Install dependencies for the frontend (Next.js):
 

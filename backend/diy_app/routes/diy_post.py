@@ -84,9 +84,9 @@ def create_post(current_user):
         filenames.append(public_url)
 
         
-    # filenames_json = json.dumps(filenames)
+    filenames_json = json.dumps(filenames)
 
-    new_post = Post(title=title, content=content, categories=categories, user_id=user_id, image_filenames=filenames)
+    new_post = Post(title=title, content=content, categories=categories, user_id=user_id, image_filenames=filenames_json)
     db.session.add(new_post)
     db.session.commit()
     return jsonify({'message': 'Post created successfully'}), 201

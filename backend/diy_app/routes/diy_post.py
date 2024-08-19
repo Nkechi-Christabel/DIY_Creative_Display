@@ -1,26 +1,62 @@
-from flask import jsonify, request, send_from_directory
+from flask import jsonify, request
 from diy_app.models.post import Post
 from . import app_routes
 from diy_app.models import db
 from diy_app.auth import token_required
-from flask_uploads import UploadSet, configure_uploads, IMAGES, UploadNotAllowed
 import json
 import os
-from flask import send_from_directory
+from supabase import create_client, Client
+from urllib.parse import urlparse
+from dotenv import load_dotenv
 
 
-photos = UploadSet('photos', IMAGES)
+load_dotenv()
+
+url: str = os.environ.get("SUPABASE_URL")
+key: str = os.environ.get("SUPABASE_KEY")
+supabase: Client = create_client(url, key)
+
+def upload_file(file):
+    bucket_name = "Images"
+    file_path = os.path.join(bucket_name, file.filename).replace("\\", "/")
+
+    # Check if the file already exists
+    existing_files = supabase.storage.from_(bucket_name).list(bucket_name)
+    if any(f['name'] == file.filename for f in existing_files):
+        public_url = supabase.storage.from_(bucket_name).get_public_url(file_path)
+        return public_url
+
+    # Read the file content
+    file_content = file.read()
+
+    response = supabase.storage.from_(bucket_name).upload(file_path, file_content)
+    if response.status_code == 200:
+        public_url = supabase.storage.from_(bucket_name).get_public_url(file_path)
+        return public_url
+    else:
+        return
 
 
-# Function to configure Flask-Uploads
-def configure_file_uploads(app):
-    configure_uploads(app, photos)
 
-# Route to serve uploaded images
-@app_routes.route('/_uploads/photos/<path:filename>', methods=['GET'])
-def download_file(filename):
-    path = os.path.join(os.getcwd(), 'diy_app', 'uploaded', 'images')
-    return send_from_directory(path, filename)
+def delete_file(public_url):
+    bucket_name = "Images"
+
+    # Parse the URL to get the file path
+    parsed_url = urlparse(public_url)
+    file_path = parsed_url.path.lstrip("/")  # Remove the leading slash
+
+    # Remove redundant 'Images/' if it appears twice
+    file_name = file_path.split(f"{bucket_name}/")[-1]  # Get the part after the first 'Images/'
+
+    # Remove any query parameters, like the '?'
+    file_name = file_name.split("?")[0]
+    full_file_path = f"{bucket_name}/{file_name}"
+    print(full_file_path)
+
+
+    # Delete the file using the full path
+    supabase.storage.from_(bucket_name).remove([full_file_path])
+
 
 
 # Creates a post
@@ -33,21 +69,24 @@ def create_post(current_user):
     user_id = current_user.id
     images = request.files.getlist('photos')
 
+    if not images:
+        return jsonify({'error': 'At least one image is required'}), 400
     if not title or not content or not categories:
         return jsonify({'error': 'Title, Content, and Categories are required fields'}), 400
 
     # Save uploaded images and get their filenames
     filenames = []
     for image in images:
-        try:
-            filename = photos.save(image)
-            filenames.append(filename)
-        except UploadNotAllowed:
-            return jsonify({'error': 'Invalid file type'}), 400
-        
-    filenames_json = json.dumps(filenames)
+        public_url = upload_file(image)
+        if not public_url:
+            return jsonify({'error': 'Upload failed'}), 400
+                
+        filenames.append(public_url)
 
-    new_post = Post(title=title, content=content, categories=categories, user_id=user_id, image_filenames=filenames_json)
+        
+    # filenames_json = json.dumps(filenames)
+
+    new_post = Post(title=title, content=content, categories=categories, user_id=user_id, image_filenames=filenames)
     db.session.add(new_post)
     db.session.commit()
     return jsonify({'message': 'Post created successfully'}), 201
@@ -60,18 +99,7 @@ def get_posts():
     posts_data = []
 
     for post in posts:
-        # Parse the JSON string stored in the image_filenames field into a list of filenames
-        try:
-            image_filenames = json.loads(post.image_filenames)
-        except json.JSONDecodeError:
-            image_filenames = []  # Handle cases where image_filenames is invalid JSON or empty
-
-        # Create URLs for accessing the images based on the filenames
-        image_urls = [photos.url(filename) for filename in image_filenames if filename]
-        
         post_data = post.to_dict()
-        post_data['photos'] = image_urls
-
         posts_data.append(post_data)
 
     return jsonify(posts_data), 200
@@ -80,17 +108,9 @@ def get_posts():
 # Gets a Post with a specific id
 @app_routes.route('/post/<int:post_id>', methods=['GET'])
 def get_post(post_id):
-    # post = Post.query.get_or_404(post_id)
     post = db.session.get(Post, post_id)
 
-    # Parse the JSON string stored in the image_filenames field into a list of filenames
-    image_filenames = json.loads(post.image_filenames)
-
-    # Create URLs for accessing the images based on the filenames
-    image_urls = [photos.url(filename) for filename in image_filenames]
-
     post_data = post.to_dict()
-    post_data['photos'] = image_urls
 
     return jsonify(post_data), 200
 
@@ -110,8 +130,6 @@ def update_post(current_user, post_id):
         return jsonify({'error': 'Title, Content, and Categories are required fields'}), 400
 
     current_user_id = current_user.id
-    # Query the Database for post_id, if failed return 404 error
-    # post = Post.query.get_or_404(post_id)
     post = db.session.get(Post, post_id)
     
     # Checks if current user is authorized to update the post
@@ -120,27 +138,27 @@ def update_post(current_user, post_id):
         post.content = content
         post.categories = categories
         if images:
+            image_filenames = json.loads(post.image_filenames)
+
+            # Deletes Images Associated with the post
+            for filename in image_filenames:
+                delete_file(filename)
+            
             # Save uploaded images and get their filenames
             filenames = []
             for image in images:
                 try:
-                    filename = photos.save(image)
-                    filenames.append(filename)
-                except UploadNotAllowed:
-                    return jsonify({'error': 'Invalid file type'}), 400
+                    public_url = upload_file(image)
+                    if public_url:
+                        filenames.append(public_url)
+                except:
+                    return jsonify({'error': 'Upload failed'}), 400
                 
             filenames_json = json.dumps(filenames)
             post.image_filenames = filenames_json
         db.session.commit()
 
-        #Including images in the data to be sent back
-        image_filenames = json.loads(post.image_filenames)
-
-        # Create URLs for accessing the images based on the filenames
-        image_urls = [photos.url(filename) for filename in image_filenames]
-
         post_data = post.to_dict()
-        post_data['photos'] = image_urls
         return jsonify({'message': 'Post updated successfully', 'updatedPost': post_data}), 201
     else:
         return jsonify({'message': 'Unauthorized to update this post'}), 403
@@ -160,9 +178,7 @@ def delete_post(current_user, post_id):
 
         # Deletes Images Associated with the post
         for filename in image_filenames:
-            file_path = os.path.join('./diy_app/uploaded/images', filename)
-            if os.path.exists(file_path):
-                os.remove(file_path)
+            delete_file(filename)
 
         db.session.delete(post)
         db.session.commit()

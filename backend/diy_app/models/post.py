@@ -15,8 +15,8 @@ class Post(Base):
     comment = db.relationship('Comment', backref=db.backref('post', lazy=True), cascade="all, delete-orphan")
     save = db.relationship('Save', backref=db.backref('post', lazy=True), cascade="all, delete-orphan")
 
-    def __repr__(self):
-        return f"('{self.id}', '{self.title}', '{self.content}', '{self.date_posted}', '{self.picture}', '{self.user_id}')"
+    def __str__(self):
+        return f"('{self.id}', '{self.title}', '{self.content}', '{self.date_posted}', '{self.image_filenames}', '{self.user_id}')"
     
     def to_dict(self):
         return {
@@ -25,18 +25,6 @@ class Post(Base):
             'content': self.content,
             'date_posted': self.date_posted, #.isoformat(), Convert datetime to string
             'categories': self.categories,
-            'user_id': self.user_id
-        }
-    
-    # Save Images
-    def to_dict_with_images(self):
-        images = json.loads(self.image_filenames)
-        image_urls = ['https://web-02.bammietop.tech/_uploads/photos/' + image for image in images]
-        return {
-            'id': self.id,
-            'title': self.title,
-            'content': self.content,
-            'categories': self.categories,
-            'date_posted': self.date_posted,
-            'photos': image_urls,
+            'user_id': self.user_id,
+            'photos': json.loads(self.image_filenames)
         }

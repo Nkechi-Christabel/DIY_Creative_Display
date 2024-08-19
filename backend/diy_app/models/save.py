@@ -11,5 +11,5 @@ class Save(Base):
             'id': self.id,
             'user_id': self.user_id,
             'post_id': self.post_id,
-            'post_details': self.post.to_dict_with_images() if self.post else None
+            'post_details': self.post.to_dict() if self.post else None
         }

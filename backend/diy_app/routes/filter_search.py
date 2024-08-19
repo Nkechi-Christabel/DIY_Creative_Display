@@ -1,6 +1,5 @@
 from flask import jsonify, request
 from diy_app.models.post import Post
-from diy_app.routes.diy_post import photos
 from . import app_routes
 import json
 
@@ -18,16 +17,9 @@ def search():
     posts_data = []
 
     for post in posts:
-        # Parse the JSON string stored in the image_filenames field into a list of filenames
-        image_filenames = json.loads(post.image_filenames)
-
-        # Create URLs for accessing the images based on the filenames
-        image_urls = [photos.url(filename) for filename in image_filenames]
-
         post_data = post.to_dict()
-        post_data['image_urls'] = image_urls
-
         posts_data.append(post_data)
+
 
     return jsonify(posts_data), 200
 
@@ -46,15 +38,8 @@ def filter():
     posts_data = []
 
     for post in posts:
-        # Parse the JSON string stored in the image_filenames field into a list of filenames
-        image_filenames = json.loads(post.image_filenames)
-
-        # Create URLs for accessing the images based on the filenames
-        image_urls = [photos.url(filename) for filename in image_filenames]
-
         post_data = post.to_dict()
-        post_data['image_urls'] = image_urls
-
         posts_data.append(post_data)
+
 
     return jsonify(posts_data), 200
